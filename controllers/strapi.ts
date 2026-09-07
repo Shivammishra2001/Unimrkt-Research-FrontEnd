@@ -1,0 +1,206 @@
+/**
+ * The ONLY entry point into Strapi (mock or live). Every other frontend
+ * file — every route, every other controller, every View — is forbidden
+ * from calling `fetch()` against the CMS directly. Per FRONTEND_SPEC.md
+ * §4.1, adapted for this project's two explicit mandates:
+ *
+ *  1. IP-aware base URL: NEXT_PUBLIC_STRAPI_API_URL (falls back to
+ *     http://localhost:1337/api) rather than the upstream blueprint's
+ *     throw-if-unset, server-only STRAPI_URL — this Strapi instance is a
+ *     bare LAN address, not a hidden internal one.
+ *  2. Dual-mode mocking: NEXT_PUBLIC_USE_MOCKS=true short-circuits every
+ *     call to mocks/index.ts before any network code runs.
+ */
+import 'server-only';
+import qs from 'qs';
+import { draftMode } from 'next/headers';
+import { StrapiError } from './errors';
+import { getMockResponse } from '@/mocks';
+import type { StrapiGlobalResponse, StrapiPageResponse, StrapiPageSlugsResponse } from '@/models/strapi';
+import type {
+  StrapiServiceDetailResponse,
+  StrapiServiceListResponse,
+  StrapiServiceSlugsResponse,
+} from '@/models/service';
+import type {
+  StrapiCityServiceCombinationsResponse,
+  StrapiServiceByLocationResponse,
+} from '@/models/location-service';
+
+export { StrapiError };
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
+const API_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337/api';
+const READ_TOKEN = process.env.STRAPI_API_TOKEN;
+const PREVIEW_TOKEN = process.env.STRAPI_PREVIEW_TOKEN;
+const REVALIDATE = Number(process.env.REVALIDATE_SECONDS ?? 3600);
+// Not part of the upstream blueprint — added per mandate #1's call to
+// "handl[e] network drops/unreachable LAN hosts": a bare LAN IP can hang
+// on an unplugged cable or a wrong subnet far longer than a normal 5xx
+// takes to come back, so every live request gets a hard ceiling.
+const FETCH_TIMEOUT_MS = Number(process.env.STRAPI_FETCH_TIMEOUT_MS ?? 8000);
+
+export interface FetchOptions {
+  query?: Record<string, unknown>;
+  tag?: string;
+  tags?: string[];
+  revalidate?: number;
+  retries?: number;
+}
+
+function getIsDraft(): boolean {
+  try {
+    return draftMode().isEnabled;
+  } catch {
+    // draftMode() throws outside a request scope (e.g. generateStaticParams()
+    // at build time) — treated as "not in draft": build-time static param
+    // generation only ever wants published slugs.
+    return false;
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new StrapiError(
+        `Request to Strapi timed out after ${timeoutMs}ms — is the LAN host at ${API_BASE_URL} reachable?`,
+        504,
+        url
+      );
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Low-level fetch wrapper. In mock mode, resolves against
+ * mocks/index.ts and never touches the network. In live mode: qs-encoded
+ * bracket-array query string, draft-aware auth/caching, retry with
+ * exponential backoff on 5xx/network errors (never on 4xx — those are
+ * deterministic), and a hard request timeout for an unreachable LAN host.
+ */
+export async function strapiFetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
+  const isDraft = getIsDraft();
+  const mergedQuery = { ...options.query, ...(isDraft ? { status: 'draft' } : {}) };
+
+  if (USE_MOCKS) {
+    return getMockResponse<T>(endpoint, mergedQuery);
+  }
+
+  const search = qs.stringify(mergedQuery, { encodeValuesOnly: true, arrayFormat: 'brackets' });
+  const url = `${API_BASE_URL}/${endpoint}${search ? `?${search}` : ''}`;
+
+  const token = isDraft ? PREVIEW_TOKEN : READ_TOKEN;
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+
+  const allTags = [...(options.tag ? [options.tag] : []), ...(options.tags ?? [])];
+  const cacheInit: RequestInit = isDraft
+    ? { cache: 'no-store' }
+    : { next: { revalidate: options.revalidate ?? REVALIDATE, ...(allTags.length ? { tags: allTags } : {}) } };
+
+  const retries = options.retries ?? 2;
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const res = await fetchWithTimeout(url, { headers, ...cacheInit }, FETCH_TIMEOUT_MS);
+
+      if (res.status === 404) {
+        // Always thrown immediately, never retried.
+        throw new StrapiError('Not found', 404, endpoint);
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => undefined);
+        if (res.status < 500) {
+          // Client errors are deterministic — never retried.
+          throw new StrapiError(`Strapi request failed: ${res.status}`, res.status, endpoint, body);
+        }
+        throw new StrapiError(`Strapi request failed: ${res.status}`, res.status, endpoint, body);
+      }
+
+      return (await res.json()) as T;
+    } catch (err) {
+      lastError = err;
+
+      if (err instanceof StrapiError && err.status < 500) {
+        throw err;
+      }
+      if (attempt < retries) {
+        await sleep(2 ** attempt * 250);
+        continue;
+      }
+    }
+  }
+
+  if (lastError instanceof Error) throw lastError;
+  throw new StrapiError('Unreachable', 503, endpoint);
+}
+
+// ---------------------------------------------------------------------------
+// Exported content-type fetchers — the full surface of what this app reads
+// from Strapi. Per FRONTEND_SPEC.md §4.1 / API_SPECIFICATION.md §2.
+// ---------------------------------------------------------------------------
+
+export function getPageBySlug(slug: string): Promise<StrapiPageResponse> {
+  return strapiFetch<StrapiPageResponse>(`pages/slug/${encodeURIComponent(slug)}`, {
+    tag: `page-${slug}`,
+  });
+}
+
+export function getPageSlugs(): Promise<StrapiPageSlugsResponse> {
+  return strapiFetch<StrapiPageSlugsResponse>('pages/slugs', { tag: 'pages' });
+}
+
+export function getGlobal(): Promise<StrapiGlobalResponse> {
+  // No populate query sent — the backend forces its own server-side
+  // populate and overwrites any caller-supplied one.
+  return strapiFetch<StrapiGlobalResponse>('global', { tag: 'global' });
+}
+
+export function getServices(params: { page?: number; pageSize?: number; sort?: string } = {}): Promise<StrapiServiceListResponse> {
+  return strapiFetch<StrapiServiceListResponse>('services', {
+    query: {
+      pagination: { page: params.page ?? 1, pageSize: params.pageSize ?? 24 },
+      ...(params.sort ? { sort: params.sort } : {}),
+    },
+    tag: 'services',
+  });
+}
+
+export function getServiceBySlug(slug: string): Promise<StrapiServiceDetailResponse> {
+  return strapiFetch<StrapiServiceDetailResponse>(`services/slug/${encodeURIComponent(slug)}`, {
+    tag: `service-${slug}`,
+  });
+}
+
+export function getServiceSlugs(): Promise<StrapiServiceSlugsResponse> {
+  return strapiFetch<StrapiServiceSlugsResponse>('services/slugs', { tag: 'services' });
+}
+
+export function getServiceByLocation(citySlug: string, serviceSlug: string): Promise<StrapiServiceByLocationResponse> {
+  return strapiFetch<StrapiServiceByLocationResponse>('services-by-location', {
+    query: { city: citySlug, service: serviceSlug },
+    tags: [`city-${citySlug}`, `service-${serviceSlug}`, `city-service-${citySlug}-${serviceSlug}`],
+  });
+}
+
+export function getCityServiceCombinations(): Promise<StrapiCityServiceCombinationsResponse> {
+  return strapiFetch<StrapiCityServiceCombinationsResponse>('services-by-location/combinations', {
+    tags: ['cities', 'services', 'city-service-combinations'],
+  });
+}
