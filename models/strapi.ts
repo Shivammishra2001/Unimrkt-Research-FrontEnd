@@ -67,6 +67,7 @@ export interface StrapiNavItem {
   href: string;
   isExternal: boolean;
   children: StrapiNavChildItem[];
+  showIndicator?: boolean;
 }
 
 export interface StrapiSeo {
@@ -107,6 +108,8 @@ export interface StrapiHeroBlock extends StrapiBlockBase {
   actions: StrapiLink[];
   sideMenu?: StrapiServiceBandItem[];
   headingSize?: 'display' | 'h2' | null;
+  statValue?: string | null;
+  statLabel?: string | null;
 }
 
 export interface StrapiContentBlock extends StrapiBlockBase {
@@ -114,7 +117,9 @@ export interface StrapiContentBlock extends StrapiBlockBase {
   heading: string | null;
   body: string;
   media: StrapiMedia | null;
-  mediaAlignment: 'left' | 'right' | 'none';
+  mediaAlignment: 'left' | 'right' | 'below' | 'none';
+  contactPrompt?: string | null;
+  contactEmail?: string | null;
 }
 
 export interface StrapiFeatureItem {
@@ -147,6 +152,7 @@ export interface StrapiCtaBlock extends StrapiBlockBase {
   body: string | null;
   actions: StrapiLink[];
   background: StrapiMedia | null;
+  backgroundColor?: string | null;
 }
 
 export interface StrapiStatItem {
@@ -165,6 +171,8 @@ export interface StrapiServiceBandItem {
   id: number;
   label: string;
   href: string;
+  isActive?: boolean;
+  description?: string | null;
 }
 
 export interface StrapiServiceBandBlock extends StrapiBlockBase {
@@ -284,6 +292,7 @@ export interface StrapiGlobal {
   footerColumns: StrapiFooterColumn[];
   socialLinks: StrapiLink[];
   copyright: string | null;
+  footerTagline: string | null;
   defaultSeo: StrapiSeo;
 }
 

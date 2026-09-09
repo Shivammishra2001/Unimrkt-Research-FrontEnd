@@ -92,6 +92,8 @@ export const MOCK_GLOBAL: StrapiGlobalResponse = {
       link('Instagram', 'https://instagram.com', true),
     ],
     copyright: `Copyright © ${new Date().getFullYear()} Unimrkt Research All rights reserved.`,
+    footerTagline:
+      'Delivering global market research, data collection, and actionable insights that drive smarter business decisions.',
     defaultSeo: {
       id: 1,
       metaTitle: 'Unimrkt Research — Structured Market Data',

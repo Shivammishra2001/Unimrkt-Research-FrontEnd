@@ -5,17 +5,21 @@ import { Prose } from '@/views/ui/Prose';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import type { ContentModel } from '@/models/domain';
 
-/** blocks.content — heading + body, optional side image. `mediaAlignment:
- * 'none'` skips the two-column grid entirely. */
+/** blocks.content — heading + body, optional image. `mediaAlignment:
+ * 'none'` skips media entirely; `'left'`/`'right'` puts it beside the text
+ * in a two-column grid; `'below'` (Figma node 267:1307's world-map
+ * illustration under "Unlock the Power of Marketplaces") centers the text
+ * and runs the image full-width underneath instead. */
 export function ContentView({ block }: { block: ContentModel; index: number }) {
-  const hasMedia = block.mediaAlignment !== 'none' && !!block.media;
+  const isBelow = block.mediaAlignment === 'below';
+  const hasSideMedia = (block.mediaAlignment === 'left' || block.mediaAlignment === 'right') && !!block.media;
   const mediaFirst = block.mediaAlignment === 'left';
 
   return (
     <Section theme={block.theme} anchorId={block.anchorId}>
       <Container>
-        <div className={hasMedia ? 'grid items-center gap-10 lg:grid-cols-2' : 'mx-auto max-w-2xl'}>
-          {hasMedia && mediaFirst && block.media && (
+        <div className={hasSideMedia ? 'grid items-center gap-10 lg:grid-cols-2' : 'mx-auto max-w-2xl text-center'}>
+          {hasSideMedia && mediaFirst && block.media && (
             <StrapiImage
               image={block.media}
               sizes="(min-width: 1024px) 50vw, 100vw"
@@ -30,7 +34,7 @@ export function ContentView({ block }: { block: ContentModel; index: number }) {
             )}
             <Prose className="mt-6">{block.body}</Prose>
           </div>
-          {hasMedia && !mediaFirst && block.media && (
+          {hasSideMedia && !mediaFirst && block.media && (
             <StrapiImage
               image={block.media}
               sizes="(min-width: 1024px) 50vw, 100vw"
@@ -38,6 +42,24 @@ export function ContentView({ block }: { block: ContentModel; index: number }) {
             />
           )}
         </div>
+        {isBelow && block.media && (
+          <StrapiImage
+            image={block.media}
+            sizes="100vw"
+            className="mx-auto mt-10 w-full max-w-5xl object-contain"
+          />
+        )}
+        {block.contactPrompt && block.contactEmail && (
+          <p className="mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-3 text-center text-sm opacity-80">
+            <span>{block.contactPrompt}</span>
+            <a
+              href={`mailto:${block.contactEmail}`}
+              className="rounded-btn border border-slate-200 px-5 py-2 font-semibold text-brand-600 hover:bg-slate-50"
+            >
+              {block.contactEmail}
+            </a>
+          </p>
+        )}
       </Container>
     </Section>
   );

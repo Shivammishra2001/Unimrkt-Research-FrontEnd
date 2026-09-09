@@ -7,7 +7,13 @@
  * disclosure in FRONTEND_SPEC.md §9.
  */
 import type { StrapiBlock, StrapiFeatureItem, StrapiLink } from '@/models/strapi';
-import type { StrapiServiceDetail, StrapiServiceDetailResponse, StrapiServiceListResponse, StrapiServiceSlugsResponse } from '@/models/service';
+import type {
+  StrapiServiceDetail,
+  StrapiServiceDetailResponse,
+  StrapiServiceListResponse,
+  StrapiServiceSlugsResponse,
+  StrapiServiceTreeResponse,
+} from '@/models/service';
 
 const NOW = '2026-01-05T09:20:00.000Z';
 
@@ -233,5 +239,34 @@ export function mockServiceDetailResponse(slug: string): StrapiServiceDetailResp
 
 export const MOCK_SERVICE_SLUGS_RESPONSE: StrapiServiceSlugsResponse = {
   data: Object.values(MOCK_SERVICES).map((s) => ({ id: s.id, slug: s.slug, updatedAt: s.updatedAt })),
+  meta: {},
+};
+
+// GET /services/tree (Google Sheet IA migration). A representative subset
+// of the real seed.ts SERVICES_HIERARCHY, not a full mirror of all 8
+// categories/~30 children — matches this file's existing convention of
+// illustrative, not exhaustive, fixtures.
+export const MOCK_SERVICE_TREE_RESPONSE: StrapiServiceTreeResponse = {
+  data: [
+    {
+      id: 101,
+      title: 'Primary Research',
+      slug: 'primary-research',
+      summary: 'Learn more about our Primary Research offering.',
+      children: [
+        { id: 1011, title: 'Telephonic Surveys', slug: 'telephonic-surveys', summary: 'Learn more about our Telephonic Surveys offering.' },
+        { id: 1012, title: 'Online Surveys', slug: 'online-surveys', summary: 'Learn more about our Online Surveys offering.' },
+      ],
+    },
+    {
+      id: 102,
+      title: 'Quantitative Research',
+      slug: 'quantitative-research',
+      summary: 'Learn more about our Quantitative Research offering.',
+      children: [
+        { id: 1021, title: 'Global Panel', slug: 'global-panel', summary: 'Learn more about our Global Panel offering.' },
+      ],
+    },
+  ],
   meta: {},
 };

@@ -39,9 +39,17 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         href={item.href}
         target={item.isExternal ? '_blank' : undefined}
         rel={item.isExternal ? 'noopener noreferrer' : undefined}
-        className="font-nav text-sm font-medium text-white/90 transition-colors hover:text-white"
+        className="flex items-center gap-1.5 font-nav text-sm font-medium uppercase tracking-wider text-white/90 transition-colors hover:text-white"
       >
         {item.label}
+        {/* `showIndicator`: Figma shows this chevron on "About unimrkt"
+            and "Contact" too, even though neither has real dropdown
+            children in the Model — rendered static (no rotation, no
+            aria-expanded) rather than faking an interactive control with
+            no menu behind it. */}
+        {item.showIndicator && (
+          <ChevronIcon className="size-3.5 rotate-90 text-white/80" aria-hidden="true" />
+        )}
       </Link>
     );
   }
@@ -52,11 +60,16 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         type="button"
         // onClick toggles for touch devices, which never fire onMouseEnter.
         onClick={() => (open ? closeWithDelay() : openNow())}
-        className="flex items-center gap-1 font-nav text-sm font-medium text-white/90 transition-colors hover:text-white"
+        className="flex items-center gap-1.5 font-nav text-sm font-medium uppercase tracking-wider text-white/90 transition-colors hover:text-white"
         aria-expanded={open}
       >
         {item.label}
-        <ChevronIcon className={`size-4 transition-transform ${open ? 'rotate-90' : ''}`} aria-hidden="true" />
+        {/* Native asset points right; rotate-90 (down) at rest matches
+            Figma, -rotate-90 (up) while open signals "collapse". */}
+        <ChevronIcon
+          className={`size-3.5 text-white/80 transition-transform ${open ? '-rotate-90' : 'rotate-90'}`}
+          aria-hidden="true"
+        />
       </button>
       {open && (
         // Wrapper starts flush (top-full, no margin) and pushes the
@@ -115,9 +128,27 @@ export function Navbar({ navigation }: { navigation: NavigationModel }) {
     >
       <div className="mx-auto flex w-full max-w-container items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0">
-          <StrapiImage image={navigation.logo} sizes="240px" priority className="h-10 w-auto" />
+          {/* `logo` is a required field in the Model (global.logo), but that's
+              a CMS-side guarantee, not a runtime one — an entry mid-edit, or
+              (as here) a seed run whose asset upload failed, can still reach
+              this component with no logo. Every other StrapiImage call site
+              in this codebase guards optional media the same way; this one
+              needs the same guard despite the domain type saying non-optional,
+              rather than crash the fixed header on every single page. */}
+          {navigation.logo ? (
+            <span className="inline-flex h-[95px] w-[130px] items-center justify-center rounded-[50%] bg-white px-3 py-2 shadow-lg">
+              <StrapiImage
+                image={navigation.logo}
+                sizes="130px"
+                priority
+                className="h-auto w-[88%] object-contain"
+              />
+            </span>
+          ) : (
+            <span className="font-sans text-lg font-bold text-white">{navigation.siteName}</span>
+          )}
         </Link>
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-16 lg:flex">
           {navigation.items.map((item) => (
             <NavLink key={item.id} item={item} />
           ))}

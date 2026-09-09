@@ -1,6 +1,7 @@
 import type { ComponentType, SVGProps } from 'react';
 import Link from 'next/link';
 import { Container } from '@/views/ui/Container';
+import { StrapiImage } from '@/views/ui/StrapiImage';
 import { FacebookIcon, InstagramIcon, LinkedInIcon, XIcon } from '@/views/ui/icons/SocialIcons';
 import type { FooterModel } from '@/models/domain';
 
@@ -21,30 +22,11 @@ export function Footer({ footer }: { footer: FooterModel }) {
   return (
     <footer className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to font-accent text-white">
       <Container className="relative py-16">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {footer.socialLinks.length > 0 && (
-            <div className="flex gap-3 lg:col-span-1">
-              {footer.socialLinks.map((social) => {
-                const Icon = SOCIAL_ICON_BY_LABEL[social.label.toLowerCase()];
-                return (
-                  <a
-                    key={social.id}
-                    href={social.href}
-                    target={social.isExternal ? '_blank' : undefined}
-                    rel={social.isExternal ? 'noopener noreferrer' : undefined}
-                    aria-label={social.label}
-                    className="flex size-11 items-center justify-center rounded-full bg-footer-social text-white transition-transform hover:scale-105"
-                  >
-                    {Icon ? (
-                      <Icon className="size-4" aria-hidden="true" />
-                    ) : (
-                      <span className="text-xs font-semibold">{social.label[0]}</span>
-                    )}
-                  </a>
-                );
-              })}
-            </div>
-          )}
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="lg:col-span-2">
+            <StrapiImage image={footer.logo} sizes="167px" className="h-[90px] w-auto object-contain" />
+            {footer.tagline && <p className="mt-6 max-w-xs text-sm text-white/80">{footer.tagline}</p>}
+          </div>
           {footer.columns.map((column) => (
             <div key={column.id}>
               <h3 className="font-accent text-sm font-semibold uppercase tracking-[0.06em] text-white/70">
@@ -66,6 +48,34 @@ export function Footer({ footer }: { footer: FooterModel }) {
               </ul>
             </div>
           ))}
+          {footer.socialLinks.length > 0 && (
+            <div>
+              <h3 className="font-accent text-sm font-semibold uppercase tracking-[0.06em] text-white/70">
+                Connect with us
+              </h3>
+              <div className="mt-4 flex gap-3">
+                {footer.socialLinks.map((social) => {
+                  const Icon = SOCIAL_ICON_BY_LABEL[social.label.toLowerCase()];
+                  return (
+                    <a
+                      key={social.id}
+                      href={social.href}
+                      target={social.isExternal ? '_blank' : undefined}
+                      rel={social.isExternal ? 'noopener noreferrer' : undefined}
+                      aria-label={social.label}
+                      className="flex size-11 items-center justify-center rounded-full bg-footer-social text-white transition-transform hover:scale-105"
+                    >
+                      {Icon ? (
+                        <Icon className="size-4" aria-hidden="true" />
+                      ) : (
+                        <span className="text-xs font-semibold">{social.label[0]}</span>
+                      )}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </Container>
       {footer.copyright && (

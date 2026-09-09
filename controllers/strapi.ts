@@ -14,20 +14,21 @@
 import 'server-only';
 import qs from 'qs';
 import { draftMode } from 'next/headers';
-import { StrapiError } from './errors';
+import { StrapiError, isBackendUnreachable } from './errors';
 import { getMockResponse } from '@/mocks';
 import type { StrapiGlobalResponse, StrapiPageResponse, StrapiPageSlugsResponse } from '@/models/strapi';
 import type {
   StrapiServiceDetailResponse,
   StrapiServiceListResponse,
   StrapiServiceSlugsResponse,
+  StrapiServiceTreeResponse,
 } from '@/models/service';
 import type {
-  StrapiCityServiceCombinationsResponse,
-  StrapiServiceByLocationResponse,
-} from '@/models/location-service';
-
-export { StrapiError };
+  StrapiIndustryDetailResponse,
+  StrapiIndustryListResponse,
+  StrapiIndustrySlugsResponse,
+} from '@/models/industry';
+export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
 const API_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337/api';
@@ -147,8 +148,21 @@ export async function strapiFetch<T>(endpoint: string, options: FetchOptions = {
     }
   }
 
-  if (lastError instanceof Error) throw lastError;
-  throw new StrapiError('Unreachable', 503, endpoint);
+  // Always throw a StrapiError here, never the raw underlying error. A
+  // fully-unreachable host (ECONNREFUSED, DNS failure, etc.) makes
+  // `fetch()` itself reject with a plain `TypeError` — that IS an
+  // `Error`, so the old `if (lastError instanceof Error) throw lastError`
+  // check let it slip through unwrapped. Every caller up the stack
+  // (layout.tsx's Global-fetch fallback, fetchPageBySegments()'s 404
+  // guard, getServiceBySlug(), getMergedCityService(), ...) narrows on
+  // `err instanceof StrapiError` to decide whether a failure is
+  // recoverable; a raw TypeError failed that check and always rethrew,
+  // which is exactly what turned a down/unreachable Strapi into an
+  // unhandled 500 instead of the graceful degradation those callers are
+  // already written to perform. Wrapping it here, once, fixes every one
+  // of those call sites without touching them.
+  const reason = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new StrapiError(`Strapi unreachable at ${endpoint}: ${reason}`, 503, endpoint, lastError);
 }
 
 // ---------------------------------------------------------------------------
@@ -192,15 +206,30 @@ export function getServiceSlugs(): Promise<StrapiServiceSlugsResponse> {
   return strapiFetch<StrapiServiceSlugsResponse>('services/slugs', { tag: 'services' });
 }
 
-export function getServiceByLocation(citySlug: string, serviceSlug: string): Promise<StrapiServiceByLocationResponse> {
-  return strapiFetch<StrapiServiceByLocationResponse>('services-by-location', {
-    query: { city: citySlug, service: serviceSlug },
-    tags: [`city-${citySlug}`, `service-${serviceSlug}`, `city-service-${citySlug}-${serviceSlug}`],
+/** GET /services/tree — top-level categories with one level of children,
+ * for the Services nav dropdown and /services listing (Google Sheet IA
+ * migration). Backend forces its own populate; no query sent. */
+export function getServiceTree(): Promise<StrapiServiceTreeResponse> {
+  return strapiFetch<StrapiServiceTreeResponse>('services/tree', { tag: 'services' });
+}
+
+export function getIndustries(params: { page?: number; pageSize?: number; sort?: string } = {}): Promise<StrapiIndustryListResponse> {
+  return strapiFetch<StrapiIndustryListResponse>('industries', {
+    query: {
+      pagination: { page: params.page ?? 1, pageSize: params.pageSize ?? 30 },
+      ...(params.sort ? { sort: params.sort } : {}),
+    },
+    tag: 'industries',
   });
 }
 
-export function getCityServiceCombinations(): Promise<StrapiCityServiceCombinationsResponse> {
-  return strapiFetch<StrapiCityServiceCombinationsResponse>('services-by-location/combinations', {
-    tags: ['cities', 'services', 'city-service-combinations'],
+export function getIndustryBySlug(slug: string): Promise<StrapiIndustryDetailResponse> {
+  return strapiFetch<StrapiIndustryDetailResponse>(`industries/slug/${encodeURIComponent(slug)}`, {
+    tag: `industry-${slug}`,
   });
 }
+
+export function getIndustrySlugs(): Promise<StrapiIndustrySlugsResponse> {
+  return strapiFetch<StrapiIndustrySlugsResponse>('industries/slugs', { tag: 'industries' });
+}
+

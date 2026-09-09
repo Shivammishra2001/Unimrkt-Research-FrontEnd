@@ -4,10 +4,12 @@ import { Montserrat, Inter, Quicksand, Anton } from 'next/font/google';
 import './globals.css';
 import { getGlobal, StrapiError } from '@/controllers/strapi';
 import { normalizeGlobal } from '@/controllers/normalize';
+import { getAllServiceCategories } from '@/controllers/service';
 import { Navbar } from '@/views/sections/Navbar';
 import { Footer } from '@/views/sections/Footer';
 import { FloatingChatButton } from '@/views/ui/FloatingChatButton';
-import type { GlobalModel } from '@/models/domain';
+import type { GlobalModel, NavigationItemModel } from '@/models/domain';
+import type { ServiceTreeItemModel } from '@/models/service';
 
 // All four typefaces loaded once here and exposed as CSS variables consumed
 // only by tailwind.config.ts's fontFamily tokens — no View imports
@@ -63,6 +65,53 @@ const loadGlobal = cache(async (): Promise<GlobalModel | null> => {
   }
 });
 
+/**
+ * Google Sheet IA migration: the Services dropdown needs to reflect the
+ * real category hierarchy (api::service.service, self-referencing), not
+ * the hand-curated `global.primaryNav` children every other nav item still
+ * uses. This is a deliberate, localized inconsistency — every other
+ * dropdown stays CMS-seeded/static; only Services becomes live-fetched —
+ * rather than a wholesale nav-architecture change. Graceful degradation
+ * matches loadGlobal(): a failed fetch here falls back to whatever
+ * children `primaryNav` already seeded for Services, not a broken layout.
+ */
+const loadServiceCategories = cache(async (): Promise<ServiceTreeItemModel[] | null> => {
+  try {
+    return await getAllServiceCategories();
+  } catch (err) {
+    console.error(
+      '[layout] Service category tree fetch failed, Services dropdown falls back to CMS-seeded children:',
+      err
+    );
+    return null;
+  }
+});
+
+function withDynamicServicesDropdown(
+  navigation: GlobalModel['navigation'],
+  categories: ServiceTreeItemModel[] | null
+): GlobalModel['navigation'] {
+  if (!categories) return navigation;
+
+  return {
+    ...navigation,
+    items: navigation.items.map((item): NavigationItemModel => {
+      if (item.href !== '/services') return item;
+      return {
+        ...item,
+        children: categories.map((c) => ({
+          id: `svc-cat-${c.slug}`,
+          label: c.title,
+          href: `/services/${c.slug}`,
+          isExternal: false,
+          children: [],
+          showIndicator: false,
+        })),
+      };
+    }),
+  };
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const global = await loadGlobal();
   if (!global) return { title: BRAND_NAME };
@@ -75,6 +124,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const global = await loadGlobal();
+  const categories = global ? await loadServiceCategories() : null;
 
   return (
     <html
@@ -83,7 +133,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <body className="flex min-h-screen flex-col font-sans antialiased">
         {global ? (
-          <Navbar navigation={global.navigation} />
+          <Navbar navigation={withDynamicServicesDropdown(global.navigation, categories)} />
         ) : (
           <header className="border-b border-slate-200 p-4 text-center text-sm">{BRAND_NAME}</header>
         )}

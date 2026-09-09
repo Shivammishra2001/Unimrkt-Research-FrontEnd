@@ -10,10 +10,12 @@ import type { ServiceDetail } from '@/models/service';
 export function ServiceDetailView({ service }: { service: ServiceDetail }) {
   return (
     <>
-      {/* Tracks the Navbar's current compact height — this hardcoded
-          banner, not the service's own blocks.hero, is the page's actual
-          first element, so it owns Navbar clearance. */}
-      <div className="relative w-full overflow-hidden border-b border-slate-800 bg-[#0a0f1d] px-6 pb-20 pt-24 text-white sm:px-12 sm:pt-28">
+      {/* Tracks the Navbar's current height — this hardcoded banner, not
+          the service's own blocks.hero, is the page's actual first
+          element, so it owns Navbar clearance. Bumped from pt-24/pt-28 to
+          pt-32/pt-36: the nav logo grew to a 95px oval badge, so the bar
+          itself is ~115-119px tall now (was well under 96px). */}
+      <div className="relative w-full overflow-hidden border-b border-slate-800 bg-[#0a0f1d] px-6 pb-20 pt-32 text-white sm:px-12 sm:pt-36">
         <Container className="px-0">
           <div className={service.thumbnail ? 'grid items-center gap-10 lg:grid-cols-2' : 'max-w-2xl'}>
             <div>
@@ -51,6 +53,30 @@ export function ServiceDetailView({ service }: { service: ServiceDetail }) {
                     {feature.title}
                   </Heading>
                   <Prose className="mt-3">{feature.description}</Prose>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      )}
+      {/* Category hierarchy (Google Sheet IA migration) — sub-services
+          render as cards on their parent category's own page rather than
+          a separate URL: they have no dedicated detail route (see the
+          routing-conflict note in this migration's execution prompt), so
+          these are plain, non-linked cards, not a navigation grid. */}
+      {service.children.length > 0 && (
+        <section className="border-t border-card-border py-16 sm:py-20 lg:py-24">
+          <Container>
+            <Heading as="h2" size="h2">
+              What&apos;s included
+            </Heading>
+            <ul className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {service.children.map((child) => (
+                <li key={child.slug} className="rounded-xl border border-card-border p-6">
+                  <Heading as="h3" size="h3">
+                    {child.title}
+                  </Heading>
+                  <Prose className="mt-3">{child.summary}</Prose>
                 </li>
               ))}
             </ul>

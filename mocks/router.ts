@@ -8,20 +8,20 @@
  * understands Strapi endpoint URL shapes.
  */
 import { StrapiError } from '@/controllers/errors';
-import type {
-  StrapiCityServiceCombinationsResponse,
-  StrapiServiceByLocationResponse,
-} from '@/models/location-service';
 import { MOCK_GLOBAL } from './fixtures/global';
 import { mockPageResponse, MOCK_PAGE_SLUGS_RESPONSE } from './fixtures/pages';
 import {
   MOCK_SERVICES,
   MOCK_SERVICE_SLUGS_RESPONSE,
+  MOCK_SERVICE_TREE_RESPONSE,
   mockServiceDetailResponse,
   mockServiceListResponse,
 } from './fixtures/services';
-import { MOCK_CITIES, findMockCity } from './fixtures/cities';
-import { findMockOverride } from './fixtures/overrides';
+import {
+  MOCK_INDUSTRY_SLUGS_RESPONSE,
+  mockIndustryDetailResponse,
+  mockIndustryListResponse,
+} from './fixtures/industries';
 
 function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -62,32 +62,25 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
     return mockServiceListResponse({ page: pagination?.page, pageSize: pagination?.pageSize, sort }) as unknown as T;
   }
 
-  if (endpoint === 'services-by-location/combinations') {
-    // Full cross-product of every city with every service — an override
-    // is optional, not what makes a pair "exist" (matches the real
-    // findCombinations() handler's own comment).
-    const data = MOCK_CITIES.flatMap((city) =>
-      Object.values(MOCK_SERVICES).map((service) => ({ citySlug: city.slug, serviceSlug: service.slug }))
-    );
-    const response: StrapiCityServiceCombinationsResponse = { data, meta: {} };
-    return response as unknown as T;
+  if (endpoint === 'services/tree') {
+    return MOCK_SERVICE_TREE_RESPONSE as unknown as T;
   }
 
-  if (endpoint === 'services-by-location') {
-    const citySlug = asString(query.city);
-    const serviceSlug = asString(query.service);
-    if (!citySlug) throw new StrapiError('Missing "city" query param', 400, endpoint);
-    if (!serviceSlug) throw new StrapiError('Missing "service" query param', 400, endpoint);
+  if (endpoint === 'industries/slugs') {
+    return MOCK_INDUSTRY_SLUGS_RESPONSE as unknown as T;
+  }
 
-    const city = findMockCity(citySlug);
-    if (!city) throw new StrapiError(`City "${citySlug}" not found`, 404, endpoint);
+  const industrySlugMatch = endpoint.match(/^industries\/slug\/(.+)$/);
+  if (industrySlugMatch) {
+    const slug = decodeURIComponent(industrySlugMatch[1]);
+    const res = mockIndustryDetailResponse(slug);
+    if (!res) throw new StrapiError('Industry not found', 404, endpoint);
+    return res as unknown as T;
+  }
 
-    const service = MOCK_SERVICES[serviceSlug];
-    if (!service) throw new StrapiError(`Service "${serviceSlug}" not found`, 404, endpoint);
-
-    const override = findMockOverride(citySlug, serviceSlug) ?? null;
-    const response: StrapiServiceByLocationResponse = { data: { city, service, override }, meta: {} };
-    return response as unknown as T;
+  if (endpoint === 'industries') {
+    const pagination = query.pagination as { page?: number; pageSize?: number } | undefined;
+    return mockIndustryListResponse({ page: pagination?.page, pageSize: pagination?.pageSize }) as unknown as T;
   }
 
   throw new StrapiError(`No mock fixture registered for endpoint "${endpoint}"`, 501, endpoint);

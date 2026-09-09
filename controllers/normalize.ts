@@ -34,17 +34,20 @@ import type {
   StrapiServiceDetailResponse,
   StrapiServiceListResponse,
   StrapiServiceSlugsResponse,
+  StrapiServiceTreeResponse,
   ServiceDetail,
   ServiceSlugModel,
   ServiceSummary,
+  ServiceTreeItemModel,
 } from '@/models/service';
 import type {
-  StrapiCity,
-  StrapiCityServiceOverride,
-  City,
-  CityServiceOverride,
-} from '@/models/location-service';
-
+  StrapiIndustryDetailResponse,
+  StrapiIndustryListResponse,
+  StrapiIndustrySlugsResponse,
+  IndustryDetail,
+  IndustrySlugModel,
+  IndustrySummary,
+} from '@/models/industry';
 // ---------------------------------------------------------------------------
 // Shared primitives
 // ---------------------------------------------------------------------------
@@ -65,6 +68,7 @@ export function normalizeNavItem(item: StrapiNavItem): NavigationItemModel {
     label: item.label,
     href: item.href,
     isExternal: item.isExternal,
+    showIndicator: item.showIndicator ?? false,
     // Strapi components cap nesting at one level — every child is
     // hardcoded to an empty children array rather than recursed further.
     children: (item.children ?? []).map((child) => ({
@@ -73,6 +77,7 @@ export function normalizeNavItem(item: StrapiNavItem): NavigationItemModel {
       href: child.href,
       isExternal: child.isExternal,
       children: [],
+      showIndicator: false,
     })),
   };
 }
@@ -147,8 +152,11 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
           id: `svc-${item.id}`,
           label: item.label,
           href: item.href,
+          isActive: item.isActive ?? false,
         })),
         headingSize: block.headingSize ?? 'display',
+        statValue: block.statValue ?? undefined,
+        statLabel: block.statLabel ?? undefined,
       };
     }
     case 'blocks.content':
@@ -161,6 +169,8 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         body: block.body,
         media: toImageModel(block.media, block.heading ?? 'Content image'),
         mediaAlignment: block.mediaAlignment,
+        contactPrompt: block.contactPrompt ?? undefined,
+        contactEmail: block.contactEmail ?? undefined,
       };
     case 'blocks.feature-grid':
       return {
@@ -197,6 +207,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         body: block.body ?? undefined,
         actions: (block.actions ?? []).map(normalizeLink),
         background: toImageModel(block.background, block.heading),
+        backgroundColor: block.backgroundColor ?? undefined,
       };
     case 'blocks.stats-band':
       return {
@@ -217,7 +228,13 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         body: block.body ?? undefined,
         background: toImageModel(block.background, block.heading),
         cta: block.cta ? normalizeLink(block.cta) : undefined,
-        items: block.items.map((item) => ({ id: `svc-${item.id}`, label: item.label, href: item.href })),
+        items: block.items.map((item) => ({
+          id: `svc-${item.id}`,
+          label: item.label,
+          href: item.href,
+          isActive: item.isActive ?? false,
+          description: item.description ?? undefined,
+        })),
       };
     case 'blocks.industry-grid':
       return {
@@ -336,6 +353,12 @@ export function normalizeServiceDetail(res: StrapiServiceDetailResponse): Servic
     features: (data.features ?? []).map(normalizeFeatureItem),
     seo: normalizeSeo(data.seo, data.title),
     blocks: data.blocks.map(normalizeBlock).filter((b): b is BlockModel => !!b),
+    // Category hierarchy (Google Sheet IA migration) — optional on the raw
+    // type since the 3 demo services never set these.
+    legacyUrl: data.legacyUrl ?? undefined,
+    suggestedUrl: data.suggestedUrl ?? undefined,
+    parent: data.parent ?? undefined,
+    children: (data.children ?? []).map((c) => ({ slug: c.slug, title: c.title, summary: c.summary })),
   };
 }
 
@@ -343,34 +366,56 @@ export function normalizeServiceSlugs(res: StrapiServiceSlugsResponse): ServiceS
   return res.data.map((s) => ({ slug: s.slug, updatedAt: s.updatedAt }));
 }
 
+/** GET /services/tree — Services nav dropdown + category listing (Google
+ * Sheet IA migration). Flattens each item's one level of children; never
+ * recurses further (the sheet's Services data is exactly 2 levels deep
+ * under a top-level category). */
+export function normalizeServiceTree(res: StrapiServiceTreeResponse): ServiceTreeItemModel[] {
+  return res.data.map((item) => ({
+    slug: item.slug,
+    title: item.title,
+    summary: item.summary,
+    children: item.children.map((c) => ({ slug: c.slug, title: c.title, summary: c.summary })),
+  }));
+}
+
 // ---------------------------------------------------------------------------
-// City / override
+// Industry (Google Sheet IA migration)
 // ---------------------------------------------------------------------------
 
-export function normalizeCity(raw: StrapiCity): City {
+function normalizeIndustrySummaryFields(data: {
+  slug: string;
+  title: string;
+  summary: string | null;
+  icon: StrapiIndustryDetailResponse['data']['icon'];
+}): IndustrySummary {
   return {
-    slug: raw.slug,
-    name: raw.name,
-    region: raw.region ?? undefined,
-    localMeta: normalizeSeo(raw.localMeta, raw.name),
+    slug: data.slug,
+    title: data.title,
+    summary: data.summary ?? undefined,
+    icon: toImageModel(data.icon, data.title),
   };
 }
 
-export function normalizeOverride(raw: StrapiCityServiceOverride): CityServiceOverride {
+export function normalizeIndustryList(res: StrapiIndustryListResponse): IndustrySummary[] {
+  return res.data.map(normalizeIndustrySummaryFields);
+}
+
+export function normalizeIndustryDetail(res: StrapiIndustryDetailResponse): IndustryDetail {
+  const { data } = res;
   return {
-    title: raw.overrideTitle ?? undefined,
-    summary: raw.overrideSummary ?? undefined,
-    price: raw.customPrice ?? undefined,
-    // Never undefined — an override with zero overrideBlocks normalizes to
-    // blocks: []. Deciding that an empty array means "fall back to
-    // master" is controllers/location-service.ts's job (Phase F4), not
-    // this function's.
-    blocks: (raw.overrideBlocks ?? []).map(normalizeBlock).filter((b): b is BlockModel => !!b),
-    localPhone: raw.localPhone ?? undefined,
-    localAddress: raw.localAddress ?? undefined,
-    seo: normalizeSeo(raw.overrideSeo, raw.overrideTitle ?? 'Service'),
+    ...normalizeIndustrySummaryFields(data),
+    legacyUrl: data.legacyUrl ?? undefined,
+    suggestedUrl: data.suggestedUrl ?? undefined,
+    seo: normalizeSeo(data.seo, data.title),
+    blocks: data.blocks.map(normalizeBlock).filter((b): b is BlockModel => !!b),
   };
 }
+
+export function normalizeIndustrySlugs(res: StrapiIndustrySlugsResponse): IndustrySlugModel[] {
+  return res.data.map((i) => ({ slug: i.slug, updatedAt: i.updatedAt }));
+}
+
 
 // ---------------------------------------------------------------------------
 // Global
@@ -396,6 +441,8 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
     })),
     socialLinks: data.socialLinks.map(normalizeLink),
     copyright: data.copyright ?? undefined,
+    logo: navigation.logo,
+    tagline: data.footerTagline ?? undefined,
   };
 
   return {

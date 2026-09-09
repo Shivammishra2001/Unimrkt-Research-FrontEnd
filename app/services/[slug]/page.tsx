@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getAllServiceSlugs, getServiceBySlug } from '@/controllers/service';
+import { isBackendUnreachable } from '@/controllers/strapi';
 import { ServiceDetailView } from '@/views/services/ServiceDetailView';
+import { OfflineNotice } from '@/views/ui/OfflineNotice';
+import type { ServiceDetail } from '@/models/service';
 
 interface RouteParams {
   slug: string;
@@ -13,7 +16,13 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: RouteParams }): Promise<Metadata> {
-  const service = await getServiceBySlug(params.slug);
+  let service: ServiceDetail | null;
+  try {
+    service = await getServiceBySlug(params.slug);
+  } catch (err) {
+    if (isBackendUnreachable(err)) return {};
+    throw err;
+  }
   if (!service) return {};
 
   return {
@@ -26,7 +35,13 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
 /** A dynamic *segment* (not catch-all) — shadows the generic catch-all for
  * the whole /services/* prefix. */
 export default async function ServiceDetailPage({ params }: { params: RouteParams }) {
-  const service = await getServiceBySlug(params.slug);
+  let service: ServiceDetail | null;
+  try {
+    service = await getServiceBySlug(params.slug);
+  } catch (err) {
+    if (isBackendUnreachable(err)) return <OfflineNotice />;
+    throw err;
+  }
   if (!service) notFound();
 
   return <ServiceDetailView service={service} />;

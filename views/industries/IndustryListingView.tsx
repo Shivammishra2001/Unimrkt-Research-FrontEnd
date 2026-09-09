@@ -3,36 +3,31 @@ import { Container } from '@/views/ui/Container';
 import { Heading } from '@/views/ui/Heading';
 import { Prose } from '@/views/ui/Prose';
 import { Button } from '@/views/ui/Button';
-import { ServiceCard } from './ServiceCard';
-import type { ServiceSummary } from '@/models/service';
+import { IndustryCard } from './IndustryCard';
+import type { IndustrySummary } from '@/models/industry';
 
 const CLOSING_CTA_LINK = {
-  id: 'services-listing-cta',
+  id: 'industries-listing-cta',
   label: 'Talk to us',
   href: '/contact',
   isExternal: false,
   variant: 'secondary' as const,
 };
 
-/**
- * /services archive. Copy is static — no backing Strapi content type; kept
- * as overridable props for a future "services page settings" single type.
- */
-export function ServiceListingView({
-  services,
-  heading = 'Services',
-  subheading = 'Everything we offer, from a single build to ongoing operations.',
+/** /industries archive. Mirrors ServiceListingView's layout exactly. */
+export function IndustryListingView({
+  industries,
+  heading = 'Industries',
+  subheading = 'Market research and insights tailored to your sector.',
 }: {
-  services: ServiceSummary[];
+  industries: IndustrySummary[];
   heading?: string;
   subheading?: string;
 }) {
   return (
     <>
       {/* !important needed to beat Section's own responsive py-* — this is
-          the page's own first element, so it owns Navbar clearance.
-          Bumped to !pt-32 sm:!pt-36 to match the taller (95px oval logo)
-          navbar. */}
+          the page's own first element, so it owns Navbar clearance. */}
       <Section theme="light" className="!pt-32 sm:!pt-36 pb-0">
         <Container>
           <div className="mx-auto max-w-2xl text-center">
@@ -46,8 +41,8 @@ export function ServiceListingView({
       <Section theme="light">
         <Container>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service, i) => (
-              <ServiceCard key={service.slug} service={service} priority={i === 0} />
+            {industries.map((industry, i) => (
+              <IndustryCard key={industry.slug} industry={industry} priority={i === 0} />
             ))}
           </div>
         </Container>
@@ -56,10 +51,10 @@ export function ServiceListingView({
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <Heading as="h2" size="h2">
-              Not sure where to start?
+              Don&apos;t see your industry?
             </Heading>
             <Prose className="mt-4 opacity-90">
-              Tell us what you&apos;re building — we&apos;ll point you at the right service.
+              Tell us about your sector — we&apos;ll tailor a research approach to it.
             </Prose>
             <div className="mt-8 flex justify-center">
               <Button link={CLOSING_CTA_LINK} variant="secondary" />

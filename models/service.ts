@@ -31,6 +31,12 @@ export interface StrapiServiceDetail extends StrapiServiceSummary {
   blocks: StrapiBlock[];
   createdAt: string;
   publishedAt: string | null;
+  // Category hierarchy (Google Sheet IA migration) — optional: the 3 demo
+  // services (web-development etc.) never set these.
+  legacyUrl?: string | null;
+  suggestedUrl?: string | null;
+  parent?: { title: string; slug: string } | null;
+  children?: StrapiServiceTreeChild[];
 }
 
 export interface StrapiServiceSlug {
@@ -39,9 +45,26 @@ export interface StrapiServiceSlug {
   updatedAt: string;
 }
 
+// GET /services/tree — shallow shape, one level of children only.
+export interface StrapiServiceTreeChild {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+}
+
+export interface StrapiServiceTreeItem {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+  children: StrapiServiceTreeChild[];
+}
+
 export type StrapiServiceListResponse = StrapiResponse<StrapiServiceSummary[]>;
 export type StrapiServiceDetailResponse = StrapiResponse<StrapiServiceDetail>;
 export type StrapiServiceSlugsResponse = StrapiResponse<StrapiServiceSlug[]>;
+export type StrapiServiceTreeResponse = StrapiResponse<StrapiServiceTreeItem[]>;
 
 // ---------------------------------------------------------------------------
 // Domain
@@ -59,9 +82,27 @@ export interface ServiceDetail extends ServiceSummary {
   features: FeatureModel[];
   seo?: SeoModel;
   blocks: BlockModel[];
+  legacyUrl?: string;
+  suggestedUrl?: string;
+  parent?: { title: string; slug: string };
+  children: ServiceTreeChildModel[];
 }
 
 export interface ServiceSlugModel {
   slug: string;
   updatedAt: string;
+}
+
+// Category hierarchy (Google Sheet IA migration).
+export interface ServiceTreeChildModel {
+  slug: string;
+  title: string;
+  summary: string;
+}
+
+export interface ServiceTreeItemModel {
+  slug: string;
+  title: string;
+  summary: string;
+  children: ServiceTreeChildModel[];
 }

@@ -28,6 +28,12 @@ export interface NavigationItemModel {
   href: string;
   isExternal: boolean;
   children: NavigationItemModel[];
+  // A chevron with real dropdown children behind it is one thing; Figma's
+  // nav also shows the same chevron on "About unimrkt" and "Contact",
+  // which have no children in the Model. Rather than have the View infer
+  // that from content (or fake a dropdown with no menu behind it), this
+  // is its own explicit, CMS-set flag — true only for those two.
+  showIndicator: boolean;
 }
 
 export interface SeoModel {
@@ -76,6 +82,8 @@ export interface HeroModel extends BlockBase {
   actions: LinkModel[];
   sideMenu: ServiceBandItemModel[];
   headingSize: 'display' | 'h2';
+  statValue?: string;
+  statLabel?: string;
 }
 
 export interface ContentModel extends BlockBase {
@@ -83,7 +91,9 @@ export interface ContentModel extends BlockBase {
   heading?: string;
   body: string;
   media?: ImageModel;
-  mediaAlignment: 'left' | 'right' | 'none';
+  mediaAlignment: 'left' | 'right' | 'below' | 'none';
+  contactPrompt?: string;
+  contactEmail?: string;
 }
 
 export interface FeatureGridModel extends BlockBase {
@@ -108,6 +118,9 @@ export interface CtaModel extends BlockBase {
   body?: string;
   actions: LinkModel[];
   background?: ImageModel;
+  // Per-instance override — falls back to the shared `theme` preset
+  // (light/dark/accent) when unset, so most CTAs need no change at all.
+  backgroundColor?: string;
 }
 
 export interface StatItemModel {
@@ -126,6 +139,8 @@ export interface ServiceBandItemModel {
   id: string;
   label: string;
   href: string;
+  isActive?: boolean;
+  description?: string;
 }
 
 export interface ServiceBandModel extends BlockBase {
@@ -236,6 +251,10 @@ export interface FooterModel {
   columns: Array<{ id: string; heading: string; links: LinkModel[] }>;
   socialLinks: LinkModel[];
   copyright?: string;
+  // Figma footer (node 267:1522) repeats the nav logo + a short tagline
+  // above the columns — reuses global.logo rather than a second upload.
+  logo: ImageModel;
+  tagline?: string;
 }
 
 export interface GlobalModel {

@@ -16,3 +16,16 @@ export class StrapiError extends Error {
     this.name = 'StrapiError';
   }
 }
+
+/**
+ * True for a StrapiError produced by strapiFetch()'s retry-exhaustion path
+ * (a fully unreachable host — connection refused, DNS failure, timeout —
+ * or a genuine 5xx from Strapi itself), as opposed to a 404 (handled
+ * separately by every controller as "not found, not an error") or a 4xx
+ * (a real client-side bug). Route components use this to distinguish "the
+ * CMS is down, show a friendly offline state" from "this page doesn't
+ * exist" or "something is actually broken."
+ */
+export function isBackendUnreachable(err: unknown): err is StrapiError {
+  return err instanceof StrapiError && err.status >= 500;
+}

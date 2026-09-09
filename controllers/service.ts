@@ -4,9 +4,9 @@
  * same name (`getServiceBySlug`) for the orchestrated version.
  */
 import { cache } from 'react';
-import { getServices, getServiceBySlug as fetchServiceBySlug, getServiceSlugs, StrapiError } from './strapi';
-import { normalizeServiceDetail, normalizeServiceList, normalizeServiceSlugs } from './normalize';
-import type { ServiceDetail, ServiceSlugModel, ServiceSummary } from '@/models/service';
+import { getServices, getServiceBySlug as fetchServiceBySlug, getServiceSlugs, getServiceTree, StrapiError } from './strapi';
+import { normalizeServiceDetail, normalizeServiceList, normalizeServiceSlugs, normalizeServiceTree } from './normalize';
+import type { ServiceDetail, ServiceSlugModel, ServiceSummary, ServiceTreeItemModel } from '@/models/service';
 
 /** Thin pass-through — populate + default sort are forced server-side by
  * the backend's `find` override. */
@@ -28,3 +28,10 @@ export const getServiceBySlug = cache(async (slug: string): Promise<ServiceDetai
 export async function getAllServiceSlugs(): Promise<ServiceSlugModel[]> {
   return normalizeServiceSlugs(await getServiceSlugs());
 }
+
+/** react `cache()`-wrapped — the Services nav dropdown (2 levels: category
+ * -> sub-category) and /services category listing both read this same
+ * request within a render pass. Google Sheet IA migration. */
+export const getAllServiceCategories = cache(async (): Promise<ServiceTreeItemModel[]> => {
+  return normalizeServiceTree(await getServiceTree());
+});
