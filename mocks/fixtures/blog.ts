@@ -6,7 +6,9 @@
  * placeholder SVGs already bundled under /public/mock (no backend
  * involved in mock mode, so no need for the extra photos seed.ts uploads).
  */
-import type { StrapiBlogCategory, StrapiBlogDetail, StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsResponse } from '@/models/blog';
+import type { StrapiBlogDetail, StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsResponse } from '@/models/blog';
+import type { StrapiCategory } from '@/models/category';
+import { MOCK_CATEGORIES } from './category';
 
 const NOW = '2026-01-05T09:20:00.000Z';
 const MOCK_IMAGES = ['/mock/blog-photo.svg', '/mock/blog-field-research.svg', '/mock/blog-ai-workforce.svg'];
@@ -16,14 +18,18 @@ function blogMedia(index: number): NonNullable<StrapiBlogDetail['coverImage']> {
   return { id: 900 + index, url, alternativeText: null, caption: null, width: 1000, height: 700, mime: 'image/svg+xml', formats: null };
 }
 
+/** `categoryName` looks up the shared MOCK_CATEGORIES object by name —
+ * every call site below still just names a category, same as before the
+ * enum-to-relation migration; only the resolved value's shape changed. */
 function blog(
   id: number,
   title: string,
   excerpt: string,
-  category: StrapiBlogCategory,
+  categoryName: keyof typeof MOCK_CATEGORIES,
   order: number,
   hasImage: boolean
 ): StrapiBlogDetail {
+  const category: StrapiCategory = MOCK_CATEGORIES[categoryName];
   const slug = title
     .toLowerCase()
     .replace(/[()]/g, '')

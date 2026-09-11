@@ -31,6 +31,7 @@ import type {
 import type { StrapiGalleryItemListResponse } from '@/models/gallery';
 import type { StrapiServicesPageResponse } from '@/models/servicesPage';
 import type { StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsResponse } from '@/models/blog';
+import type { StrapiCategoryListResponse } from '@/models/category';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -278,5 +279,16 @@ export function getBlogBySlug(slug: string): Promise<StrapiBlogDetailResponse> {
 
 export function getBlogSlugs(): Promise<StrapiBlogSlugsResponse> {
   return strapiFetch<StrapiBlogSlugsResponse>('blogs/slugs', { tag: 'blogs' });
+}
+
+/** GET /categories — backend forces a default `name:asc` sort; pageSize
+ * 100 is a generous ceiling past the 5-category seed (same convention as
+ * getGalleryItems()/getBlogs()). Powers the /blogs filter tabs — a new
+ * category created in the Admin panel appears here with no code change. */
+export function getCategories(): Promise<StrapiCategoryListResponse> {
+  return strapiFetch<StrapiCategoryListResponse>('categories', {
+    query: { pagination: { pageSize: 100 } },
+    tag: 'categories',
+  });
 }
 

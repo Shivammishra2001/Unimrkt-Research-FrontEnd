@@ -3,55 +3,56 @@
 import { useCallback, useMemo, useState } from 'react';
 import { BlogCard } from './BlogCard';
 import { Pagination } from './Pagination';
-import type { BlogCategory, BlogSummary } from '@/models/blog';
+import type { BlogSummary } from '@/models/blog';
+import type { CategoryModel } from '@/models/category';
 
 const PAGE_SIZE = 9; // Figma's 3x3 grid (node 522:4933-5037)
-
-// Figma node 522:4914's filter bar shows shorter labels than the full
-// enum values two of the five categories store — display text only,
-// filtering still happens on the real category value.
-const CATEGORY_TABS: Array<{ value: BlogCategory | 'All'; label: string }> = [
-  { value: 'All', label: 'All' },
-  { value: 'Primary Research', label: 'Primary Research' },
-  { value: 'Qualitative Research', label: 'Qualitative' },
-  { value: 'Quantitative Research', label: 'Quantitative' },
-  { value: 'Business Research', label: 'Business Research' },
-  { value: 'Research Support Functions', label: 'Research Support Functions' },
-];
+const ALL_SLUG = 'all';
 
 /** Figma nodes 522:4914 (category filter), 522:4933-5037 (3x3 grid),
  * 522:5050 (pagination). All three are client-side over the full post
  * pool passed in from the server page — same "fetch once, filter/page in
  * the browser" convention GalleryView.tsx already uses, just with a real
  * numbered Pagination instead of Load More since that's what this design
- * shows. */
-export function BlogGridSection({ posts }: { posts: BlogSummary[] }) {
-  const [activeCategory, setActiveCategory] = useState<BlogCategory | 'All'>('All');
+ * shows.
+ *
+ * `categories` (fetched from `/api/categories`, see app/blogs/page.tsx)
+ * drives the tab list — no hardcoded array. Filtering matches on
+ * `category.slug`, and each tab's label uses `category.label` (falls
+ * back to the full name in normalizeCategory() when a category has no
+ * `shortLabel` — Figma node 522:4914's filter bar shows a shorter label
+ * than the full name for exactly 2 of the original 5 categories; that
+ * per-category choice now lives on the Category itself, admin-editable,
+ * instead of being hardcoded here). */
+export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; categories: CategoryModel[] }) {
+  const [activeSlug, setActiveSlug] = useState<string>(ALL_SLUG);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const tabs = useMemo(() => [{ slug: ALL_SLUG, label: 'All' }, ...categories], [categories]);
+
   const filtered = useMemo(
-    () => (activeCategory === 'All' ? posts : posts.filter((p) => p.category === activeCategory)),
-    [posts, activeCategory]
+    () => (activeSlug === ALL_SLUG ? posts : posts.filter((p) => p.category?.slug === activeSlug)),
+    [posts, activeSlug]
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageStart = (currentPage - 1) * PAGE_SIZE;
   const pageItems = filtered.slice(pageStart, pageStart + PAGE_SIZE);
 
-  const handleCategoryChange = useCallback((category: BlogCategory | 'All') => {
-    setActiveCategory(category);
+  const handleCategoryChange = useCallback((slug: string) => {
+    setActiveSlug(slug);
     setCurrentPage(1);
   }, []);
 
   return (
     <div>
       <div className="flex flex-wrap justify-center gap-3">
-        {CATEGORY_TABS.map((tab) => {
-          const isActive = tab.value === activeCategory;
+        {tabs.map((tab) => {
+          const isActive = tab.slug === activeSlug;
           return (
             <button
-              key={tab.value}
+              key={tab.slug}
               type="button"
-              onClick={() => handleCategoryChange(tab.value)}
+              onClick={() => handleCategoryChange(tab.slug)}
               aria-pressed={isActive}
               className={`min-h-[44px] rounded-[3px] px-6 py-2 font-sans text-[13px] font-semibold uppercase tracking-wider transition-colors ${
                 isActive

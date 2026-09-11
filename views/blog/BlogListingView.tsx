@@ -9,6 +9,7 @@ import { FeaturedBlogSection } from './FeaturedBlogSection';
 import { BlogFaqAccordion, SITEWIDE_BLOG_FAQ_ITEMS } from './BlogFaqAccordion';
 import { BlogBottomCta } from './BlogBottomCta';
 import type { BlogSummary } from '@/models/blog';
+import type { CategoryModel } from '@/models/category';
 
 const BOTTOM_CTA_LINK = {
   id: 'blog-bottom-cta',
@@ -21,12 +22,15 @@ const BOTTOM_CTA_LINK = {
 /**
  * /blogs — Figma node 522:4719. Navbar/Footer are already rendered
  * globally by app/layout.tsx; this view owns everything between them.
- * Only the post grid/featured-strip content is CMS-dynamic (`posts`,
- * fetched via controllers/blog.ts); hero copy, FAQ, "About Our Blog",
- * and the bottom CTA are static text copied verbatim off the node — see
- * the plan's scope note for why this page has no `blogs-page` singleType.
+ * The post grid/featured-strip content is CMS-dynamic (`posts`, fetched
+ * via controllers/blog.ts) and so is the category filter's tab list
+ * (`categories`, fetched via controllers/category.ts, independently of
+ * which categories any post currently uses — see app/blogs/page.tsx);
+ * hero copy, FAQ, "About Our Blog", and the bottom CTA are static text
+ * copied verbatim off the node — see the plan's scope note for why this
+ * page has no `blogs-page` singleType.
  */
-export function BlogListingView({ posts }: { posts: BlogSummary[] }) {
+export function BlogListingView({ posts, categories }: { posts: BlogSummary[]; categories: CategoryModel[] }) {
   const sortedPosts = [...posts].sort((a, b) => a.order - b.order);
 
   return (
@@ -69,7 +73,7 @@ export function BlogListingView({ posts }: { posts: BlogSummary[] }) {
       {/* Category filter + 3x3 grid + pagination */}
       <section className="bg-white py-16 sm:py-20 lg:py-24">
         <Container>
-          <BlogGridSection posts={sortedPosts} />
+          <BlogGridSection posts={sortedPosts} categories={categories} />
         </Container>
       </section>
 

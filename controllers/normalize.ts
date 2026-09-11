@@ -69,6 +69,7 @@ import type {
   BlogSlugModel,
   BlogSummary,
 } from '@/models/blog';
+import type { StrapiCategory, StrapiCategoryListResponse, CategoryModel } from '@/models/category';
 import type { FaqItemModel } from '@/models/domain';
 // ---------------------------------------------------------------------------
 // Shared primitives
@@ -667,6 +668,23 @@ export function normalizeGalleryItems(res: StrapiGalleryItemListResponse): Galle
 }
 
 // ---------------------------------------------------------------------------
+// Category (dynamic replacement for blog's old fixed category enum)
+// ---------------------------------------------------------------------------
+
+export function normalizeCategory(data: StrapiCategory): CategoryModel {
+  return {
+    id: data.documentId ?? String(data.id),
+    name: data.name,
+    slug: data.slug,
+    label: data.shortLabel || data.name,
+  };
+}
+
+export function normalizeCategoryList(res: StrapiCategoryListResponse): CategoryModel[] {
+  return res.data.map(normalizeCategory);
+}
+
+// ---------------------------------------------------------------------------
 // Blog (/blogs page, Figma node 522:4719)
 // ---------------------------------------------------------------------------
 
@@ -675,7 +693,7 @@ function normalizeBlogSummaryFields(data: StrapiBlogSummary): BlogSummary {
     slug: data.slug,
     title: data.title,
     excerpt: data.excerpt,
-    category: data.category,
+    category: data.category ? normalizeCategory(data.category) : null,
     coverImage: toImageModel(data.coverImage, data.title),
     order: data.order ?? 0,
   };

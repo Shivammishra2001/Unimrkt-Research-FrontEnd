@@ -6,17 +6,11 @@
  */
 import type { StrapiMedia, StrapiResponse, StrapiSeo } from './strapi';
 import type { ImageModel, SeoModel, FaqItemModel } from './domain';
+import type { StrapiCategory, CategoryModel } from './category';
 
 // ---------------------------------------------------------------------------
 // Raw
 // ---------------------------------------------------------------------------
-
-export type StrapiBlogCategory =
-  | 'Primary Research'
-  | 'Qualitative Research'
-  | 'Quantitative Research'
-  | 'Business Research'
-  | 'Research Support Functions';
 
 export interface StrapiBlogSummary {
   id: number;
@@ -24,7 +18,10 @@ export interface StrapiBlogSummary {
   title: string;
   slug: string;
   excerpt: string;
-  category: StrapiBlogCategory;
+  /** A relation to `api::category.category` (was a fixed enum) — see
+   * models/category.ts. Nullable only because a relation always CAN come
+   * back unpopulated/unset on the wire; every seeded post has one. */
+  category: StrapiCategory | null;
   coverImage: StrapiMedia | null;
   order: number;
   updatedAt: string;
@@ -82,13 +79,11 @@ export type StrapiBlogSlugsResponse = StrapiResponse<StrapiBlogSlug[]>;
 // Domain
 // ---------------------------------------------------------------------------
 
-export type BlogCategory = StrapiBlogCategory;
-
 export interface BlogSummary {
   slug: string;
   title: string;
   excerpt: string;
-  category: BlogCategory;
+  category: CategoryModel | null;
   coverImage?: ImageModel;
   order: number;
 }

@@ -25,6 +25,7 @@ import {
 import { MOCK_GALLERY_ITEMS_RESPONSE } from './fixtures/gallery';
 import { MOCK_SERVICES_PAGE_RESPONSE } from './fixtures/servicesPage';
 import { MOCK_BLOG_SLUGS_RESPONSE, mockBlogDetailResponse, mockBlogListResponse } from './fixtures/blog';
+import { MOCK_CATEGORIES_RESPONSE } from './fixtures/category';
 
 function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -109,6 +110,10 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
   if (endpoint === 'blogs') {
     const pagination = query.pagination as { page?: number; pageSize?: number } | undefined;
     return mockBlogListResponse({ page: pagination?.page, pageSize: pagination?.pageSize }) as unknown as T;
+  }
+
+  if (endpoint === 'categories') {
+    return MOCK_CATEGORIES_RESPONSE as unknown as T;
   }
 
   throw new StrapiError(`No mock fixture registered for endpoint "${endpoint}"`, 501, endpoint);

@@ -28,9 +28,11 @@ export function BlogCard({ post, priority = false, sizes }: { post: BlogSummary;
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         )}
-        <span className="absolute bottom-3 left-3 rounded-[2px] bg-ink2 px-[10px] py-[10px] font-sans text-xs font-medium leading-[1.5] text-white">
-          {post.category}
-        </span>
+        {post.category && (
+          <span className="absolute bottom-3 left-3 rounded-[2px] bg-ink2 px-[10px] py-[10px] font-sans text-xs font-medium leading-[1.5] text-white">
+            {post.category.name}
+          </span>
+        )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-6 pt-4">
         <h3 className="font-sans text-xl font-semibold leading-[1.34] text-ink2 line-clamp-2">{post.title}</h3>

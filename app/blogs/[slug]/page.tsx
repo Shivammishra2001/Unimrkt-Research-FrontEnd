@@ -12,8 +12,10 @@ import type { BlogDetail, BlogSummary } from '@/models/blog';
  * when the collection has that many. */
 function pickRelatedPosts(all: BlogSummary[], post: BlogDetail): BlogSummary[] {
   const others = all.filter((p) => p.slug !== post.slug).sort((a, b) => a.order - b.order);
-  const sameCategory = others.filter((p) => p.category === post.category);
-  const rest = others.filter((p) => p.category !== post.category);
+  // `category` is a populated relation object, not a primitive — compare
+  // by slug, not reference equality (each fetch returns its own object).
+  const sameCategory = others.filter((p) => p.category?.slug && p.category.slug === post.category?.slug);
+  const rest = others.filter((p) => !(p.category?.slug && p.category.slug === post.category?.slug));
   return [...sameCategory, ...rest].slice(0, 4);
 }
 
