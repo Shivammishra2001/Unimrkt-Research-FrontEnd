@@ -22,6 +22,9 @@ import {
   mockIndustryDetailResponse,
   mockIndustryListResponse,
 } from './fixtures/industries';
+import { MOCK_GALLERY_ITEMS_RESPONSE } from './fixtures/gallery';
+import { MOCK_SERVICES_PAGE_RESPONSE } from './fixtures/servicesPage';
+import { MOCK_BLOG_SLUGS_RESPONSE, mockBlogDetailResponse, mockBlogListResponse } from './fixtures/blog';
 
 function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -81,6 +84,31 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
   if (endpoint === 'industries') {
     const pagination = query.pagination as { page?: number; pageSize?: number } | undefined;
     return mockIndustryListResponse({ page: pagination?.page, pageSize: pagination?.pageSize }) as unknown as T;
+  }
+
+  if (endpoint === 'gallery-items') {
+    return MOCK_GALLERY_ITEMS_RESPONSE as unknown as T;
+  }
+
+  if (endpoint === 'services-page') {
+    return MOCK_SERVICES_PAGE_RESPONSE as unknown as T;
+  }
+
+  if (endpoint === 'blogs/slugs') {
+    return MOCK_BLOG_SLUGS_RESPONSE as unknown as T;
+  }
+
+  const blogSlugMatch = endpoint.match(/^blogs\/slug\/(.+)$/);
+  if (blogSlugMatch) {
+    const slug = decodeURIComponent(blogSlugMatch[1]);
+    const res = mockBlogDetailResponse(slug);
+    if (!res) throw new StrapiError('Blog post not found', 404, endpoint);
+    return res as unknown as T;
+  }
+
+  if (endpoint === 'blogs') {
+    const pagination = query.pagination as { page?: number; pageSize?: number } | undefined;
+    return mockBlogListResponse({ page: pagination?.page, pageSize: pagination?.pageSize }) as unknown as T;
   }
 
   throw new StrapiError(`No mock fixture registered for endpoint "${endpoint}"`, 501, endpoint);

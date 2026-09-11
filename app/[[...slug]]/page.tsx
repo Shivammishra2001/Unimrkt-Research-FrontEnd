@@ -31,12 +31,24 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
       title: page.seo.title,
       description: page.seo.description,
       ...(page.seo.noIndex ? { robots: { index: false, follow: false } } : {}),
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        type: 'website',
+        ...(page.seo.shareImage
+          ? { images: [{ url: page.seo.shareImage.src, width: page.seo.shareImage.width, height: page.seo.shareImage.height, alt: page.seo.shareImage.alt }] }
+          : {}),
+      },
     };
   }
 
   try {
     const global = normalizeGlobal(await getGlobal());
-    return { title: global.defaultSeo.title, description: global.defaultSeo.description };
+    return {
+      title: global.defaultSeo.title,
+      description: global.defaultSeo.description,
+      openGraph: { title: global.defaultSeo.title, description: global.defaultSeo.description, type: 'website' },
+    };
   } catch (err) {
     if (err instanceof StrapiError) return {};
     throw err;

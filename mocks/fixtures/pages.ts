@@ -206,6 +206,7 @@ const homeBlocks: StrapiBlock[] = [
     id: blockId(),
     heading: 'Frequently Asked Questions',
     background: MOCK_IMAGES.faqWorldmap,
+    cta: { id: 9001, label: 'Browse Blogs', href: '/blogs', isExternal: false, variant: 'primary' },
     // Authored answer copy, not extracted — the accordion is collapsed by
     // default on the source canvas, so no answer text was ever visible to
     // pull (seed.ts's own disclosure).

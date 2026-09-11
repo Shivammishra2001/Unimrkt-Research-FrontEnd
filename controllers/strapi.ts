@@ -28,6 +28,9 @@ import type {
   StrapiIndustryListResponse,
   StrapiIndustrySlugsResponse,
 } from '@/models/industry';
+import type { StrapiGalleryItemListResponse } from '@/models/gallery';
+import type { StrapiServicesPageResponse } from '@/models/servicesPage';
+import type { StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsResponse } from '@/models/blog';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -231,5 +234,49 @@ export function getIndustryBySlug(slug: string): Promise<StrapiIndustryDetailRes
 
 export function getIndustrySlugs(): Promise<StrapiIndustrySlugsResponse> {
   return strapiFetch<StrapiIndustrySlugsResponse>('industries/slugs', { tag: 'industries' });
+}
+
+/** GET /gallery-items — backend forces its own image populate + default
+ * order:asc,createdAt:desc sort; no query sent for either. pageSize 100
+ * is a generous ceiling well past the 9-item seed, not a real pagination
+ * UI (the /gallery page renders its own client-side Load More instead). */
+export function getGalleryItems(): Promise<StrapiGalleryItemListResponse> {
+  return strapiFetch<StrapiGalleryItemListResponse>('gallery-items', {
+    query: { pagination: { pageSize: 100 } },
+    tag: 'gallery-items',
+  });
+}
+
+/** GET /services-page — singleType, backend forces its own deep populate;
+ * no query sent (same convention as getGlobal()). */
+export function getServicesPageSettings(): Promise<StrapiServicesPageResponse> {
+  return strapiFetch<StrapiServicesPageResponse>('services-page', { tag: 'services-page' });
+}
+
+/** GET /blogs?populate=* — unlike getServices/getIndustries, `blog`'s `find`
+ * controller does NOT force its own populate, so `populate: '*'` is sent
+ * explicitly here rather than left for the backend to fill in. pageSize
+ * 100 is a generous ceiling past the ~10-post seed (same convention as
+ * getGalleryItems()) — /blogs filters/paginates the whole set client-side
+ * rather than round-tripping a page param. */
+export function getBlogs(params: { page?: number; pageSize?: number; sort?: string } = {}): Promise<StrapiBlogListResponse> {
+  return strapiFetch<StrapiBlogListResponse>('blogs', {
+    query: {
+      populate: '*',
+      pagination: { page: params.page ?? 1, pageSize: params.pageSize ?? 100 },
+      ...(params.sort ? { sort: params.sort } : {}),
+    },
+    tag: 'blogs',
+  });
+}
+
+export function getBlogBySlug(slug: string): Promise<StrapiBlogDetailResponse> {
+  return strapiFetch<StrapiBlogDetailResponse>(`blogs/slug/${encodeURIComponent(slug)}`, {
+    tag: `blog-${slug}`,
+  });
+}
+
+export function getBlogSlugs(): Promise<StrapiBlogSlugsResponse> {
+  return strapiFetch<StrapiBlogSlugsResponse>('blogs/slugs', { tag: 'blogs' });
 }
 

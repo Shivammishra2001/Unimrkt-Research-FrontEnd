@@ -60,7 +60,14 @@ export interface FeatureModel {
   title: string;
   description: string;
   icon?: ImageModel;
+  /** Fallback key for a static icon set (e.g. Lucide) — set when the CMS
+   * entry has no uploaded `icon` media, used by blocks.why-choose-us. */
+  iconIdentifier?: string;
   link?: LinkModel;
+  /** blocks.why-choose-us only — feature-grid's items never set these. */
+  statValue?: string;
+  statLabel?: string;
+  order: number;
 }
 
 export type BlockTheme = 'light' | 'dark' | 'accent';
@@ -194,6 +201,9 @@ export interface FaqModel extends BlockBase {
   heading: string;
   background?: ImageModel;
   items: FaqItemModel[];
+  // Figma node 267:1274 ("Browse Blogs") — homepage-only so far; optional
+  // since every other page using blocks.faq has none.
+  cta?: LinkModel;
 }
 
 export interface BlogPostItemModel {
@@ -212,6 +222,33 @@ export interface BlogTeaserModel extends BlockBase {
   posts: BlogPostItemModel[];
 }
 
+export interface WhyChooseUsModel extends BlockBase {
+  kind: 'whyChooseUs';
+  eyebrow?: string;
+  heading: string;
+  subheading?: string;
+  description?: string;
+  items: FeatureModel[];
+}
+
+export interface ProcessStepItemModel {
+  id: string;
+  stepNumber?: string;
+  title: string;
+  description: string;
+  icon?: ImageModel;
+  iconIdentifier?: string;
+  order: number;
+}
+
+export interface ProcessStepsModel extends BlockBase {
+  kind: 'processSteps';
+  eyebrow?: string;
+  heading: string;
+  subheading?: string;
+  steps: ProcessStepItemModel[];
+}
+
 export type BlockModel =
   | HeroModel
   | ContentModel
@@ -223,7 +260,9 @@ export type BlockModel =
   | IndustryGridModel
   | MediaGalleryModel
   | FaqModel
-  | BlogTeaserModel;
+  | BlogTeaserModel
+  | WhyChooseUsModel
+  | ProcessStepsModel;
 
 export type BlockKind = BlockModel['kind'];
 

@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Section } from '@/views/ui/Section';
 import { Container } from '@/views/ui/Container';
 import { Heading } from '@/views/ui/Heading';
+import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import { PlusIcon } from '@/views/ui/icons/PlusIcon';
 import type { FaqModel } from '@/models/domain';
@@ -21,7 +22,11 @@ export function FaqView({ block }: { block: FaqModel; index: number }) {
       {block.background && (
         <StrapiImage image={block.background} sizes="100vw" fill className="absolute inset-0 object-cover opacity-[0.06]" />
       )}
-      <Container className="relative">
+      <Container className="relative flex flex-col items-center">
+        {/* Figma node 267:1274 — "Browse Blogs" on the homepage's FAQ
+            section, centered above the heading. Optional: no other page
+            using blocks.faq sets a cta. */}
+        {block.cta && <Button link={block.cta} className="mb-6" />}
         <Heading as="h2" size="h2" className="text-center">
           {block.heading}
         </Heading>

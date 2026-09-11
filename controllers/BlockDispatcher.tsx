@@ -11,6 +11,8 @@ import { IndustryGridView } from '@/views/sections/IndustryGridView';
 import { MediaGalleryView } from '@/views/sections/MediaGalleryView';
 import { FaqView } from '@/views/sections/FaqView';
 import { BlogTeaserView } from '@/views/sections/BlogTeaserView';
+import { WhyChooseUsView } from '@/views/sections/WhyChooseUsView';
+import { ProcessStepsView } from '@/views/sections/ProcessStepsView';
 
 type BlockViewProps<K extends BlockKind> = { block: Extract<BlockModel, { kind: K }>; index: number };
 type BlockMap = { [K in BlockKind]: ComponentType<BlockViewProps<K>> };
@@ -33,6 +35,8 @@ const BLOCK_MAP: BlockMap = {
   mediaGallery: MediaGalleryView,
   faq: FaqView,
   blogTeaser: BlogTeaserView,
+  whyChooseUs: WhyChooseUsView,
+  processSteps: ProcessStepsView,
 };
 
 /**

@@ -48,6 +48,20 @@ import type {
   IndustrySlugModel,
   IndustrySummary,
 } from '@/models/industry';
+import type { StrapiGalleryItemListResponse, GalleryImage } from '@/models/gallery';
+import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/servicesPage';
+import type {
+  StrapiBlogDetailResponse,
+  StrapiBlogListResponse,
+  StrapiBlogSlugsResponse,
+  StrapiBlogSummary,
+  StrapiBlocksContent,
+  StrapiBlocksNode,
+  BlogDetail,
+  BlogSlugModel,
+  BlogSummary,
+} from '@/models/blog';
+import type { FaqItemModel } from '@/models/domain';
 // ---------------------------------------------------------------------------
 // Shared primitives
 // ---------------------------------------------------------------------------
@@ -117,7 +131,15 @@ export function normalizeFeatureItem(item: StrapiFeatureItem): FeatureModel {
     title: item.title,
     description: item.description,
     icon: toImageModel(item.icon, item.title),
+    iconIdentifier: item.iconIdentifier ?? undefined,
     link: item.link ? normalizeLink(item.link) : undefined,
+    statValue: item.statValue ?? undefined,
+    statLabel: item.statLabel ?? undefined,
+    // Existing feature-grid rows created before `order` existed have no
+    // value for it at the DB level (a schema default only applies to new
+    // rows) — falls back to 0, same as every other optional-turned-field
+    // in this file.
+    order: item.order ?? 0,
   };
 }
 
@@ -278,6 +300,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         heading: block.heading,
         background: toImageModel(block.background, block.heading),
         items: block.items.map((item) => ({ id: `faq-${item.id}`, question: item.question, answer: item.answer })),
+        cta: block.cta ? normalizeLink(block.cta) : undefined,
       };
     case 'blocks.blog-teaser':
       return {
@@ -295,6 +318,41 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
           image: toImageModel(post.image, post.title),
           href: post.href,
         })),
+      };
+    case 'blocks.why-choose-us':
+      return {
+        kind: 'whyChooseUs',
+        id,
+        anchorId,
+        theme,
+        eyebrow: block.eyebrow ?? undefined,
+        heading: block.heading,
+        subheading: block.subheading ?? undefined,
+        description: block.description ?? undefined,
+        // Editors reorder cards via each item's `order` field rather than
+        // drag-and-drop in the CMS's repeatable-component UI.
+        items: (block.items ?? []).map(normalizeFeatureItem).sort((a, b) => a.order - b.order),
+      };
+    case 'blocks.process-steps':
+      return {
+        kind: 'processSteps',
+        id,
+        anchorId,
+        theme,
+        eyebrow: block.eyebrow ?? undefined,
+        heading: block.heading,
+        subheading: block.subheading ?? undefined,
+        steps: (block.steps ?? [])
+          .map((step) => ({
+            id: `step-${step.id}`,
+            stepNumber: step.stepNumber ?? undefined,
+            title: step.title,
+            description: step.description,
+            icon: toImageModel(step.icon, step.title),
+            iconIdentifier: step.iconIdentifier ?? undefined,
+            order: step.order ?? 0,
+          }))
+          .sort((a, b) => a.order - b.order),
       };
     default:
       // An unknown __component from a newer Strapi deploy is dropped, not
@@ -375,6 +433,7 @@ export function normalizeServiceTree(res: StrapiServiceTreeResponse): ServiceTre
     slug: item.slug,
     title: item.title,
     summary: item.summary,
+    thumbnail: toImageModel(item.thumbnail, item.title),
     children: item.children.map((c) => ({ slug: c.slug, title: c.title, summary: c.summary })),
   }));
 }
@@ -416,6 +475,93 @@ export function normalizeIndustrySlugs(res: StrapiIndustrySlugsResponse): Indust
   return res.data.map((i) => ({ slug: i.slug, updatedAt: i.updatedAt }));
 }
 
+// ---------------------------------------------------------------------------
+// Gallery Item (/gallery page migration off its static fixture)
+// ---------------------------------------------------------------------------
+
+/** `gallery-item`'s `category` enum -> the filter-tab id GalleryView's
+ * existing client-side filter already keys off (fixtures/gallery.json
+ * used this same id scheme, so this is the one place that scheme has to
+ * be kept in sync with the enum's exact label strings). */
+const GALLERY_CATEGORY_IDS: Record<string, string> = {
+  'Team & Culture': 'team-culture',
+  'Research Process': 'research-process',
+  'Field Work': 'field-work',
+  'Client Interactions': 'client-interactions',
+  'Events & Conferences': 'events-conferences',
+};
+
+export function normalizeGalleryItems(res: StrapiGalleryItemListResponse): GalleryImage[] {
+  return res.data
+    .map((item): GalleryImage | null => {
+      const image = toImageModel(item.image, item.title);
+      // No image relation set yet in the CMS — nothing to render, so this
+      // entry is dropped rather than shown as a broken card.
+      if (!image) return null;
+      return {
+        id: item.documentId ?? String(item.id),
+        src: image.src,
+        alt: image.alt,
+        category: GALLERY_CATEGORY_IDS[item.category] ?? item.category.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        width: image.width,
+        height: image.height,
+        blurDataURL: image.blurDataURL,
+      };
+    })
+    .filter((img): img is GalleryImage => img !== null);
+}
+
+// ---------------------------------------------------------------------------
+// Blog (/blogs page, Figma node 522:4719)
+// ---------------------------------------------------------------------------
+
+function normalizeBlogSummaryFields(data: StrapiBlogSummary): BlogSummary {
+  return {
+    slug: data.slug,
+    title: data.title,
+    excerpt: data.excerpt,
+    category: data.category,
+    coverImage: toImageModel(data.coverImage, data.title),
+    order: data.order ?? 0,
+  };
+}
+
+export function normalizeBlogList(res: StrapiBlogListResponse): BlogSummary[] {
+  return res.data.map(normalizeBlogSummaryFields);
+}
+
+/** Concatenates every text leaf in a Blocks tree — used only to estimate
+ * read time (~200wpm), not for rendering (RichContent.tsx renders the
+ * structured tree directly). */
+function extractPlainText(nodes: StrapiBlocksContent): string {
+  return nodes.map(nodeText).join(' ');
+}
+function nodeText(node: StrapiBlocksNode): string {
+  if (node.type === 'text') return node.text;
+  return node.children.map(nodeText).join(' ');
+}
+
+export function normalizeBlogDetail(res: StrapiBlogDetailResponse): BlogDetail {
+  const { data } = res;
+  const body = data.body ?? [];
+  const wordCount = extractPlainText(body).split(/\s+/).filter(Boolean).length;
+  return {
+    ...normalizeBlogSummaryFields(data),
+    body,
+    faqItems: (data.faqItems ?? []).map((item): FaqItemModel => ({
+      id: `blog-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+    readTimeMinutes: Math.max(1, Math.round(wordCount / 200)),
+    publishedAt: data.publishedAt ?? undefined,
+    seo: normalizeSeo(data.seo, data.title),
+  };
+}
+
+export function normalizeBlogSlugs(res: StrapiBlogSlugsResponse): BlogSlugModel[] {
+  return res.data.map((b) => ({ slug: b.slug, updatedAt: b.updatedAt }));
+}
 
 // ---------------------------------------------------------------------------
 // Global
@@ -450,5 +596,71 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
     footer,
     // Non-null assertion — defaultSeo is a required field on the schema.
     defaultSeo: normalizeSeo(data.defaultSeo, data.siteName)!,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Services Page settings (singleType) — /services' hero/intro/value-props/
+// workflow/FAQ/CTA copy.
+// ---------------------------------------------------------------------------
+
+export function normalizeServicesPageSettings(res: StrapiServicesPageResponse): ServicesPageSettings {
+  const data = res.data;
+
+  return {
+    hero: data.hero
+      ? {
+          eyebrow: data.hero.eyebrow ?? undefined,
+          heading: data.hero.heading,
+          subheading: data.hero.subheading ?? undefined,
+          media: toImageModel(data.hero.media, data.hero.heading),
+          actions: (data.hero.actions ?? []).map(normalizeLink),
+        }
+      : undefined,
+    introEyebrow: data.introEyebrow ?? undefined,
+    introHeading: data.introHeading,
+    introParagraph1: data.introParagraph1 ?? undefined,
+    introParagraph2: data.introParagraph2 ?? undefined,
+    valuePropsHeading: data.valuePropsHeading ?? undefined,
+    valuePropsBody: data.valuePropsBody ?? undefined,
+    valuePropsBackground: toImageModel(data.valuePropsBackground, data.valuePropsHeading ?? 'Value proposition background'),
+    valueProps: (data.valueProps ?? []).map(normalizeFeatureItem).sort((a, b) => a.order - b.order),
+    workflow: data.workflow
+      ? {
+          eyebrow: data.workflow.eyebrow ?? undefined,
+          heading: data.workflow.heading,
+          subheading: data.workflow.subheading ?? undefined,
+          steps: (data.workflow.steps ?? [])
+            .map((step) => ({
+              id: `workflow-step-${step.id}`,
+              stepNumber: step.stepNumber ?? undefined,
+              title: step.title,
+              description: step.description,
+              icon: toImageModel(step.icon, step.title),
+              iconIdentifier: step.iconIdentifier ?? undefined,
+              order: step.order ?? 0,
+            }))
+            .sort((a, b) => a.order - b.order),
+        }
+      : undefined,
+    faq: data.faq
+      ? {
+          heading: data.faq.heading,
+          background: toImageModel(data.faq.background, data.faq.heading),
+          items: (data.faq.items ?? []).map((item) => ({
+            id: `services-faq-${item.id}`,
+            question: item.question,
+            answer: item.answer,
+          })),
+        }
+      : undefined,
+    cta: data.cta
+      ? {
+          heading: data.cta.heading,
+          body: data.cta.body ?? undefined,
+          actions: (data.cta.actions ?? []).map(normalizeLink),
+          background: toImageModel(data.cta.background, data.cta.heading),
+        }
+      : undefined,
   };
 }

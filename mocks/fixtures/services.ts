@@ -26,7 +26,17 @@ function link(label: string, href: string, isExternal: boolean, variant: StrapiL
 let nextFeatureId = 1;
 function feature(title: string, description: string): StrapiFeatureItem {
   nextFeatureId += 1;
-  return { id: nextFeatureId, title, description, icon: null, link: null };
+  return {
+    id: nextFeatureId,
+    title,
+    description,
+    icon: null,
+    link: null,
+    iconIdentifier: null,
+    statValue: null,
+    statLabel: null,
+    order: null,
+  };
 }
 
 let nextBlockId = 500;
@@ -253,6 +263,7 @@ export const MOCK_SERVICE_TREE_RESPONSE: StrapiServiceTreeResponse = {
       title: 'Primary Research',
       slug: 'primary-research',
       summary: 'Learn more about our Primary Research offering.',
+      thumbnail: null,
       children: [
         { id: 1011, title: 'Telephonic Surveys', slug: 'telephonic-surveys', summary: 'Learn more about our Telephonic Surveys offering.' },
         { id: 1012, title: 'Online Surveys', slug: 'online-surveys', summary: 'Learn more about our Online Surveys offering.' },
@@ -263,6 +274,7 @@ export const MOCK_SERVICE_TREE_RESPONSE: StrapiServiceTreeResponse = {
       title: 'Quantitative Research',
       slug: 'quantitative-research',
       summary: 'Learn more about our Quantitative Research offering.',
+      thumbnail: null,
       children: [
         { id: 1021, title: 'Global Panel', slug: 'global-panel', summary: 'Learn more about our Global Panel offering.' },
       ],

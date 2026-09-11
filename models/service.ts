@@ -58,6 +58,7 @@ export interface StrapiServiceTreeItem {
   title: string;
   slug: string;
   summary: string;
+  thumbnail: StrapiMedia | null;
   children: StrapiServiceTreeChild[];
 }
 
@@ -104,5 +105,6 @@ export interface ServiceTreeItemModel {
   slug: string;
   title: string;
   summary: string;
+  thumbnail?: ImageModel;
   children: ServiceTreeChildModel[];
 }

@@ -133,7 +133,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <body className="flex min-h-screen flex-col font-sans antialiased">
         {global ? (
-          <Navbar navigation={withDynamicServicesDropdown(global.navigation, categories)} />
+          <Navbar
+            navigation={withDynamicServicesDropdown(global.navigation, categories)}
+            serviceCategories={categories}
+          />
         ) : (
           <header className="border-b border-slate-200 p-4 text-center text-sm">{BRAND_NAME}</header>
         )}

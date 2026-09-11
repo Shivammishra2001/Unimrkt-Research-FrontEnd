@@ -1,0 +1,84 @@
+{
+  "categories": [
+    { "id": "all", "label": "All" },
+    { "id": "team-culture", "label": "Team & Culture" },
+    { "id": "research-process", "label": "Research Process" },
+    { "id": "field-work", "label": "Field Work" },
+    { "id": "client-interactions", "label": "Client Interactions" },
+    { "id": "events-conferences", "label": "Events & Conferences" }
+  ],
+  "images": [
+    {
+      "id": "gallery-01",
+      "src": "/images/gallery/gallery-01.jpg",
+      "alt": "Unimrkt Research team collaborating in the office",
+      "category": "team-culture",
+      "width": 1200,
+      "height": 801
+    },
+    {
+      "id": "gallery-02",
+      "src": "/images/gallery/gallery-02.jpg",
+      "alt": "Analysts reviewing survey data on screen",
+      "category": "research-process",
+      "width": 1200,
+      "height": 800
+    },
+    {
+      "id": "gallery-03",
+      "src": "/images/gallery/gallery-03.jpg",
+      "alt": "Field researcher conducting an on-site interview",
+      "category": "field-work",
+      "width": 1200,
+      "height": 800
+    },
+    {
+      "id": "gallery-04",
+      "src": "/images/gallery/gallery-04.jpg",
+      "alt": "Client meeting to discuss research findings",
+      "category": "client-interactions",
+      "width": 1200,
+      "height": 801
+    },
+    {
+      "id": "gallery-05",
+      "src": "/images/gallery/gallery-05.jpg",
+      "alt": "Team members presenting at an industry conference",
+      "category": "events-conferences",
+      "width": 1200,
+      "height": 800
+    },
+    {
+      "id": "gallery-06",
+      "src": "/images/gallery/gallery-06.jpg",
+      "alt": "Researchers brainstorming around a whiteboard",
+      "category": "team-culture",
+      "width": 1200,
+      "height": 800
+    },
+    {
+      "id": "gallery-07",
+      "src": "/images/gallery/gallery-07.jpg",
+      "alt": "Data collection in the field with a tablet",
+      "category": "field-work",
+      "width": 1200,
+      "height": 801
+    },
+    {
+      "id": "gallery-08",
+      "src": "/images/gallery/gallery-08.jpg",
+      "alt": "Client workshop reviewing market insights together",
+      "category": "client-interactions",
+      "width": 1200,
+      "height": 801
+    },
+    {
+      "id": "gallery-09",
+      "src": "/images/gallery/gallery-09.jpg",
+      "alt": "Unimrkt Research booth at a research conference",
+      "category": "events-conferences",
+      "width": 1200,
+      "height": 800
+    }
+  ]
+}

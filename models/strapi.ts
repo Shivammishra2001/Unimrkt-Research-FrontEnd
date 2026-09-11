@@ -128,6 +128,12 @@ export interface StrapiFeatureItem {
   description: string;
   icon: StrapiMedia | null;
   link: StrapiLink | null;
+  // blocks.why-choose-us reuses this same component — feature-grid's
+  // items simply never set these.
+  iconIdentifier: string | null;
+  statValue: string | null;
+  statLabel: string | null;
+  order: number | null;
 }
 
 export interface StrapiFeatureGridBlock extends StrapiBlockBase {
@@ -226,6 +232,7 @@ export interface StrapiFaqBlock extends StrapiBlockBase {
   heading: string;
   background: StrapiMedia | null;
   items: StrapiFaqItem[];
+  cta: StrapiLink | null;
 }
 
 export interface StrapiBlogPostItem {
@@ -244,6 +251,33 @@ export interface StrapiBlogTeaserBlock extends StrapiBlockBase {
   posts: StrapiBlogPostItem[];
 }
 
+export interface StrapiWhyChooseUsBlock extends StrapiBlockBase {
+  __component: 'blocks.why-choose-us';
+  eyebrow: string | null;
+  heading: string;
+  subheading: string | null;
+  description: string | null;
+  items: StrapiFeatureItem[];
+}
+
+export interface StrapiProcessStepItem {
+  id: number;
+  stepNumber: string | null;
+  title: string;
+  description: string;
+  icon: StrapiMedia | null;
+  iconIdentifier: string | null;
+  order: number | null;
+}
+
+export interface StrapiProcessStepsBlock extends StrapiBlockBase {
+  __component: 'blocks.process-steps';
+  eyebrow: string | null;
+  heading: string;
+  subheading: string | null;
+  steps: StrapiProcessStepItem[];
+}
+
 export type StrapiBlock =
   | StrapiHeroBlock
   | StrapiContentBlock
@@ -255,7 +289,9 @@ export type StrapiBlock =
   | StrapiIndustryGridBlock
   | StrapiMediaGalleryBlock
   | StrapiFaqBlock
-  | StrapiBlogTeaserBlock;
+  | StrapiBlogTeaserBlock
+  | StrapiWhyChooseUsBlock
+  | StrapiProcessStepsBlock;
 
 export interface StrapiPage {
   id: number;
