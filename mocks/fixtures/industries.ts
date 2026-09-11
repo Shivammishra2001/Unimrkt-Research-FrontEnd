@@ -28,7 +28,57 @@ function industry(id: number, title: string, slug: string): StrapiIndustryDetail
       keywords: null,
       preventIndexing: false,
     },
-    blocks: [],
+    // The full node-384:6205 detail-page fields — null/empty here (only
+    // "Automotives" carries real content in the actual seed), matching
+    // the real API's wire format: every repeatable field is always an
+    // array (possibly empty), never omitted or null.
+    heroEyebrow: null,
+    heroHeading: null,
+    heroSubheading: null,
+    heroImage: null,
+    heroActions: [],
+    trustHeading: null,
+    trustLogos: [],
+    whatWeDoEyebrow: null,
+    whatWeDoHeading: null,
+    whatWeDoBody: null,
+    whatWeDoCta: null,
+    whatWeDoImage: null,
+    whyResearchEyebrow: null,
+    whyResearchHeading: null,
+    whyResearchCards: [],
+    expertiseEyebrow: null,
+    expertiseHeading: null,
+    expertiseItems: [],
+    challengesEyebrow: null,
+    challengesHeading: null,
+    challengesBody: null,
+    challengesCards: [],
+    whoWeServeEyebrow: null,
+    whoWeServeHeading: null,
+    whoWeServeCards: [],
+    methodologiesEyebrow: null,
+    methodologiesHeading: null,
+    methodologiesBody: null,
+    methodologies: [],
+    empowerEyebrow: null,
+    empowerHeading: null,
+    empowerBody: null,
+    empowerCta: null,
+    empowerImage: null,
+    enquiryEyebrow: null,
+    enquiryHeading: null,
+    enquiryBody: null,
+    enquiryImage: null,
+    faqItems: [],
+    caseStudiesEyebrow: null,
+    caseStudiesHeading: null,
+    caseStudiesBody: null,
+    caseStudiesCta: null,
+    caseStudies: [],
+    aboutEyebrow: null,
+    aboutHeading: null,
+    aboutBody: null,
   };
 }
 
@@ -48,7 +98,15 @@ export function mockIndustryListResponse(params: { page?: number; pageSize?: num
   const pageItems = ordered.slice(start, start + pageSize);
 
   return {
-    data: pageItems.map(({ blocks: _blocks, seo: _seo, createdAt: _createdAt, publishedAt: _publishedAt, legacyUrl: _legacyUrl, suggestedUrl: _suggestedUrl, ...summary }) => summary),
+    data: pageItems.map(({ id, documentId, title, slug, summary, icon, updatedAt }) => ({
+      id,
+      documentId,
+      title,
+      slug,
+      summary,
+      icon,
+      updatedAt,
+    })),
     meta: {
       pagination: {
         page,

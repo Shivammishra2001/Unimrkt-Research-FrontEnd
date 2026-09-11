@@ -8,6 +8,7 @@ import type {
   StrapiBlock,
   StrapiFeatureItem,
   StrapiGlobal,
+  StrapiIndustryItem,
   StrapiLink,
   StrapiNavItem,
   StrapiPageResponse,
@@ -21,6 +22,7 @@ import type {
   FeatureModel,
   FooterModel,
   GlobalModel,
+  IndustryItemModel,
   LinkModel,
   NavigationItemModel,
   NavigationModel,
@@ -34,19 +36,25 @@ import type {
   StrapiServiceDetailResponse,
   StrapiServiceListResponse,
   StrapiServiceSlugsResponse,
+  StrapiServiceStatItem,
   StrapiServiceTreeResponse,
   ServiceDetail,
   ServiceSlugModel,
+  ServiceStatItemModel,
   ServiceSummary,
   ServiceTreeItemModel,
 } from '@/models/service';
 import type {
   StrapiIndustryDetailResponse,
+  StrapiIndustryDetailCard,
   StrapiIndustryListResponse,
   StrapiIndustrySlugsResponse,
+  StrapiTrustLogo,
   IndustryDetail,
+  IndustryDetailCardModel,
   IndustrySlugModel,
   IndustrySummary,
+  TrustLogoModel,
 } from '@/models/industry';
 import type { StrapiGalleryItemListResponse, GalleryImage } from '@/models/gallery';
 import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/servicesPage';
@@ -140,6 +148,40 @@ export function normalizeFeatureItem(item: StrapiFeatureItem): FeatureModel {
     // rows) — falls back to 0, same as every other optional-turned-field
     // in this file.
     order: item.order ?? 0,
+  };
+}
+
+/** blocks.industry-item — reused by both blocks.industry-grid (dynamic
+ * zone) and the industries/[slug] detail page's Methodologies/Case
+ * Studies grids (neither of which is a dynamic-zone block). */
+export function normalizeIndustryItem(item: StrapiIndustryItem): IndustryItemModel {
+  return {
+    id: `industry-${item.id}`,
+    title: item.title,
+    image: toImageModel(item.image, item.title),
+    accentColor: item.accentColor ?? '#7f3856',
+  };
+}
+
+/** industries.detail-card — the recurring "title + short description +
+ * either a photo or a line icon" card shape used by /industries/[slug]'s
+ * Why-Research/Expertise/Challenges/Who-We-Serve grids. */
+export function normalizeIndustryDetailCard(item: StrapiIndustryDetailCard): IndustryDetailCardModel {
+  return {
+    id: `industry-card-${item.id}`,
+    title: item.title,
+    description: item.description ?? undefined,
+    image: toImageModel(item.image, item.title),
+    icon: toImageModel(item.icon, item.title),
+    iconIdentifier: item.iconIdentifier ?? undefined,
+  };
+}
+
+function normalizeTrustLogo(item: StrapiTrustLogo): TrustLogoModel {
+  return {
+    id: `trust-logo-${item.id}`,
+    name: item.name,
+    image: toImageModel(item.image, item.name),
   };
 }
 
@@ -268,12 +310,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         subheading: block.subheading ?? undefined,
         background: toImageModel(block.background, block.heading),
         cta: block.cta ? normalizeLink(block.cta) : undefined,
-        items: block.items.map((item) => ({
-          id: `industry-${item.id}`,
-          title: item.title,
-          image: toImageModel(item.image, item.title),
-          accentColor: item.accentColor ?? '#7f3856',
-        })),
+        items: block.items.map(normalizeIndustryItem),
       };
     case 'blocks.media-gallery':
       return {
@@ -404,19 +441,74 @@ export function normalizeServiceList(res: StrapiServiceListResponse): ServiceSum
   return res.data.map(normalizeServiceSummaryFields);
 }
 
+function normalizeServiceStatItem(item: StrapiServiceStatItem): ServiceStatItemModel {
+  return {
+    id: `service-stat-${item.id}`,
+    value: item.value,
+    label: item.label,
+    iconIdentifier: item.iconIdentifier ?? undefined,
+  };
+}
+
 export function normalizeServiceDetail(res: StrapiServiceDetailResponse): ServiceDetail {
   const { data } = res;
   return {
     ...normalizeServiceSummaryFields(data),
     features: (data.features ?? []).map(normalizeFeatureItem),
     seo: normalizeSeo(data.seo, data.title),
-    blocks: data.blocks.map(normalizeBlock).filter((b): b is BlockModel => !!b),
     // Category hierarchy (Google Sheet IA migration) — optional on the raw
     // type since the 3 demo services never set these.
     legacyUrl: data.legacyUrl ?? undefined,
     suggestedUrl: data.suggestedUrl ?? undefined,
     parent: data.parent ?? undefined,
     children: (data.children ?? []).map((c) => ({ slug: c.slug, title: c.title, summary: c.summary })),
+
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? data.title),
+    heroActions: data.heroActions.map(normalizeLink),
+
+    trustHeading: data.trustHeading ?? undefined,
+    trustLogos: data.trustLogos.map(normalizeTrustLogo),
+
+    overviewEyebrow: data.overviewEyebrow ?? undefined,
+    overviewHeading: data.overviewHeading ?? undefined,
+    overviewBody: data.overviewBody ?? undefined,
+    overviewImage: toImageModel(data.overviewImage, data.overviewHeading ?? data.title),
+    overviewFeatures: data.overviewFeatures.map(normalizeIndustryDetailCard),
+
+    capabilitiesEyebrow: data.capabilitiesEyebrow ?? undefined,
+    capabilitiesHeading: data.capabilitiesHeading ?? undefined,
+    capabilitiesBody: data.capabilitiesBody ?? undefined,
+
+    credentialsHeading: data.credentialsHeading ?? undefined,
+    credentialsBody: data.credentialsBody ?? undefined,
+    credentials: data.credentials.map(normalizeServiceStatItem),
+
+    methodologiesEyebrow: data.methodologiesEyebrow ?? undefined,
+    methodologiesHeading: data.methodologiesHeading ?? undefined,
+    methodologies: data.methodologies.map(normalizeIndustryDetailCard),
+
+    industriesEyebrow: data.industriesEyebrow ?? undefined,
+    industriesHeading: data.industriesHeading ?? undefined,
+    industriesBody: data.industriesBody ?? undefined,
+    industriesServed: data.industriesServed.map(normalizeIndustryDetailCard),
+
+    enquiryEyebrow: data.enquiryEyebrow ?? undefined,
+    enquiryHeading: data.enquiryHeading ?? undefined,
+    enquiryBody: data.enquiryBody ?? undefined,
+    enquiryImage: toImageModel(data.enquiryImage, data.enquiryHeading ?? data.title),
+
+    faqItems: data.faqItems.map((item): FaqItemModel => ({
+      id: `service-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+
+    aboutEyebrow: data.aboutEyebrow ?? undefined,
+    aboutHeading: data.aboutHeading ?? undefined,
+    aboutBody: data.aboutBody ?? undefined,
   };
 }
 
@@ -467,7 +559,70 @@ export function normalizeIndustryDetail(res: StrapiIndustryDetailResponse): Indu
     legacyUrl: data.legacyUrl ?? undefined,
     suggestedUrl: data.suggestedUrl ?? undefined,
     seo: normalizeSeo(data.seo, data.title),
-    blocks: data.blocks.map(normalizeBlock).filter((b): b is BlockModel => !!b),
+
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? data.title),
+    heroActions: data.heroActions.map(normalizeLink),
+
+    trustHeading: data.trustHeading ?? undefined,
+    trustLogos: data.trustLogos.map(normalizeTrustLogo),
+
+    whatWeDoEyebrow: data.whatWeDoEyebrow ?? undefined,
+    whatWeDoHeading: data.whatWeDoHeading ?? undefined,
+    whatWeDoBody: data.whatWeDoBody ?? undefined,
+    whatWeDoCta: data.whatWeDoCta ? normalizeLink(data.whatWeDoCta) : undefined,
+    whatWeDoImage: toImageModel(data.whatWeDoImage, data.whatWeDoHeading ?? data.title),
+
+    whyResearchEyebrow: data.whyResearchEyebrow ?? undefined,
+    whyResearchHeading: data.whyResearchHeading ?? undefined,
+    whyResearchCards: data.whyResearchCards.map(normalizeIndustryDetailCard),
+
+    expertiseEyebrow: data.expertiseEyebrow ?? undefined,
+    expertiseHeading: data.expertiseHeading ?? undefined,
+    expertiseItems: data.expertiseItems.map(normalizeIndustryDetailCard),
+
+    challengesEyebrow: data.challengesEyebrow ?? undefined,
+    challengesHeading: data.challengesHeading ?? undefined,
+    challengesBody: data.challengesBody ?? undefined,
+    challengesCards: data.challengesCards.map(normalizeIndustryDetailCard),
+
+    whoWeServeEyebrow: data.whoWeServeEyebrow ?? undefined,
+    whoWeServeHeading: data.whoWeServeHeading ?? undefined,
+    whoWeServeCards: data.whoWeServeCards.map(normalizeIndustryDetailCard),
+
+    methodologiesEyebrow: data.methodologiesEyebrow ?? undefined,
+    methodologiesHeading: data.methodologiesHeading ?? undefined,
+    methodologiesBody: data.methodologiesBody ?? undefined,
+    methodologies: data.methodologies.map(normalizeIndustryItem),
+
+    empowerEyebrow: data.empowerEyebrow ?? undefined,
+    empowerHeading: data.empowerHeading ?? undefined,
+    empowerBody: data.empowerBody ?? undefined,
+    empowerCta: data.empowerCta ? normalizeLink(data.empowerCta) : undefined,
+    empowerImage: toImageModel(data.empowerImage, data.empowerHeading ?? data.title),
+
+    enquiryEyebrow: data.enquiryEyebrow ?? undefined,
+    enquiryHeading: data.enquiryHeading ?? undefined,
+    enquiryBody: data.enquiryBody ?? undefined,
+    enquiryImage: toImageModel(data.enquiryImage, data.enquiryHeading ?? data.title),
+
+    faqItems: data.faqItems.map((item): FaqItemModel => ({
+      id: `industry-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+
+    caseStudiesEyebrow: data.caseStudiesEyebrow ?? undefined,
+    caseStudiesHeading: data.caseStudiesHeading ?? undefined,
+    caseStudiesBody: data.caseStudiesBody ?? undefined,
+    caseStudiesCta: data.caseStudiesCta ? normalizeLink(data.caseStudiesCta) : undefined,
+    caseStudies: data.caseStudies.map(normalizeIndustryItem),
+
+    aboutEyebrow: data.aboutEyebrow ?? undefined,
+    aboutHeading: data.aboutHeading ?? undefined,
+    aboutBody: data.aboutBody ?? undefined,
   };
 }
 

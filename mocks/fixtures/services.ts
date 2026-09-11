@@ -1,12 +1,15 @@
 /**
  * Verbatim from backend/scripts/seed.ts's SERVICES array — same titles,
- * summaries, prices, features and block copy the real backend seeds.
- * `thumbnail` is null on every entry because seed.ts never sets one (only
- * `blocks.hero`/`content`/`cta` media fields reference the uploaded
- * assets) — matches the "every currently-seeded service has no thumbnail"
- * disclosure in FRONTEND_SPEC.md §9.
+ * summaries, prices and features the real backend seeds. `thumbnail` is
+ * null on every entry because seed.ts never sets one — matches the
+ * "every currently-seeded service has no thumbnail" disclosure in
+ * FRONTEND_SPEC.md §9. The Figma-node-384:6205-equivalent detail fields
+ * (hero/trust/overview/credentials/etc.) are null/empty here — only the
+ * real "Primary Research" entry carries that content — matching the
+ * "sparse page renders via template fallback" behavior every other
+ * detail page's mock already has.
  */
-import type { StrapiBlock, StrapiFeatureItem, StrapiLink } from '@/models/strapi';
+import type { StrapiFeatureItem } from '@/models/strapi';
 import type {
   StrapiServiceDetail,
   StrapiServiceDetailResponse,
@@ -16,12 +19,6 @@ import type {
 } from '@/models/service';
 
 const NOW = '2026-01-05T09:20:00.000Z';
-
-let nextLinkId = 200;
-function link(label: string, href: string, isExternal: boolean, variant: StrapiLink['variant']): StrapiLink {
-  nextLinkId += 1;
-  return { id: nextLinkId, label, href, isExternal, variant };
-}
 
 let nextFeatureId = 1;
 function feature(title: string, description: string): StrapiFeatureItem {
@@ -39,59 +36,44 @@ function feature(title: string, description: string): StrapiFeatureItem {
   };
 }
 
-let nextBlockId = 500;
-function blockId(): number {
-  nextBlockId += 1;
-  return nextBlockId;
-}
-
-function serviceBlocks(opts: {
-  heroEyebrow: string;
-  heroHeading: string;
-  heroSubheading: string;
-  heroActionLabel: string;
-  contentHeading: string;
-  contentBody: string;
-  ctaHeading: string;
-  ctaBody: string;
-  ctaActionLabel: string;
-}): StrapiBlock[] {
-  return [
-    {
-      __component: 'blocks.hero',
-      id: blockId(),
-      eyebrow: opts.heroEyebrow,
-      heading: opts.heroHeading,
-      subheading: opts.heroSubheading,
-      media: null,
-      mediaAlignment: 'right',
-      actions: [link(opts.heroActionLabel, '/contact', false, 'primary')],
-      sideMenu: [],
-      headingSize: null,
-      theme: 'light',
-      anchorId: null,
-    },
-    {
-      __component: 'blocks.content',
-      id: blockId(),
-      heading: opts.contentHeading,
-      body: opts.contentBody,
-      media: null,
-      mediaAlignment: 'none',
-      theme: 'light',
-      anchorId: null,
-    },
-    {
-      __component: 'blocks.cta',
-      id: blockId(),
-      heading: opts.ctaHeading,
-      body: opts.ctaBody,
-      actions: [link(opts.ctaActionLabel, '/contact', false, 'primary')],
-      background: null,
-      theme: 'accent',
-      anchorId: null,
-    },
-  ];
+/** Every node-474:5731 detail field, null/empty — spread into a mock
+ * entry so its shape always matches `StrapiServiceDetail` exactly. */
+function emptyDetailFields() {
+  return {
+    heroEyebrow: null,
+    heroHeading: null,
+    heroSubheading: null,
+    heroImage: null,
+    heroActions: [],
+    trustHeading: null,
+    trustLogos: [],
+    overviewEyebrow: null,
+    overviewHeading: null,
+    overviewBody: null,
+    overviewImage: null,
+    overviewFeatures: [],
+    capabilitiesEyebrow: null,
+    capabilitiesHeading: null,
+    capabilitiesBody: null,
+    credentialsHeading: null,
+    credentialsBody: null,
+    credentials: [],
+    methodologiesEyebrow: null,
+    methodologiesHeading: null,
+    methodologies: [],
+    industriesEyebrow: null,
+    industriesHeading: null,
+    industriesBody: null,
+    industriesServed: [],
+    enquiryEyebrow: null,
+    enquiryHeading: null,
+    enquiryBody: null,
+    enquiryImage: null,
+    faqItems: [],
+    aboutEyebrow: null,
+    aboutHeading: null,
+    aboutBody: null,
+  };
 }
 
 const webDevelopment: StrapiServiceDetail = {
@@ -118,18 +100,7 @@ const webDevelopment: StrapiServiceDetail = {
     feature('ISR out of the box', 'Published content revalidates on a webhook, not a redeploy.'),
     feature('Typed end to end', 'Strapi schema to normalized domain model to View props, no `any` at the boundary.'),
   ],
-  blocks: serviceBlocks({
-    heroEyebrow: 'Service',
-    heroHeading: 'Web development that ships without a deploy',
-    heroSubheading: 'We build the engine; your team edits the content.',
-    heroActionLabel: 'Get a quote',
-    contentHeading: 'What you get',
-    contentBody:
-      'A production Next.js app wired to a Strapi content model your editors already understand — pages, navigation, and reusable sections, all typed from the database to the browser.',
-    ctaHeading: 'Ready to start your build?',
-    ctaBody: 'Most engagements start with a two-week content-model workshop.',
-    ctaActionLabel: 'Book a call',
-  }),
+  ...emptyDetailFields(),
 };
 
 const uiUxDesign: StrapiServiceDetail = {
@@ -156,18 +127,7 @@ const uiUxDesign: StrapiServiceDetail = {
     feature('Component-driven', 'Every screen is composed from the same atoms your engineers will actually ship.'),
     feature('Accessible by default', 'Contrast, focus states and semantic markup are part of the deliverable, not a follow-up.'),
   ],
-  blocks: serviceBlocks({
-    heroEyebrow: 'Service',
-    heroHeading: 'Design systems your engineers will actually use',
-    heroSubheading: 'Every screen maps directly onto a real, typed component.',
-    heroActionLabel: 'See our process',
-    contentHeading: 'How we work',
-    contentBody:
-      'We design in the same token structure your codebase already uses, so nothing gets "translated" between Figma and production — it ships as-is.',
-    ctaHeading: 'Want a design system audit?',
-    ctaBody: 'We review your existing components before proposing anything new.',
-    ctaActionLabel: 'Book a call',
-  }),
+  ...emptyDetailFields(),
 };
 
 const cloudDevops: StrapiServiceDetail = {
@@ -194,18 +154,7 @@ const cloudDevops: StrapiServiceDetail = {
     feature('Zero-downtime deploys', 'Backend schema changes roll out without taking the storefront offline.'),
     feature('24/7 on-call', 'A real person, not a ticket queue, for anything that pages you at 3am.'),
   ],
-  blocks: serviceBlocks({
-    heroEyebrow: 'Service',
-    heroHeading: 'Infrastructure that matches how you actually publish',
-    heroSubheading: 'Caching, CI/CD and on-call, tuned for a CMS-driven storefront.',
-    heroActionLabel: 'Talk to us',
-    contentHeading: 'What we manage',
-    contentBody:
-      'Strapi hosting, the revalidation webhook, CDN cache rules, and the CI pipeline that builds and deploys both apps — so a schema change never means a 2am incident.',
-    ctaHeading: 'Already running Strapi + Next.js?',
-    ctaBody: 'We can take over ops without a migration.',
-    ctaActionLabel: 'Book a call',
-  }),
+  ...emptyDetailFields(),
 };
 
 export const MOCK_SERVICES: Record<string, StrapiServiceDetail> = {
@@ -230,7 +179,16 @@ export function mockServiceListResponse(params: {
   const pageItems = ordered.slice(start, start + pageSize);
 
   return {
-    data: pageItems.map(({ blocks: _blocks, seo: _seo, features: _features, createdAt: _createdAt, publishedAt: _publishedAt, ...summary }) => summary),
+    data: pageItems.map(({ id, documentId, title, slug, summary, thumbnail, basePrice, updatedAt }) => ({
+      id,
+      documentId,
+      title,
+      slug,
+      summary,
+      thumbnail,
+      basePrice,
+      updatedAt,
+    })),
     meta: {
       pagination: {
         page,

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getAllIndustrySlugs, getIndustryBySlug } from '@/controllers/industry';
+import { getAllBlogPosts } from '@/controllers/blog';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { IndustryDetailView } from '@/views/industries/IndustryDetailView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
@@ -36,13 +37,14 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
  * the whole /industries/* prefix. Mirrors app/services/[slug]/page.tsx. */
 export default async function IndustryDetailPage({ params }: { params: RouteParams }) {
   let industry: IndustryDetail | null;
+  let blogPosts: Awaited<ReturnType<typeof getAllBlogPosts>>;
   try {
-    industry = await getIndustryBySlug(params.slug);
+    [industry, blogPosts] = await Promise.all([getIndustryBySlug(params.slug), getAllBlogPosts()]);
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     throw err;
   }
   if (!industry) notFound();
 
-  return <IndustryDetailView industry={industry} />;
+  return <IndustryDetailView industry={industry} blogPosts={blogPosts} />;
 }

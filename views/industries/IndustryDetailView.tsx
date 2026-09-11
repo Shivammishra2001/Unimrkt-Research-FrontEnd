@@ -1,38 +1,79 @@
-import { Container } from '@/views/ui/Container';
-import { Heading } from '@/views/ui/Heading';
-import { Prose } from '@/views/ui/Prose';
-import { StrapiImage } from '@/views/ui/StrapiImage';
-import { BlockDispatcher } from '@/controllers/BlockDispatcher';
+import { DetailHero } from './detail/DetailHero';
+import { TrustStrip } from '@/views/ui/detail/TrustStrip';
+import { ContentBlock } from './detail/ContentBlock';
+import { WhyResearchSection } from './detail/WhyResearchSection';
+import { ExpertiseStrip } from './detail/ExpertiseStrip';
+import { ChallengesSection } from './detail/ChallengesSection';
+import { WhoWeServeSection } from './detail/WhoWeServeSection';
+import { MethodologiesSection } from './detail/MethodologiesSection';
+import { EnquiryForm } from '@/views/ui/detail/EnquiryForm';
+import { CaseStudiesSection } from './detail/CaseStudiesSection';
+import { AboutIndustrySection } from './detail/AboutIndustrySection';
+import { resolveIndustryDetail } from './detail/fallback';
+import { FeaturedBlogSection } from '@/views/blog/FeaturedBlogSection';
+import { BlogFaqAccordion } from '@/views/blog/BlogFaqAccordion';
+import { BlogBottomCta } from '@/views/blog/BlogBottomCta';
 import type { IndustryDetail } from '@/models/industry';
+import type { BlogSummary } from '@/models/blog';
 
-/** /industries/:slug — mirrors ServiceDetailView's dark hero banner +
- * BlockDispatcher pattern, minus the features grid (industries have none). */
-export function IndustryDetailView({ industry }: { industry: IndustryDetail }) {
+/**
+ * /industries/[slug] detail page — Figma node 384:6205 ("Automotives").
+ * Navbar/Footer are global (app/layout.tsx). Template + graceful
+ * fallback: `resolveIndustryDetail()` (detail/fallback.ts) prefers each
+ * industry's own Strapi data and falls back to the node's own structure
+ * with generic, `industry.title`-interpolated copy wherever a field is
+ * empty — so every one of the 27 industries renders the full page, not
+ * just "Automotives" (the only one with authored content so far). The
+ * one section that stays CMS-only is Case Studies — see fallback.ts's
+ * header comment for why. Latest Blogs and the bottom CTA are genuinely
+ * global site chrome (confirmed byte-identical across /blogs,
+ * /blogs/[slug], and /industries already), not per-industry content, so
+ * they reuse the existing shared components unconditionally.
+ */
+export function IndustryDetailView({ industry, blogPosts }: { industry: IndustryDetail; blogPosts: BlogSummary[] }) {
+  const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
+  const content = resolveIndustryDetail(industry);
+
   return (
     <>
-      {/* Same Navbar-clearance banner treatment as ServiceDetailView — see
-          the comment there for why this hardcoded pt-32/pt-36 exists. */}
-      <div className="relative w-full overflow-hidden border-b border-slate-800 bg-[#0a0f1d] px-6 pb-20 pt-32 text-white sm:px-12 sm:pt-36">
-        <Container className="px-0">
-          <div className={industry.icon ? 'grid items-center gap-10 lg:grid-cols-2' : 'max-w-2xl'}>
-            <div>
-              <Heading as="h1" size="display" className="!text-white">
-                {industry.title}
-              </Heading>
-              {industry.summary && <Prose className="mt-4 text-white/80">{industry.summary}</Prose>}
-            </div>
-            {industry.icon && (
-              <StrapiImage
-                image={industry.icon}
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                priority
-                className="w-full rounded-2xl object-cover"
-              />
-            )}
-          </div>
-        </Container>
-      </div>
-      <BlockDispatcher blocks={industry.blocks} />
+      <DetailHero hero={content.hero} title={content.title} />
+      <TrustStrip heading={content.trust.heading} logos={content.trust.logos} />
+
+      <ContentBlock
+        eyebrow={content.whatWeDo.eyebrow}
+        heading={content.whatWeDo.heading}
+        body={content.whatWeDo.body}
+        cta={content.whatWeDo.cta}
+        image={content.whatWeDo.image}
+        frame="rounded"
+        imageSide="right"
+      />
+
+      <WhyResearchSection whyResearch={content.whyResearch} />
+      <ExpertiseStrip expertise={content.expertise} />
+      <ChallengesSection challenges={content.challenges} />
+      <WhoWeServeSection whoWeServe={content.whoWeServe} />
+      <MethodologiesSection methodologies={content.methodologies} />
+
+      <ContentBlock
+        eyebrow={content.empower.eyebrow}
+        heading={content.empower.heading}
+        body={content.empower.body}
+        cta={content.empower.cta}
+        image={content.empower.image}
+        frame="circle"
+        imageSide="right"
+      />
+
+      <EnquiryForm eyebrow={content.enquiry.eyebrow} heading={content.enquiry.heading} body={content.enquiry.body} image={content.enquiry.image} />
+
+      {sortedBlogPosts.length > 0 && <FeaturedBlogSection posts={sortedBlogPosts} heading="Latest Blogs" />}
+
+      <BlogFaqAccordion heading="Frequently Asked Questions" items={content.faqItems} />
+
+      <CaseStudiesSection caseStudies={content.caseStudies} />
+      <AboutIndustrySection about={content.about} />
+      <BlogBottomCta />
     </>
   );
 }

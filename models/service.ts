@@ -3,13 +3,26 @@
  * live in a single file (FRONTEND_SPEC.md §5.3). Views import only the
  * Domain section below; controllers/normalize.ts is the only file that
  * reads the Raw section.
+ *
+ * Every attribute from `heroEyebrow` down maps 1:1 to a section of Figma
+ * node 474:5731 ("Primary Research") — see ServiceDetailView.tsx for the
+ * render order. All are optional: a missing field falls back to the
+ * template default resolved in views/services/detail/fallback.ts.
  */
-import type { StrapiFeatureItem, StrapiMedia, StrapiResponse, StrapiSeo, StrapiBlock } from './strapi';
-import type { BlockModel, FeatureModel, ImageModel, SeoModel } from './domain';
+import type { StrapiFeatureItem, StrapiMedia, StrapiResponse, StrapiSeo, StrapiLink, StrapiFaqItem } from './strapi';
+import type { FeatureModel, ImageModel, SeoModel, LinkModel, FaqItemModel } from './domain';
+import type { StrapiIndustryDetailCard, StrapiTrustLogo, IndustryDetailCardModel, TrustLogoModel } from './industry';
 
 // ---------------------------------------------------------------------------
 // Raw
 // ---------------------------------------------------------------------------
+
+export interface StrapiServiceStatItem {
+  id: number;
+  value: string;
+  label: string;
+  iconIdentifier: string | null;
+}
 
 export interface StrapiServiceSummary {
   id: number;
@@ -28,7 +41,6 @@ export interface StrapiServiceSummary {
 export interface StrapiServiceDetail extends StrapiServiceSummary {
   features: StrapiFeatureItem[];
   seo: StrapiSeo | null;
-  blocks: StrapiBlock[];
   createdAt: string;
   publishedAt: string | null;
   // Category hierarchy (Google Sheet IA migration) — optional: the 3 demo
@@ -37,6 +49,49 @@ export interface StrapiServiceDetail extends StrapiServiceSummary {
   suggestedUrl?: string | null;
   parent?: { title: string; slug: string } | null;
   children?: StrapiServiceTreeChild[];
+
+  heroEyebrow: string | null;
+  heroHeading: string | null;
+  heroSubheading: string | null;
+  heroImage: StrapiMedia | null;
+  heroActions: StrapiLink[];
+
+  trustHeading: string | null;
+  trustLogos: StrapiTrustLogo[];
+
+  overviewEyebrow: string | null;
+  overviewHeading: string | null;
+  overviewBody: string | null;
+  overviewImage: StrapiMedia | null;
+  overviewFeatures: StrapiIndustryDetailCard[];
+
+  capabilitiesEyebrow: string | null;
+  capabilitiesHeading: string | null;
+  capabilitiesBody: string | null;
+
+  credentialsHeading: string | null;
+  credentialsBody: string | null;
+  credentials: StrapiServiceStatItem[];
+
+  methodologiesEyebrow: string | null;
+  methodologiesHeading: string | null;
+  methodologies: StrapiIndustryDetailCard[];
+
+  industriesEyebrow: string | null;
+  industriesHeading: string | null;
+  industriesBody: string | null;
+  industriesServed: StrapiIndustryDetailCard[];
+
+  enquiryEyebrow: string | null;
+  enquiryHeading: string | null;
+  enquiryBody: string | null;
+  enquiryImage: StrapiMedia | null;
+
+  faqItems: StrapiFaqItem[];
+
+  aboutEyebrow: string | null;
+  aboutHeading: string | null;
+  aboutBody: string | null;
 }
 
 export interface StrapiServiceSlug {
@@ -71,6 +126,13 @@ export type StrapiServiceTreeResponse = StrapiResponse<StrapiServiceTreeItem[]>;
 // Domain
 // ---------------------------------------------------------------------------
 
+export interface ServiceStatItemModel {
+  id: string;
+  value: string;
+  label: string;
+  iconIdentifier?: string;
+}
+
 export interface ServiceSummary {
   slug: string;
   title: string;
@@ -82,11 +144,53 @@ export interface ServiceSummary {
 export interface ServiceDetail extends ServiceSummary {
   features: FeatureModel[];
   seo?: SeoModel;
-  blocks: BlockModel[];
   legacyUrl?: string;
   suggestedUrl?: string;
   parent?: { title: string; slug: string };
   children: ServiceTreeChildModel[];
+
+  heroEyebrow?: string;
+  heroHeading?: string;
+  heroSubheading?: string;
+  heroImage?: ImageModel;
+  heroActions: LinkModel[];
+
+  trustHeading?: string;
+  trustLogos: TrustLogoModel[];
+
+  overviewEyebrow?: string;
+  overviewHeading?: string;
+  overviewBody?: string;
+  overviewImage?: ImageModel;
+  overviewFeatures: IndustryDetailCardModel[];
+
+  capabilitiesEyebrow?: string;
+  capabilitiesHeading?: string;
+  capabilitiesBody?: string;
+
+  credentialsHeading?: string;
+  credentialsBody?: string;
+  credentials: ServiceStatItemModel[];
+
+  methodologiesEyebrow?: string;
+  methodologiesHeading?: string;
+  methodologies: IndustryDetailCardModel[];
+
+  industriesEyebrow?: string;
+  industriesHeading?: string;
+  industriesBody?: string;
+  industriesServed: IndustryDetailCardModel[];
+
+  enquiryEyebrow?: string;
+  enquiryHeading?: string;
+  enquiryBody?: string;
+  enquiryImage?: ImageModel;
+
+  faqItems: FaqItemModel[];
+
+  aboutEyebrow?: string;
+  aboutHeading?: string;
+  aboutBody?: string;
 }
 
 export interface ServiceSlugModel {

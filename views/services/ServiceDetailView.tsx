@@ -1,89 +1,65 @@
-import { Container } from '@/views/ui/Container';
-import { Heading } from '@/views/ui/Heading';
-import { Prose } from '@/views/ui/Prose';
-import { StrapiImage } from '@/views/ui/StrapiImage';
-import { BlockDispatcher } from '@/controllers/BlockDispatcher';
+import { ServiceDetailHero } from './detail/ServiceDetailHero';
+import { TrustStrip } from '@/views/ui/detail/TrustStrip';
+import { OverviewSection } from './detail/OverviewSection';
+import { CapabilitiesSection } from './detail/CapabilitiesSection';
+import { CredentialsSection } from './detail/CredentialsSection';
+import { MethodologiesSection } from './detail/MethodologiesSection';
+import { IndustriesServedSection } from './detail/IndustriesServedSection';
+import { EnquiryForm } from '@/views/ui/detail/EnquiryForm';
+import { AboutSection } from './detail/AboutSection';
+import { resolveServiceDetail } from './detail/fallback';
+import { FeaturedBlogSection } from '@/views/blog/FeaturedBlogSection';
+import { BlogFaqAccordion } from '@/views/blog/BlogFaqAccordion';
+import { BlogBottomCta } from '@/views/blog/BlogBottomCta';
 import type { ServiceDetail } from '@/models/service';
+import type { BlogSummary } from '@/models/blog';
 
-/** /services/:slug — dedicated dark hero banner (title/summary/thumbnail/
- * price badge) + feature grid + BlockDispatcher over service.blocks. */
-export function ServiceDetailView({ service }: { service: ServiceDetail }) {
+/**
+ * /services/[slug] detail page — Figma node 474:5731 ("Primary
+ * Research"). Navbar/Footer are global (app/layout.tsx). Template +
+ * graceful fallback, same architecture as /industries/[slug]:
+ * `resolveServiceDetail()` (detail/fallback.ts) prefers each service's
+ * own Strapi data and falls back to the node's own structure with
+ * generic, `service.title`-interpolated copy wherever a field is empty
+ * — so every one of the ~35 seeded services renders the full page, not
+ * just "Primary Research" (the only one with authored content so far).
+ * Latest Blogs and the bottom CTA are genuinely global site chrome
+ * (confirmed byte-identical across /blogs, /blogs/[slug], /industries,
+ * and this node), not per-service content, so they reuse the existing
+ * shared components unconditionally.
+ *
+ * Renders ONLY node 474:5731's own sections, in its exact order —
+ * Breadcrumb (in ServiceDetailHero) / Hero / Trust strip / Overview /
+ * Capabilities / Credentials / Methodologies / Industries served /
+ * Enquiry / Latest Blogs / FAQ / About / bottom CTA. The category
+ * hierarchy's "What's included" sub-service list (`service.children`)
+ * was previously rendered as an addendum here — deleted: that node has
+ * no such section, and this page must not render anything outside it.
+ * `service.children` itself stays on the model (real relational data,
+ * used elsewhere — e.g. the services listing/tree) — only this page's
+ * non-Figma rendering of it is gone.
+ */
+export function ServiceDetailView({ service, blogPosts }: { service: ServiceDetail; blogPosts: BlogSummary[] }) {
+  const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
+  const content = resolveServiceDetail(service);
+
   return (
     <>
-      {/* Tracks the Navbar's current height — this hardcoded banner, not
-          the service's own blocks.hero, is the page's actual first
-          element, so it owns Navbar clearance. Bumped from pt-24/pt-28 to
-          pt-32/pt-36: the nav logo grew to a 95px oval badge, so the bar
-          itself is ~115-119px tall now (was well under 96px). */}
-      <div className="relative w-full overflow-hidden border-b border-slate-800 bg-[#0a0f1d] px-6 pb-20 pt-32 text-white sm:px-12 sm:pt-36">
-        <Container className="px-0">
-          <div className={service.thumbnail ? 'grid items-center gap-10 lg:grid-cols-2' : 'max-w-2xl'}>
-            <div>
-              <Heading as="h1" size="display" className="!text-white">
-                {service.title}
-              </Heading>
-              <Prose className="mt-4 text-white/80">{service.summary}</Prose>
-              {service.basePrice && (
-                <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-brand-600/30 bg-brand-600/10 px-5 py-2 text-lg font-semibold text-brand-500 backdrop-blur-sm">
-                  {service.basePrice}
-                </span>
-              )}
-            </div>
-            {/* Every currently-seeded service has no thumbnail, so this is
-                dead code in practice today — disclosed rather than
-                silently removed, since a future service could set one. */}
-            {service.thumbnail && (
-              <StrapiImage
-                image={service.thumbnail}
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                priority
-                className="w-full rounded-2xl object-cover"
-              />
-            )}
-          </div>
-        </Container>
-      </div>
-      {service.features.length > 0 && (
-        <section className="py-16 sm:py-20 lg:py-24">
-          <Container>
-            <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {service.features.map((feature) => (
-                <li key={feature.id} className="rounded-xl border border-card-border p-6">
-                  <Heading as="h3" size="h3">
-                    {feature.title}
-                  </Heading>
-                  <Prose className="mt-3">{feature.description}</Prose>
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-      )}
-      {/* Category hierarchy (Google Sheet IA migration) — sub-services
-          render as cards on their parent category's own page rather than
-          a separate URL: they have no dedicated detail route (see the
-          routing-conflict note in this migration's execution prompt), so
-          these are plain, non-linked cards, not a navigation grid. */}
-      {service.children.length > 0 && (
-        <section className="border-t border-card-border py-16 sm:py-20 lg:py-24">
-          <Container>
-            <Heading as="h2" size="h2">
-              What&apos;s included
-            </Heading>
-            <ul className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {service.children.map((child) => (
-                <li key={child.slug} className="rounded-xl border border-card-border p-6">
-                  <Heading as="h3" size="h3">
-                    {child.title}
-                  </Heading>
-                  <Prose className="mt-3">{child.summary}</Prose>
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-      )}
-      <BlockDispatcher blocks={service.blocks} />
+      <ServiceDetailHero hero={content.hero} title={content.title} parent={service.parent} />
+      <TrustStrip heading={content.trust.heading} logos={content.trust.logos} />
+      <OverviewSection overview={content.overview} />
+      <CapabilitiesSection capabilities={content.capabilities} />
+      <CredentialsSection credentials={content.credentials} />
+      <MethodologiesSection methodologies={content.methodologies} />
+      <IndustriesServedSection industries={content.industries} />
+      <EnquiryForm eyebrow={content.enquiry.eyebrow} heading={content.enquiry.heading} body={content.enquiry.body} image={content.enquiry.image} />
+
+      {sortedBlogPosts.length > 0 && <FeaturedBlogSection posts={sortedBlogPosts} heading="Latest Blogs" />}
+
+      <BlogFaqAccordion heading="Frequently Asked Questions" items={content.faqItems} />
+
+      <AboutSection about={content.about} />
+      <BlogBottomCta />
     </>
   );
 }
