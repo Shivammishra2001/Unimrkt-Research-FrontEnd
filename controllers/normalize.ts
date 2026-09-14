@@ -59,6 +59,7 @@ import type {
 import type { StrapiGalleryItemListResponse, GalleryImage } from '@/models/gallery';
 import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/servicesPage';
 import type { StrapiOurCompanyPageResponse, OurCompanySettings } from '@/models/ourCompanyPage';
+import type { StrapiContactPageResponse, StrapiOfficeLocation, ContactPageSettings, OfficeLocationModel } from '@/models/contactPage';
 import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
@@ -883,5 +884,53 @@ export function normalizeOurCompanyPageSettings(res: StrapiOurCompanyPageRespons
     aboutCompanyHeading: data.aboutCompanyHeading ?? undefined,
     aboutCompanyBody: data.aboutCompanyBody ?? undefined,
     seo: normalizeSeo(data.seo, data.heroHeading ?? 'Our Company'),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Contact page (/contact, Figma node 637:10433)
+// ---------------------------------------------------------------------------
+
+function normalizeOfficeLocation(office: StrapiOfficeLocation): OfficeLocationModel {
+  return {
+    id: `office-${office.id}`,
+    name: office.name,
+    address: office.address,
+    email: office.email,
+    phone: office.phone,
+    phoneLabel: office.phoneLabel ?? undefined,
+    featured: office.featured ?? false,
+    image: toImageModel(office.image, office.name),
+  };
+}
+
+export function normalizeContactPageSettings(res: StrapiContactPageResponse): ContactPageSettings {
+  const data = res.data;
+
+  return {
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? 'Contact'),
+    heroCta: data.heroCta ? normalizeLink(data.heroCta) : undefined,
+    statsHeading: data.statsHeading ?? undefined,
+    stats: (data.stats ?? []).map(normalizeServiceStatItem),
+    officeEyebrow: data.officeEyebrow ?? undefined,
+    officeHeading: data.officeHeading ?? undefined,
+    offices: (data.offices ?? []).map(normalizeOfficeLocation),
+    formEyebrow: data.formEyebrow ?? undefined,
+    formHeading: data.formHeading ?? undefined,
+    formSubheading: data.formSubheading ?? undefined,
+    formImage: toImageModel(data.formImage, data.formHeading ?? 'Contact form'),
+    faqItems: (data.faqItems ?? []).map((item) => ({
+      id: `contact-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+    workWithUsHeading: data.workWithUsHeading ?? undefined,
+    workWithUsBody: data.workWithUsBody ?? undefined,
+    workWithUsCta: data.workWithUsCta ? normalizeLink(data.workWithUsCta) : undefined,
+    workWithUsImage: toImageModel(data.workWithUsImage, data.workWithUsHeading ?? 'Work With unimrkt'),
+    seo: normalizeSeo(data.seo, data.heroHeading ?? 'Contact'),
   };
 }
