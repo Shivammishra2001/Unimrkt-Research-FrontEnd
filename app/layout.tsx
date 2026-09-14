@@ -7,7 +7,7 @@ import { normalizeGlobal } from '@/controllers/normalize';
 import { getAllServiceCategories } from '@/controllers/service';
 import { Navbar } from '@/views/sections/Navbar';
 import { Footer } from '@/views/sections/Footer';
-import { FloatingChatButton } from '@/views/ui/FloatingChatButton';
+import { ChatWidget } from '@/views/ui/ChatWidget';
 import type { GlobalModel, NavigationItemModel } from '@/models/domain';
 import type { ServiceTreeItemModel } from '@/models/service';
 
@@ -142,7 +142,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <main className="flex-1">{children}</main>
         {global && <Footer footer={global.footer} />}
-        <FloatingChatButton />
+        <ChatWidget />
       </body>
     </html>
   );
