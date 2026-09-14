@@ -7,7 +7,11 @@ import type { ResolvedWorkWithUs } from './fallback';
  * are the card's 1-based array position, not stored data — the node
  * shows them as a plain numeric prefix on each card, not present as
  * separate text in the underlying data. CMS-first, template-fallback —
- * always renders. */
+ * always renders.
+ *
+ * No hover state, same reasoning as ValuesSection.tsx: these cards
+ * carry no href/onClick and Figma defines no interactive variant for
+ * them, so no hover-only affordance is added. */
 export function JourneySection({ journey }: { journey: ResolvedWorkWithUs['journey'] }) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to py-16 text-white sm:py-20 lg:py-24">

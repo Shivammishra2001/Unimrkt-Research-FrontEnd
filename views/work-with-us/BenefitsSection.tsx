@@ -8,7 +8,9 @@ import type { ResolvedWorkWithUs } from './fallback';
  * benefit grid right (red circular icon badge + label, no card
  * background — a plain list, distinct from every card-grid shell
  * elsewhere on the site). CMS-first, template-fallback — always
- * renders. */
+ * renders. No hover state, same reasoning as ValuesSection.tsx: these
+ * rows carry no href/onClick and Figma defines no interactive variant
+ * for them. */
 export function BenefitsSection({ benefits }: { benefits: ResolvedWorkWithUs['benefits'] }) {
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">

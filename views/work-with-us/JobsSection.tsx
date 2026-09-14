@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '@/views/ui/Container';
 import { LocationPinIcon } from '@/views/ui/icons/LocationPinIcon';
 import { Briefcase, Users, Calendar, Search } from 'lucide-react';
@@ -14,7 +15,19 @@ const ALL = 'All';
 const SELECT_CLASS =
   'h-[65px] w-full appearance-none rounded-[10px] border border-[#ebebe4] bg-white px-4 pt-[22px] pb-2 font-sans text-sm font-medium text-heading focus:outline-none focus:ring-2 focus:ring-brand-600';
 
+/** Figma defines no distinct hover/pressed variant for this button shape
+ * anywhere in the file (plain static frames, not a component with a
+ * "State" property) — this is the exact same tap/hover scale as
+ * views/ui/Button.tsx, the one motion spec already established
+ * sitewide, applied here by hand only because this button's own
+ * maroon-outline styling has no equivalent in Button.tsx's variant set. */
+function useButtonMotionProps() {
+  const shouldReduceMotion = useReducedMotion();
+  return shouldReduceMotion ? {} : { whileHover: { scale: 1.03 }, whileTap: { scale: 0.98 }, transition: { duration: 0.15 } };
+}
+
 function JobCard({ job }: { job: JobListingModel }) {
+  const motionProps = useButtonMotionProps();
   return (
     <div className="relative flex flex-col gap-6 rounded-[18px] border border-[#ebebe4] bg-white p-6 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.05)] sm:flex-row sm:items-center sm:gap-8">
       <span className="flex size-[74px] shrink-0 items-center justify-center rounded-full bg-brand-600/10 text-brand-600">
@@ -47,18 +60,20 @@ function JobCard({ job }: { job: JobListingModel }) {
           so both buttons route there rather than opening a fabricated
           detail view. */}
       <div className="flex shrink-0 gap-3">
-        <a
+        <motion.a
           href={`mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(`More information about ${job.title}`)}`}
-          className="flex h-14 items-center justify-center rounded-[4px] border border-[#962b39] px-6 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-[#7e2a43] transition-colors hover:bg-[#962b39]/5"
+          className="flex h-14 items-center justify-center rounded-[4px] border border-[#962b39] px-6 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-[#7e2a43] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:bg-[#962b39]/5"
+          {...motionProps}
         >
           View Details
-        </a>
-        <a
+        </motion.a>
+        <motion.a
           href={`mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(`Application for ${job.title}`)}`}
-          className="flex h-14 items-center justify-center rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-6 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-white transition-transform hover:brightness-110"
+          className="flex h-14 items-center justify-center rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-6 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:brightness-110"
+          {...motionProps}
         >
           Apply Now
-        </a>
+        </motion.a>
       </div>
     </div>
   );
@@ -72,6 +87,7 @@ function JobCard({ job }: { job: JobListingModel }) {
  * More". CMS-first, template-fallback — always renders.
  */
 export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
+  const loadMoreMotionProps = useButtonMotionProps();
   const [search, setSearch] = useState('');
   const [department, setDepartment] = useState(ALL);
   const [jobType, setJobType] = useState(ALL);
@@ -110,7 +126,7 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
 
         <div className="mx-auto mt-12 max-w-5xl rounded-[20px] border border-[#ebebe4] bg-white p-6 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.05)]">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="relative flex h-[65px] items-center rounded-[10px] border border-[#ebebe4] bg-white px-4">
+            <div className="relative flex h-[65px] items-center rounded-[10px] border border-[#ebebe4] bg-white px-4 transition-colors focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-600">
               <Search className="size-5 shrink-0 text-heading/50" strokeWidth={1.5} aria-hidden="true" />
               <input
                 type="text"
@@ -158,13 +174,14 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
 
         {hasMore && (
           <div className="mt-12 flex justify-center">
-            <button
+            <motion.button
               type="button"
               onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-              className="flex h-14 items-center justify-center rounded-[4px] border border-[#ebebe4] px-10 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-heading transition-colors hover:border-brand-600"
+              className="flex h-14 items-center justify-center rounded-[4px] border border-[#ebebe4] px-10 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-heading transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:border-brand-600"
+              {...loadMoreMotionProps}
             >
               Load More
-            </button>
+            </motion.button>
           </div>
         )}
       </Container>

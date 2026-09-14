@@ -7,7 +7,15 @@ import type { ResolvedWorkWithUs } from './fallback';
  * a distinct shell from every other Values-style card on the site
  * (/our-company's is dark glassmorphic); the 8 cards' own content is
  * the exact same "Core Values" set as /our-company's, just presented
- * differently on this page — see fallback.ts's header comment. */
+ * differently on this page — see fallback.ts's header comment.
+ *
+ * No hover state: these cards carry no href/onClick — they're
+ * decorative/informational, not a link or button — and Figma itself
+ * defines no interactive variant for them (plain static frames, no
+ * "State" property, confirmed via Dev Mode). Adding a hover-only lift
+ * or shadow to a non-clickable card would imply an interaction that
+ * doesn't exist, so none is added here (unlike Button.tsx-driven CTAs
+ * elsewhere on this page, which do get real hover/focus treatment). */
 export function ValuesSection({ values }: { values: ResolvedWorkWithUs['values'] }) {
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
