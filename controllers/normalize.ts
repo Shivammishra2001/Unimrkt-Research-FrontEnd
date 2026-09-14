@@ -60,6 +60,7 @@ import type { StrapiGalleryItemListResponse, GalleryImage } from '@/models/galle
 import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/servicesPage';
 import type { StrapiOurCompanyPageResponse, OurCompanySettings } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse, StrapiOfficeLocation, ContactPageSettings, OfficeLocationModel } from '@/models/contactPage';
+import type { StrapiWorkWithUsPageResponse, StrapiJobListing, WorkWithUsSettings, JobListingModel } from '@/models/workWithUsPage';
 import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
@@ -932,5 +933,63 @@ export function normalizeContactPageSettings(res: StrapiContactPageResponse): Co
     workWithUsCta: data.workWithUsCta ? normalizeLink(data.workWithUsCta) : undefined,
     workWithUsImage: toImageModel(data.workWithUsImage, data.workWithUsHeading ?? 'Work With unimrkt'),
     seo: normalizeSeo(data.seo, data.heroHeading ?? 'Contact'),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Work With Us page (/work-with-us, Figma node 924:23216)
+// ---------------------------------------------------------------------------
+
+function normalizeJobListing(job: StrapiJobListing): JobListingModel {
+  return {
+    id: `job-${job.id}`,
+    title: job.title,
+    location: job.location,
+    jobType: job.jobType,
+    department: job.department,
+    postedDate: job.postedDate,
+  };
+}
+
+export function normalizeWorkWithUsPageSettings(res: StrapiWorkWithUsPageResponse): WorkWithUsSettings {
+  const data = res.data;
+
+  return {
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? 'Work With Us'),
+    heroCta: data.heroCta ? normalizeLink(data.heroCta) : undefined,
+    valuesEyebrow: data.valuesEyebrow ?? undefined,
+    valuesHeading: data.valuesHeading ?? undefined,
+    valuesBody: data.valuesBody ?? undefined,
+    valuesCards: (data.valuesCards ?? []).map(normalizeIndustryDetailCard),
+    benefitsEyebrow: data.benefitsEyebrow ?? undefined,
+    benefitsHeading: data.benefitsHeading ?? undefined,
+    benefitsBody: data.benefitsBody ?? undefined,
+    benefitsLabel: data.benefitsLabel ?? undefined,
+    benefitsImage: toImageModel(data.benefitsImage, data.benefitsHeading ?? 'More Than Just a Job'),
+    benefits: (data.benefits ?? []).map(normalizeIndustryDetailCard),
+    jobsEyebrow: data.jobsEyebrow ?? undefined,
+    jobsHeading: data.jobsHeading ?? undefined,
+    jobsBody: data.jobsBody ?? undefined,
+    jobs: (data.jobs ?? []).map(normalizeJobListing),
+    journeyEyebrow: data.journeyEyebrow ?? undefined,
+    journeyHeading: data.journeyHeading ?? undefined,
+    journeyBody: data.journeyBody ?? undefined,
+    journeySteps: (data.journeySteps ?? []).map(normalizeIndustryDetailCard),
+    joinUsHeading: data.joinUsHeading ?? undefined,
+    joinUsBody: data.joinUsBody ?? undefined,
+    disclaimerHeading: data.disclaimerHeading ?? undefined,
+    disclaimerBody: data.disclaimerBody ?? undefined,
+    faqItems: (data.faqItems ?? []).map((item) => ({
+      id: `wwu-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+    aboutCareersEyebrow: data.aboutCareersEyebrow ?? undefined,
+    aboutCareersHeading: data.aboutCareersHeading ?? undefined,
+    aboutCareersBody: data.aboutCareersBody ?? undefined,
+    seo: normalizeSeo(data.seo, data.heroHeading ?? 'Work With Us'),
   };
 }

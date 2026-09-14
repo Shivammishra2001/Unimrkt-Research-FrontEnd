@@ -34,6 +34,7 @@ import type { StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsR
 import type { StrapiCategoryListResponse } from '@/models/category';
 import type { StrapiOurCompanyPageResponse } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse } from '@/models/contactPage';
+import type { StrapiWorkWithUsPageResponse } from '@/models/workWithUsPage';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -305,5 +306,11 @@ export function getOurCompanyPageSettings(): Promise<StrapiOurCompanyPageRespons
  * no query sent (same convention as getOurCompanyPageSettings()). */
 export function getContactPageSettings(): Promise<StrapiContactPageResponse> {
   return strapiFetch<StrapiContactPageResponse>('contact-page', { tag: 'contact-page' });
+}
+
+/** GET /work-with-us-page — singleType, backend forces its own deep
+ * populate; no query sent (same convention as getContactPageSettings()). */
+export function getWorkWithUsPageSettings(): Promise<StrapiWorkWithUsPageResponse> {
+  return strapiFetch<StrapiWorkWithUsPageResponse>('work-with-us-page', { tag: 'work-with-us-page' });
 }
 
