@@ -32,6 +32,7 @@ import type { StrapiGalleryItemListResponse } from '@/models/gallery';
 import type { StrapiServicesPageResponse } from '@/models/servicesPage';
 import type { StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsResponse } from '@/models/blog';
 import type { StrapiCategoryListResponse } from '@/models/category';
+import type { StrapiOurCompanyPageResponse } from '@/models/ourCompanyPage';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -290,5 +291,12 @@ export function getCategories(): Promise<StrapiCategoryListResponse> {
     query: { pagination: { pageSize: 100 } },
     tag: 'categories',
   });
+}
+
+/** GET /our-company-page — singleType, backend forces its own deep
+ * populate; no query sent (same convention as getServicesPageSettings()/
+ * getGlobal()). */
+export function getOurCompanyPageSettings(): Promise<StrapiOurCompanyPageResponse> {
+  return strapiFetch<StrapiOurCompanyPageResponse>('our-company-page', { tag: 'our-company-page' });
 }
 

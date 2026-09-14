@@ -58,6 +58,7 @@ import type {
 } from '@/models/industry';
 import type { StrapiGalleryItemListResponse, GalleryImage } from '@/models/gallery';
 import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/servicesPage';
+import type { StrapiOurCompanyPageResponse, OurCompanySettings } from '@/models/ourCompanyPage';
 import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
@@ -835,5 +836,52 @@ export function normalizeServicesPageSettings(res: StrapiServicesPageResponse): 
           background: toImageModel(data.cta.background, data.cta.heading),
         }
       : undefined,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Our Company page (/our-company, Figma node 617:7561)
+// ---------------------------------------------------------------------------
+
+export function normalizeOurCompanyPageSettings(res: StrapiOurCompanyPageResponse): OurCompanySettings {
+  const data = res.data;
+
+  return {
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? 'Our Company'),
+    heroCta: data.heroCta ? normalizeLink(data.heroCta) : undefined,
+    statsHeading: data.statsHeading ?? undefined,
+    stats: (data.stats ?? []).map(normalizeServiceStatItem),
+    aboutEyebrow: data.aboutEyebrow ?? undefined,
+    aboutHeading: data.aboutHeading ?? undefined,
+    aboutBody: data.aboutBody ?? undefined,
+    aboutImage: toImageModel(data.aboutImage, data.aboutHeading ?? 'About Unimrkt'),
+    insightsEyebrow: data.insightsEyebrow ?? undefined,
+    insightsHeading: data.insightsHeading ?? undefined,
+    insightsBody: data.insightsBody ?? undefined,
+    insightsCards: (data.insightsCards ?? []).map(normalizeIndustryDetailCard),
+    ecosystemEyebrow: data.ecosystemEyebrow ?? undefined,
+    ecosystemHeading: data.ecosystemHeading ?? undefined,
+    ecosystemSubtext: data.ecosystemSubtext ?? undefined,
+    ecosystemCards: (data.ecosystemCards ?? []).map(normalizeIndustryDetailCard),
+    valuesEyebrow: data.valuesEyebrow ?? undefined,
+    valuesHeading: data.valuesHeading ?? undefined,
+    valuesBody: data.valuesBody ?? undefined,
+    valuesCards: (data.valuesCards ?? []).map(normalizeIndustryDetailCard),
+    industriesEyebrow: data.industriesEyebrow ?? undefined,
+    industriesHeading: data.industriesHeading ?? undefined,
+    industriesBody: data.industriesBody ?? undefined,
+    industriesCards: (data.industriesCards ?? []).map(normalizeIndustryDetailCard),
+    faqItems: (data.faqItems ?? []).map((item) => ({
+      id: `our-company-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+    aboutCompanyEyebrow: data.aboutCompanyEyebrow ?? undefined,
+    aboutCompanyHeading: data.aboutCompanyHeading ?? undefined,
+    aboutCompanyBody: data.aboutCompanyBody ?? undefined,
+    seo: normalizeSeo(data.seo, data.heroHeading ?? 'Our Company'),
   };
 }

@@ -31,6 +31,19 @@ import {
   ShoppingCart,
   Radio,
   MoreHorizontal,
+  Timer,
+  Languages,
+  FileSearch,
+  Compass,
+  Binary,
+  Send,
+  MessageCircle,
+  Lightbulb,
+  Share2,
+  Scale,
+  Eye,
+  Brain,
+  Handshake,
   Sparkles,
   type LucideIcon,
 } from 'lucide-react';
@@ -41,8 +54,9 @@ import type { ImageModel } from '@/models/domain';
  * — used only when an editor hasn't uploaded an `icon` image. Same
  * convention as views/sections/WhyChooseUsView.tsx's ICON_MAP. Any
  * unknown identifier falls back to Sparkles rather than rendering
- * nothing. Shared by /industries/[slug] (384:6205) and /services/[slug]
- * (474:5731) — keys are a superset of both nodes' seeded identifiers. */
+ * nothing. Shared by /industries/[slug] (384:6205), /services/[slug]
+ * (474:5731), and /our-company (617:7561) — keys are a superset of all
+ * three nodes' seeded identifiers. */
 const ICON_MAP: Record<string, LucideIcon> = {
   // industries/[slug]
   'profile-2user': Users,
@@ -78,6 +92,21 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'shopping-cart': ShoppingCart,
   radio: Radio,
   more: MoreHorizontal,
+  // our-company (Figma node 617:7561)
+  timer: Timer,
+  'language-circle': Languages,
+  inspection: FileSearch,
+  discovery: Compass,
+  decode: Binary,
+  timing: Send,
+  chat: MessageCircle,
+  idea: Lightbulb,
+  teamwork: Users,
+  network: Share2,
+  ethics: Scale,
+  transparency: Eye,
+  intelligence: Brain,
+  'cultural-diversity': Handshake,
 };
 
 export interface DetailCardIconProps {

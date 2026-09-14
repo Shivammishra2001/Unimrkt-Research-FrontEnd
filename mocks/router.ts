@@ -26,6 +26,7 @@ import { MOCK_GALLERY_ITEMS_RESPONSE } from './fixtures/gallery';
 import { MOCK_SERVICES_PAGE_RESPONSE } from './fixtures/servicesPage';
 import { MOCK_BLOG_SLUGS_RESPONSE, mockBlogDetailResponse, mockBlogListResponse } from './fixtures/blog';
 import { MOCK_CATEGORIES_RESPONSE } from './fixtures/category';
+import { MOCK_OUR_COMPANY_PAGE_RESPONSE } from './fixtures/ourCompanyPage';
 
 function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -114,6 +115,10 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
 
   if (endpoint === 'categories') {
     return MOCK_CATEGORIES_RESPONSE as unknown as T;
+  }
+
+  if (endpoint === 'our-company-page') {
+    return MOCK_OUR_COMPANY_PAGE_RESPONSE as unknown as T;
   }
 
   throw new StrapiError(`No mock fixture registered for endpoint "${endpoint}"`, 501, endpoint);
