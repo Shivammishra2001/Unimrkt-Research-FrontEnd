@@ -22,10 +22,11 @@ type Status = 'idle' | 'submitting' | 'success' | 'error';
  * flag+chevron is rendered as a static India-code indicator (matching
  * this site's existing EnquiryForm.tsx convention of a fixed "+91"
  * prefix, not a real country picker — the node itself shows no dropdown
- * interaction, just the flag glyph). Posts to /api/contact, this
- * project's one real lead-capture endpoint (see that route's own header
- * comment) — client-side validation here is a UX nicety, not the source
- * of truth; the API route re-validates server-side.
+ * interaction, just the flag glyph). Posts to /contact-submit (NOT
+ * under /api/* — see that route's own header comment for why), this
+ * project's one real lead-capture endpoint — client-side validation
+ * here is a UX nicety, not the source of truth; the route re-validates
+ * server-side.
  */
 export function ContactFormSection({ form }: { form: ResolvedContact['form'] }) {
   const [status, setStatus] = useState<Status>('idle');
@@ -48,7 +49,7 @@ export function ContactFormSection({ form }: { form: ResolvedContact['form'] }) 
     setStatus('submitting');
     setError(null);
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch('/contact-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, phone, company }),

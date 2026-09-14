@@ -10,6 +10,16 @@ import type { NextRequest } from 'next/server';
  * (Name, Email ID, Phone number, Company name) server-side too — never
  * trust client-side validation alone — then forwards to
  * `api::contact-submission.contact-submission`'s public `create` route.
+ *
+ * Deliberately NOT under /api/* : on the staging deployment, the reverse
+ * proxy routes the entire public /api/* prefix straight to Strapi (that
+ * is how /api/our-company-page, /api/contact-page, etc. resolve at all)
+ * — confirmed by /api/preview and /api/revalidate also returning
+ * Strapi's own 404 shape / a bare 405 on that domain, not this
+ * project's Next.js route handlers, which is a pre-existing
+ * characteristic of that proxy, not something this route changes. A
+ * route handler actually needs to live outside /api/* to be reachable
+ * on that domain at all.
  */
 const API_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337/api';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
