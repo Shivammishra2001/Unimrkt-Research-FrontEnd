@@ -15,7 +15,7 @@
  *      authored sensible, distinct descriptions instead; "Join" is
  *      verbatim.
  */
-import type { WorkWithUsSettings, JobListingModel } from '@/models/workWithUsPage';
+import type { WorkWithUsSettings, JobListingModel, JobDescriptionBlock } from '@/models/workWithUsPage';
 import type { FaqItemModel, LinkModel } from '@/models/domain';
 import type { IndustryDetailCardModel } from '@/models/industry';
 
@@ -57,8 +57,58 @@ const FALLBACK_BENEFITS: IndustryDetailCardModel[] = [
   benefitCard('meal', 'Meal Facility', 'dinner'),
 ];
 
+// Verbatim content of Figma node 924:23508 (View Details modal) — the
+// node's own named example, "Executive – Language & Communication".
+// No other job has an equivalent detail-modal drawn anywhere in the
+// file, matching backend/scripts/seed.ts's WORK_WITH_US_JOBS comment.
+const FALLBACK_JOB_DESCRIPTION_ITEMS: JobDescriptionBlock[] = [
+  { text: 'Monitor live/recorded operational calls of Research Associates for language assessment and guidance' },
+  {
+    text: 'Identify opportunities for improvement in –',
+    subItems: [
+      'Accent neutralization',
+      'Pronunciation',
+      'Grammar',
+      'Telephone etiquette/call hygiene',
+      'Voice modulation, clarity, pace',
+      'Active listening/selective listening',
+      'Overall fluency',
+    ],
+  },
+  { text: 'Provide constructive feedback on the areas of improvement to the associates on their spoken English based on the areas derived from the recordings' },
+  { text: 'Share best practices from other call recordings and own experience for effective learning' },
+  { text: 'Prepare, maintain, and circulate monitoring reports regularly' },
+  { text: 'Evaluate Research Associates on overall behaviour, including attendance and punctuality for feedback sessions' },
+];
+
+const FALLBACK_JOB_SKILLS_ITEMS: string[] = [
+  'Excellent command over spoken and written English with a strong grasp of intermediate grammar (clear understanding of English pronunciation, phonetics and common grammar errors)',
+  'Ability to identify and correct regional accent influence',
+  'Ability to share feedback in a non-judgemental and supportive manner',
+  'Strong interpersonal skills; able to connect effectively within the team and other teams as well',
+  'Problem-solving aptitude; able to handle unexpected issues quickly and efficiently',
+  'Ability to work professionally both in a team and independently to ensure timely completion of tasks',
+];
+
+const FALLBACK_JOB_QUALIFICATIONS_ITEMS: string[] = [
+  'Post-graduate freshers with strong communication skills are encouraged to apply',
+  'Graduate/Post-Graduate candidates in any stream with minimum 6 months of experience in language coaching, communication monitoring, or quality evaluation roles may apply',
+  'Educational background in English, Communications, Linguistics, or related fields will be preferred',
+  'Prior experience in corporate training, soft skills development, or professional development programs is a plus',
+];
+
 const FALLBACK_JOBS: JobListingModel[] = [
-  { id: 'fallback-job-executive', title: 'Executive – Language & Communication', location: 'Gurugram, India', jobType: 'Full Time', department: 'Training', postedDate: '12 Aug 2026' },
+  {
+    id: 'fallback-job-executive',
+    title: 'Executive – Language & Communication',
+    location: 'Gurugram, India',
+    jobType: 'Full Time',
+    department: 'Training',
+    postedDate: '12 Aug 2026',
+    descriptionItems: FALLBACK_JOB_DESCRIPTION_ITEMS,
+    skillsItems: FALLBACK_JOB_SKILLS_ITEMS,
+    qualificationsItems: FALLBACK_JOB_QUALIFICATIONS_ITEMS,
+  },
   { id: 'fallback-job-primary', title: 'Associate – Primary Research', location: 'Gurugram, India', jobType: 'Full Time', department: 'Operations', postedDate: '12 Aug 2026' },
   { id: 'fallback-job-secondary', title: 'Associate - Secondary Research', location: 'Gurugram, India', jobType: 'Full Time', department: 'Operations', postedDate: '12 Aug 2026' },
   { id: 'fallback-job-sales', title: 'Assistant Manager – India Sales', location: 'Gurugram, India', jobType: 'Full Time', department: 'India Research', postedDate: '12 Aug 2026' },

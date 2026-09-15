@@ -5,10 +5,11 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '@/views/ui/Container';
 import { LocationPinIcon } from '@/views/ui/icons/LocationPinIcon';
 import { Briefcase, Users, Calendar, Search } from 'lucide-react';
+import { JobDetailsModal } from './JobDetailsModal';
+import { JobApplicationModal } from './JobApplicationModal';
 import type { ResolvedWorkWithUs } from './fallback';
 import type { JobListingModel } from '@/models/workWithUsPage';
 
-const CAREERS_EMAIL = 'careers@unimrkt.com';
 const PAGE_SIZE = 4;
 const ALL = 'All';
 
@@ -26,7 +27,7 @@ function useButtonMotionProps() {
   return shouldReduceMotion ? {} : { whileHover: { scale: 1.03 }, whileTap: { scale: 0.98 }, transition: { duration: 0.15 } };
 }
 
-function JobCard({ job }: { job: JobListingModel }) {
+function JobCard({ job, onViewDetails, onApply }: { job: JobListingModel; onViewDetails: () => void; onApply: () => void }) {
   const motionProps = useButtonMotionProps();
   return (
     <div className="relative flex flex-col gap-6 rounded-[18px] border border-[#ebebe4] bg-white p-6 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.05)] sm:flex-row sm:items-center sm:gap-8">
@@ -54,26 +55,23 @@ function JobCard({ job }: { job: JobListingModel }) {
           </span>
         </div>
       </div>
-      {/* No per-job description exists anywhere in the node or the CMS
-          model — the page's own "Join Us" copy is the only real
-          application instruction (send a resume to careers@unimrkt.com),
-          so both buttons route there rather than opening a fabricated
-          detail view. */}
       <div className="flex shrink-0 gap-3">
-        <motion.a
-          href={`mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(`More information about ${job.title}`)}`}
+        <motion.button
+          type="button"
+          onClick={onViewDetails}
           className="flex h-14 items-center justify-center rounded-[4px] border border-[#962b39] px-6 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-[#7e2a43] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:bg-[#962b39]/5"
           {...motionProps}
         >
           View Details
-        </motion.a>
-        <motion.a
-          href={`mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(`Application for ${job.title}`)}`}
+        </motion.button>
+        <motion.button
+          type="button"
+          onClick={onApply}
           className="flex h-14 items-center justify-center rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-6 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:brightness-110"
           {...motionProps}
         >
           Apply Now
-        </motion.a>
+        </motion.button>
       </div>
     </div>
   );
@@ -93,6 +91,8 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
   const [jobType, setJobType] = useState(ALL);
   const [location, setLocation] = useState(ALL);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [detailsJob, setDetailsJob] = useState<JobListingModel | null>(null);
+  const [applyJob, setApplyJob] = useState<JobListingModel | null>(null);
 
   const departments = useMemo(() => Array.from(new Set(jobs.items.map((j) => j.department))), [jobs.items]);
   const jobTypes = useMemo(() => Array.from(new Set(jobs.items.map((j) => j.jobType))), [jobs.items]);
@@ -114,7 +114,8 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
   const hasMore = visibleCount < filtered.length;
 
   return (
-    <section id="open-positions" className="bg-white py-16 sm:py-20 lg:py-24">
+    <>
+      <section id="open-positions" className="bg-white py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-600">{jobs.eyebrow}</p>
@@ -166,7 +167,7 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
 
         <div className="mx-auto mt-8 flex max-w-5xl flex-col gap-6">
           {visibleJobs.length > 0 ? (
-            visibleJobs.map((job) => <JobCard key={job.id} job={job} />)
+            visibleJobs.map((job) => <JobCard key={job.id} job={job} onViewDetails={() => setDetailsJob(job)} onApply={() => setApplyJob(job)} />)
           ) : (
             <p className="text-center opacity-70">No open positions match your filters right now.</p>
           )}
@@ -185,6 +186,19 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
           </div>
         )}
       </Container>
-    </section>
+      </section>
+
+      {detailsJob && (
+        <JobDetailsModal
+          job={detailsJob}
+          onClose={() => setDetailsJob(null)}
+          onApply={() => {
+            setApplyJob(detailsJob);
+            setDetailsJob(null);
+          }}
+        />
+      )}
+      {applyJob && <JobApplicationModal jobTitle={applyJob.title} onClose={() => setApplyJob(null)} />}
+    </>
   );
 }

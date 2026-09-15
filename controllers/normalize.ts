@@ -948,6 +948,9 @@ function normalizeJobListing(job: StrapiJobListing): JobListingModel {
     jobType: job.jobType,
     department: job.department,
     postedDate: job.postedDate,
+    descriptionItems: job.descriptionItems ?? undefined,
+    skillsItems: job.skillsItems ?? undefined,
+    qualificationsItems: job.qualificationsItems ?? undefined,
   };
 }
 

@@ -14,6 +14,15 @@ import type { ImageModel, LinkModel, FaqItemModel, SeoModel } from './domain';
 // Raw
 // ---------------------------------------------------------------------------
 
+/** One "Identify opportunities for improvement in –"-style bullet in a
+ * job's Job Description (Figma node 924:23508): a top-level bullet with
+ * an optional nested numbered sub-list, exactly as drawn for the
+ * "Executive – Language & Communication" job. */
+export interface JobDescriptionBlock {
+  text: string;
+  subItems?: string[];
+}
+
 export interface StrapiJobListing {
   id: number;
   title: string;
@@ -21,6 +30,13 @@ export interface StrapiJobListing {
   jobType: string;
   department: string;
   postedDate: string;
+  /** Rich detail-modal content (node 924:23508) — only the one job the
+   * node draws ("Executive – Language & Communication") has this
+   * populated; every other job leaves these null/empty and the modal
+   * omits the corresponding section rather than inventing filler. */
+  descriptionItems: JobDescriptionBlock[] | null;
+  skillsItems: string[] | null;
+  qualificationsItems: string[] | null;
 }
 
 export interface StrapiWorkWithUsPage {
@@ -71,6 +87,9 @@ export interface JobListingModel {
   jobType: string;
   department: string;
   postedDate: string;
+  descriptionItems?: JobDescriptionBlock[];
+  skillsItems?: string[];
+  qualificationsItems?: string[];
 }
 
 export interface WorkWithUsSettings {
