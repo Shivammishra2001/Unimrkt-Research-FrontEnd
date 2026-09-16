@@ -39,7 +39,7 @@ export function IndustryGridView({ block }: { block: IndustryGridModel; index: n
                   <StrapiImage image={item.image} sizes="(min-width: 1024px) 25vw, 50vw" fill className="object-cover" />
                 </div>
               )}
-              <p className="relative z-10 px-2 pb-2 font-sans text-lg font-semibold text-white">{item.title}</p>
+              <h3 className="relative z-10 px-2 pb-2 font-sans text-lg font-semibold text-white">{item.title}</h3>
             </div>
           ))}
         </div>

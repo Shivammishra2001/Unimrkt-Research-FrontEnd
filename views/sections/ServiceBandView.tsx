@@ -50,7 +50,7 @@ export function ServiceBandView({ block }: { block: ServiceBandModel; index: num
                   </p>
                 )}
                 <div className="flex items-center justify-between gap-3">
-                  <span className="font-sans text-lg font-semibold">{item.label}</span>
+                  <h3 className="font-sans text-lg font-semibold">{item.label}</h3>
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 ease-out group-hover:border-brand-600 group-hover:bg-brand-600">
                     <ArrowRightIcon className="size-4" aria-hidden="true" />
                   </span>
