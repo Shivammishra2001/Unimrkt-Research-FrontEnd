@@ -1158,6 +1158,7 @@ export function normalizeTeamMember(item: StrapiTeamMember): TeamMemberModel {
     role: item.role,
     photo: toImageModel(item.photo, item.name),
     order: item.order,
+    bio: item.bio ?? undefined,
   };
 }
 

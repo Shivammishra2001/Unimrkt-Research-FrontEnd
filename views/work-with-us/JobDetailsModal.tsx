@@ -3,7 +3,7 @@
 import { Briefcase, Users, Calendar } from 'lucide-react';
 import { LocationPinIcon } from '@/views/ui/icons/LocationPinIcon';
 import { CloseIcon } from '@/views/ui/icons/CloseIcon';
-import { useModalDismiss } from './useModalDismiss';
+import { useModalDismiss } from '@/views/ui/useModalDismiss';
 import type { JobListingModel, JobDescriptionBlock } from '@/models/workWithUsPage';
 
 /**

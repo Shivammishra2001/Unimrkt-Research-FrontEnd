@@ -8,9 +8,17 @@
  *
  * Every string here — including all 19 member names/roles, in the
  * node's own exact top-to-bottom, left-to-right grid reading order —
- * is copied verbatim via get_design_context. No bio, department, or
- * social-link field is included anywhere: none is drawn on any card on
- * this node.
+ * is copied verbatim via get_design_context. No department or
+ * social-link field is included anywhere: neither is drawn on any card
+ * or in the "View Profile" modal (Figma node 1126:55196 -> the modal
+ * card itself is 1126:56704).
+ *
+ * `bio`: that modal only ever draws ONE worked example — Anurag
+ * Magoo's own bio paragraph, included verbatim below. No other member
+ * has bio text drawn anywhere in the Figma file, so every other
+ * member's `bio` is left undefined; TeamProfileModal.tsx omits the bio
+ * paragraph entirely when it's empty rather than inventing filler copy
+ * (same precedent as JobDetailsModal.tsx's section-by-section omission).
  */
 import type { OurTeamPageSettings } from '@/models/ourTeamPage';
 import type { TeamMemberModel } from '@/models/teamMember';
@@ -24,15 +32,18 @@ function localImage(filename: string, alt: string, width: number, height: number
 
 const FALLBACK_HERO_IMAGE = localImage('team-hero-bg.jpg', 'Meet the Minds Behind Unimrkt', 1900, 926);
 
-function member(idSuffix: string, name: string, role: string, photoFile: string, order: number): TeamMemberModel {
-  return { id: `fallback-team-${idSuffix}`, name, role, photo: localImage(photoFile, name, 700, 860), order };
+function member(idSuffix: string, name: string, role: string, photoFile: string, order: number, bio?: string): TeamMemberModel {
+  return { id: `fallback-team-${idSuffix}`, name, role, photo: localImage(photoFile, name, 700, 860), order, bio };
 }
+
+const ANURAG_MAGOO_BIO =
+  'Anurag Magoo is the Co-Founder of Unimrkt Research, with specializations in Key Account Management, Research Analysis, Strategy Planning & Execution, and Process Reengineering. He has a post-graduate diploma in Global Sales and Marketing and is also a qualified Six Sigma Green Belt executive. In addition, he has also been an internal auditor for ISO 20252 & ISO 9001. With over 26+ years of industry experience, he developed his early career with American Express and was the Head of Research Operations at Exevo for more than 9 years. Before joining Unimrkt, he was the Executive Director of Cimigo India.';
 
 // 19 cards, verbatim, in the node's own top-to-bottom / left-to-right
 // grid reading order (row 1: cols 1-4, row 2: cols 1-4, ... row 5: cols
 // 1-3 only — the grid's last row has 3 cards, not 4, exactly as drawn).
 const FALLBACK_MEMBERS: TeamMemberModel[] = [
-  member('anurag-magoo', 'Anurag Magoo', 'Co-Founder', 'team-anurag-magoo.jpg', 1),
+  member('anurag-magoo', 'Anurag Magoo', 'Co-Founder', 'team-anurag-magoo.jpg', 1, ANURAG_MAGOO_BIO),
   member('sandeep-kumar', 'Sandeep Kumar', 'Co-Founder', 'team-sandeep-kumar.jpg', 2),
   member('kanishk-sheel', 'Kanishk Sheel', 'Co-Founder & Managing Director', 'team-kanishk-sheel.jpg', 3),
   member('james-west', 'James West', 'Managing Director - North America', 'team-james-west.jpg', 4),

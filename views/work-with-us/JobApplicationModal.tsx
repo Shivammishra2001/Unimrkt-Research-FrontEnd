@@ -2,7 +2,7 @@
 
 import { useRef, useState, type DragEvent } from 'react';
 import { CloseIcon } from '@/views/ui/icons/CloseIcon';
-import { useModalDismiss } from './useModalDismiss';
+import { useModalDismiss } from '@/views/ui/useModalDismiss';
 
 const FIELD_CLASS =
   'h-[65px] w-full rounded-xl border border-[#e0e0e0] bg-[#f9f9f7] px-[17px] font-sans text-[13px] font-medium text-heading placeholder:text-[#5e5e5e] focus:outline-none focus:ring-2 focus:ring-brand-600';
