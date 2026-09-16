@@ -51,7 +51,7 @@ export function HeroSection({ hero }: { hero: ResolvedOurTeam['hero'] }) {
             About Us
           </Link>
           <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="truncate font-sans text-sm text-[#868484]">Our Team</span>
+          <span className="min-w-0 flex-1 truncate font-sans text-sm text-[#868484]">Our Team</span>
         </div>
       </div>
     </>
