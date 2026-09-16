@@ -37,6 +37,7 @@ import type { StrapiContactPageResponse } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse } from '@/models/workWithUsPage';
 import type { StrapiCaseStudyListResponse, StrapiCaseStudyDetailResponse, StrapiCaseStudySlugsResponse } from '@/models/caseStudy';
 import type { StrapiCaseStudyPageResponse } from '@/models/caseStudyPage';
+import type { StrapiPrivacyPolicyPageResponse } from '@/models/privacyPolicyPage';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -351,5 +352,11 @@ export function getCaseStudySlugs(): Promise<StrapiCaseStudySlugsResponse> {
  * hardcoded in the frontend template. */
 export function getCaseStudyPageSettings(): Promise<StrapiCaseStudyPageResponse> {
   return strapiFetch<StrapiCaseStudyPageResponse>('case-study-page', { tag: 'case-study-page' });
+}
+
+/** GET /privacy-policy-page — singleType, backend forces its own deep
+ * populate; no query sent (same convention as getCaseStudyPageSettings()). */
+export function getPrivacyPolicyPageSettings(): Promise<StrapiPrivacyPolicyPageResponse> {
+  return strapiFetch<StrapiPrivacyPolicyPageResponse>('privacy-policy-page', { tag: 'privacy-policy-page' });
 }
 

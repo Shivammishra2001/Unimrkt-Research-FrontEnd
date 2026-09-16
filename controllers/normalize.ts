@@ -75,6 +75,14 @@ import type {
   CaseStudyTestimonialCardModel,
 } from '@/models/caseStudyPage';
 import type {
+  StrapiPrivacyPolicyPageResponse,
+  StrapiPrivacyPolicyTocItem,
+  StrapiPrivacyPolicyListItem,
+  PrivacyPolicyPageSettings,
+  PrivacyPolicyTocItemModel,
+  PrivacyPolicyListItemModel,
+} from '@/models/privacyPolicyPage';
+import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
   StrapiBlogSlugsResponse,
@@ -1134,5 +1142,48 @@ export function normalizeCaseStudyPageSettings(res: StrapiCaseStudyPageResponse)
     bottomCtaHeading: data.bottomCtaHeading ?? undefined,
     bottomCtaBody: data.bottomCtaBody ?? undefined,
     bottomCtaAction: data.bottomCtaAction ? normalizeLink(data.bottomCtaAction) : undefined,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Privacy Policy page (/privacy-policy, Figma node 1114:50556)
+// ---------------------------------------------------------------------------
+
+function normalizePrivacyPolicyTocItem(item: StrapiPrivacyPolicyTocItem): PrivacyPolicyTocItemModel {
+  return { id: `pp-toc-${item.id}`, label: item.label, anchor: item.anchor };
+}
+
+function normalizePrivacyPolicyListItem(item: StrapiPrivacyPolicyListItem): PrivacyPolicyListItemModel {
+  return { id: `pp-list-${item.id}`, text: item.text };
+}
+
+export function normalizePrivacyPolicyPageSettings(res: StrapiPrivacyPolicyPageResponse): PrivacyPolicyPageSettings {
+  const data = res.data;
+
+  return {
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? 'Privacy Policy'),
+    introBody: data.introBody ?? undefined,
+    tocHeading: data.tocHeading ?? undefined,
+    tocItems: (data.tocItems ?? []).map(normalizePrivacyPolicyTocItem),
+    qualifiesHeading: data.qualifiesHeading ?? undefined,
+    qualifiesBody: data.qualifiesBody ?? undefined,
+    lawfulHeading: data.lawfulHeading ?? undefined,
+    lawfulIntro: data.lawfulIntro ?? undefined,
+    lawfulPurposesList: (data.lawfulPurposesList ?? []).map(normalizePrivacyPolicyListItem),
+    lawfulBasisIntro: data.lawfulBasisIntro ?? undefined,
+    lawfulBasisList: (data.lawfulBasisList ?? []).map(normalizePrivacyPolicyListItem),
+    lawfulClosing: data.lawfulClosing ?? undefined,
+    registrationHeading: data.registrationHeading ?? undefined,
+    registrationBody: data.registrationBody ?? undefined,
+    panelHeading: data.panelHeading ?? undefined,
+    panelIntro: data.panelIntro ?? undefined,
+    panelDataSourcesList: (data.panelDataSourcesList ?? []).map(normalizePrivacyPolicyListItem),
+    panelClosing: data.panelClosing ?? undefined,
+    legalHeading: data.legalHeading ?? undefined,
+    legalBody: data.legalBody ?? undefined,
+    seo: normalizeSeo(data.seo, data.heroHeading ?? 'Privacy Policy'),
   };
 }
