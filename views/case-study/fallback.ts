@@ -42,6 +42,7 @@ const FALLBACK_HERO_CTA: LinkModel = { id: 'fallback-hero-cta', label: 'Explore 
 const FALLBACK_CASE_STUDIES: CaseStudySummary[] = [
   {
     id: 'fallback-cs-banking',
+    slug: 'understanding-customer-expectations-in-a-changing-financial-market',
     title: 'Understanding Customer Expectations in a Changing Financial Market',
     excerpt: 'Uncover evolving customer needs and expectations shaping today’s financial landscape.',
     category: 'BANKING & FINANCE',
@@ -49,6 +50,7 @@ const FALLBACK_CASE_STUDIES: CaseStudySummary[] = [
   },
   {
     id: 'fallback-cs-healthcare',
+    slug: 'mapping-patient-needs-across-the-healthcare-journey',
     title: 'Mapping Patient Needs Across the Healthcare Journey',
     excerpt: 'Understand patient needs across every healthcare touchpoint.',
     category: 'HEALTHCARE',
@@ -56,6 +58,7 @@ const FALLBACK_CASE_STUDIES: CaseStudySummary[] = [
   },
   {
     id: 'fallback-cs-automotive',
+    slug: 'understanding-the-future-of-mobility',
     title: 'Understanding the Future of Mobility',
     excerpt: 'Explore evolving mobility trends, behaviours, and consumer expectations.',
     category: 'AUTOMOTIVE',
@@ -63,6 +66,7 @@ const FALLBACK_CASE_STUDIES: CaseStudySummary[] = [
   },
   {
     id: 'fallback-cs-fmcg',
+    slug: 'finding-the-next-consumer-growth-opportunity',
     title: 'Finding the Next Consumer Growth Opportunity',
     excerpt: 'Identify emerging consumer trends and opportunities driving sustainable growth.',
     category: 'FMCG',
@@ -70,6 +74,7 @@ const FALLBACK_CASE_STUDIES: CaseStudySummary[] = [
   },
   {
     id: 'fallback-cs-telecom',
+    slug: 'decoding-digital-adoption-across-markets',
     title: 'Decoding Digital Adoption Across Markets',
     excerpt: 'Uncover digital behaviors, adoption patterns, and market opportunities across regions.',
     category: 'IT & TELECOM',
@@ -77,6 +82,7 @@ const FALLBACK_CASE_STUDIES: CaseStudySummary[] = [
   },
   {
     id: 'fallback-cs-energy',
+    slug: 'understanding-changing-energy-consumption',
     title: 'Understanding Changing Energy Consumption',
     excerpt: 'Track evolving energy habits, consumption patterns, and emerging market needs.',
     category: 'ENERGY & UTILITIES',

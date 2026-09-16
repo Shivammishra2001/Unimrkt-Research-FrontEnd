@@ -61,7 +61,13 @@ import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/
 import type { StrapiOurCompanyPageResponse, OurCompanySettings } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse, StrapiOfficeLocation, ContactPageSettings, OfficeLocationModel } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse, StrapiJobListing, WorkWithUsSettings, JobListingModel } from '@/models/workWithUsPage';
-import type { StrapiCaseStudy, StrapiCaseStudyListResponse, CaseStudySummary } from '@/models/caseStudy';
+import type {
+  StrapiCaseStudy,
+  StrapiCaseStudyListResponse,
+  StrapiCaseStudyDetailResponse,
+  CaseStudySummary,
+  CaseStudyDetail,
+} from '@/models/caseStudy';
 import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
@@ -182,7 +188,7 @@ export function normalizeIndustryDetailCard(item: StrapiIndustryDetailCard): Ind
   };
 }
 
-function normalizeTrustLogo(item: StrapiTrustLogo): TrustLogoModel {
+export function normalizeTrustLogo(item: StrapiTrustLogo): TrustLogoModel {
   return {
     id: `trust-logo-${item.id}`,
     name: item.name,
@@ -1005,6 +1011,7 @@ export function normalizeWorkWithUsPageSettings(res: StrapiWorkWithUsPageRespons
 export function normalizeCaseStudy(cs: StrapiCaseStudy): CaseStudySummary {
   return {
     id: `case-study-${cs.id}`,
+    slug: cs.slug,
     title: cs.title,
     excerpt: cs.excerpt,
     category: cs.category,
@@ -1014,4 +1021,49 @@ export function normalizeCaseStudy(cs: StrapiCaseStudy): CaseStudySummary {
 
 export function normalizeCaseStudyList(response: StrapiCaseStudyListResponse): CaseStudySummary[] {
   return (response.data ?? []).map(normalizeCaseStudy);
+}
+
+// ---------------------------------------------------------------------------
+// Case Study detail (/case-study/[slug], Figma node 1107:49842)
+// ---------------------------------------------------------------------------
+
+export function normalizeCaseStudyDetail(cs: StrapiCaseStudy): CaseStudyDetail {
+  return {
+    id: `case-study-${cs.id}`,
+    title: cs.title,
+    slug: cs.slug,
+    excerpt: cs.excerpt,
+    category: cs.category,
+    coverImage: toImageModel(cs.coverImage, cs.title),
+    heroSubheading: cs.heroSubheading ?? undefined,
+    heroImage: toImageModel(cs.heroImage, cs.title),
+    trustLogos: (cs.trustLogos ?? []).map(normalizeTrustLogo),
+    challengeHeading: cs.challengeHeading ?? undefined,
+    challengeBody: cs.challengeBody ?? undefined,
+    challengeBullets: cs.challengeBullets ?? undefined,
+    challengeClosing: cs.challengeClosing ?? undefined,
+    challengePhoto: toImageModel(cs.challengePhoto, cs.title),
+    researchQuestionHeading: cs.researchQuestionHeading ?? undefined,
+    researchQuestionBody: cs.researchQuestionBody ?? undefined,
+    researchQuestionItems: (cs.researchQuestionItems ?? []).map(normalizeIndustryDetailCard),
+    approachHeading: cs.approachHeading ?? undefined,
+    approachBody: cs.approachBody ?? undefined,
+    approachSteps: (cs.approachSteps ?? []).map(normalizeIndustryDetailCard),
+    uncoveredHeading: cs.uncoveredHeading ?? undefined,
+    uncoveredBody: cs.uncoveredBody ?? undefined,
+    uncoveredPanels: (cs.uncoveredPanels ?? []).map(normalizeIndustryDetailCard),
+    impactHeading: cs.impactHeading ?? undefined,
+    impactBody: cs.impactBody ?? undefined,
+    impactImage: toImageModel(cs.impactImage, cs.title),
+    impactItems: (cs.impactItems ?? []).map(normalizeIndustryDetailCard),
+    faqItems: (cs.faqItems ?? []).map((item) => ({
+      id: `case-study-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+  };
+}
+
+export function normalizeCaseStudyDetailResponse(response: StrapiCaseStudyDetailResponse): CaseStudyDetail | null {
+  return response.data ? normalizeCaseStudyDetail(response.data) : null;
 }

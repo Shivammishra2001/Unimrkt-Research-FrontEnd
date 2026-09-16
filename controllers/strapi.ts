@@ -35,7 +35,7 @@ import type { StrapiCategoryListResponse } from '@/models/category';
 import type { StrapiOurCompanyPageResponse } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse } from '@/models/workWithUsPage';
-import type { StrapiCaseStudyListResponse } from '@/models/caseStudy';
+import type { StrapiCaseStudyListResponse, StrapiCaseStudyDetailResponse, StrapiCaseStudySlugsResponse } from '@/models/caseStudy';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -326,5 +326,19 @@ export function getCaseStudies(): Promise<StrapiCaseStudyListResponse> {
     query: { populate: '*', pagination: { pageSize: 100 } },
     tag: 'case-studies',
   });
+}
+
+/** GET /case-studies/slug/:slug — deep-populated (the backend's own
+ * `find`/`findBySlug` both force buildCaseStudyPopulate(), so no
+ * populate query is sent here — same convention as
+ * getIndustryBySlug()/getBlogBySlug()). Backs /case-study/[slug]. */
+export function getCaseStudyBySlug(slug: string): Promise<StrapiCaseStudyDetailResponse> {
+  return strapiFetch<StrapiCaseStudyDetailResponse>(`case-studies/slug/${encodeURIComponent(slug)}`, {
+    tag: `case-study-${slug}`,
+  });
+}
+
+export function getCaseStudySlugs(): Promise<StrapiCaseStudySlugsResponse> {
+  return strapiFetch<StrapiCaseStudySlugsResponse>('case-studies/slugs', { tag: 'case-studies' });
 }
 
