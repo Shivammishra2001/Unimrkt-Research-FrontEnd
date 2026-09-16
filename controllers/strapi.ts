@@ -36,6 +36,7 @@ import type { StrapiOurCompanyPageResponse } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse } from '@/models/workWithUsPage';
 import type { StrapiCaseStudyListResponse, StrapiCaseStudyDetailResponse, StrapiCaseStudySlugsResponse } from '@/models/caseStudy';
+import type { StrapiCaseStudyPageResponse } from '@/models/caseStudyPage';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -340,5 +341,15 @@ export function getCaseStudyBySlug(slug: string): Promise<StrapiCaseStudyDetailR
 
 export function getCaseStudySlugs(): Promise<StrapiCaseStudySlugsResponse> {
   return strapiFetch<StrapiCaseStudySlugsResponse>('case-studies/slugs', { tag: 'case-studies' });
+}
+
+/** GET /case-study-page — singleType, backend forces its own deep
+ * populate; no query sent (same convention as getContactPageSettings()/
+ * getWorkWithUsPageSettings()). Holds the template-level copy shared by
+ * every case study — including the detail page's "Trusted by Global
+ * Businesses" heading — so it's editable in the CMS instead of
+ * hardcoded in the frontend template. */
+export function getCaseStudyPageSettings(): Promise<StrapiCaseStudyPageResponse> {
+  return strapiFetch<StrapiCaseStudyPageResponse>('case-study-page', { tag: 'case-study-page' });
 }
 

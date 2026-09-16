@@ -1,16 +1,16 @@
 /**
  * Template + graceful fallback resolver for /case-study — Figma node
  * 1023:45614 ("Case Study", file foaJFuv0vRX8nD43o0ylgB). Same
- * architecture as views/work-with-us/fallback.ts, but narrower in
- * scope: per this task's own directive, the ONLY backend content type
- * built for this page is `api::case-study.case-study` (the "Case Study
- * Explorer" grid's cards — Priority 1 is that collection's real data,
- * falling back to this node's own 6 cards when empty). Every other
- * section (hero, "Our Approach" steps, testimonials, FAQ, "About Case
- * Study") has no CMS backing at all — this task's schema location was
- * explicitly scoped to `backend/src/api/case-study/` only, not a
- * `case-study-page` singleType — so those sections are this node's own
- * verbatim copy, always.
+ * architecture as views/work-with-us/fallback.ts: EVERY section is
+ * CMS-first now, sourced from the api::case-study-page.case-study-page
+ * singleType (models/caseStudyPage.ts) and falling back to this node's
+ * own verbatim copy per field wherever the CMS value is empty.
+ *
+ * Priority 1 for the "Case Study Explorer" grid is still the real
+ * `api::case-study.case-study` collection's own entries — the settings
+ * singleType never carries per-case-study content, only this page's
+ * shared template chrome (hero, explorer labels, approach steps,
+ * testimonials, listing FAQ, about).
  *
  * One disclosed decision (confirmed with the user before building):
  * each card's arrow-right CTA (drawn on every Component 1055-1060) is
@@ -27,7 +27,9 @@
  * data; see ExplorerSection.tsx's own comment.
  */
 import type { CaseStudySummary } from '@/models/caseStudy';
+import type { CaseStudyPageSettings, CaseStudyTestimonialCardModel } from '@/models/caseStudyPage';
 import type { FaqItemModel, LinkModel, ImageModel } from '@/models/domain';
+import type { IndustryDetailCardModel } from '@/models/industry';
 
 const ASSET_DIR = '/images/case-study';
 
@@ -90,54 +92,43 @@ const FALLBACK_CASE_STUDIES: CaseStudySummary[] = [
   },
 ];
 
-export interface ApproachStep {
-  id: string;
-  number: number;
-  title: string;
-  body: string;
-  icon: string;
+function approachCard(idSuffix: string, title: string, description: string, iconFile: string): IndustryDetailCardModel {
+  return { id: `fallback-${idSuffix}`, title, description, icon: localImage(iconFile, title, 70, 70) };
 }
 
-// "Our Approach" — 4 cards (Component 1061-1064), verbatim.
-const APPROACH_STEPS: ApproachStep[] = [
-  { id: 'challenge', number: 1, title: 'The Challenge', body: 'What business problem needed solving?', icon: 'cs-icon-challenge.png' },
-  { id: 'research', number: 2, title: 'The Research', body: 'Which methodology was used?', icon: 'cs-icon-research.png' },
-  { id: 'insight', number: 3, title: 'The Insight', body: 'What did the research reveal?', icon: 'cs-icon-insight.png' },
-  { id: 'impact', number: 4, title: 'The Impact', body: 'How did the insight support the business?', icon: 'cs-icon-impact.png' },
+// "Our Approach" — 4 cards (Component 1061-1064), verbatim. Used only
+// when the case-study-page singleType's own `approachSteps` is empty.
+const FALLBACK_APPROACH_STEPS: IndustryDetailCardModel[] = [
+  approachCard('approach-challenge', 'The Challenge', 'What business problem needed solving?', 'cs-icon-challenge.png'),
+  approachCard('approach-research', 'The Research', 'Which methodology was used?', 'cs-icon-research.png'),
+  approachCard('approach-insight', 'The Insight', 'What did the research reveal?', 'cs-icon-insight.png'),
+  approachCard('approach-impact', 'The Impact', 'How did the insight support the business?', 'cs-icon-impact.png'),
 ];
-
-export interface TestimonialCard {
-  id: string;
-  heading: string;
-  quote: string;
-  roleLine: string;
-  orgLine: string;
-}
 
 // 3 testimonial cards (Component 1065-1067), verbatim. Distinct shape
 // from api::testimonial.testimonial (which requires a real authorName
 // and pairs it with a company) — these cards show only a generic
-// role + organization-type line, never a name, so reusing that
-// existing collection would mean inventing a name value it requires
-// but the node never draws. Out of this task's declared schema scope
-// anyway (backend/src/api/case-study/ only), so left as static copy.
-const TESTIMONIALS: TestimonialCard[] = [
+// role + organization-type line, never a name, so this project reuses
+// a dedicated `case-study.testimonial-card` component instead (see
+// models/caseStudyPage.ts). Used only when the singleType's own
+// `testimonials` is empty.
+const FALLBACK_TESTIMONIALS: CaseStudyTestimonialCardModel[] = [
   {
-    id: 'testimonial-marketing',
+    id: 'fallback-testimonial-marketing',
     heading: 'Expertise That Drives Better Decisions',
     quote: 'Unimrkt brought strong research expertise and a clear understanding of our business challenge. The insights helped us make more confident, data-driven decisions.',
     roleLine: 'Marketing Director',
     orgLine: 'Consumer Brand',
   },
   {
-    id: 'testimonial-strategy',
+    id: 'fallback-testimonial-strategy',
     heading: 'Insights That Strengthen Strategy',
     quote: 'The team was responsive, thorough and highly focused on data quality. Their research approach gave us actionable insights that directly supported our strategy.',
     roleLine: 'Strategy Head',
     orgLine: 'Global Organization',
   },
   {
-    id: 'testimonial-business',
+    id: 'fallback-testimonial-business',
     heading: 'Turning Research Into Impact',
     quote: 'What stood out was Unimrkt’s ability to turn complex research findings into clear, practical insights. It was a valuable partnership from start to finish.',
     roleLine: 'Business Head',
@@ -149,8 +140,9 @@ const TESTIMONIALS: TestimonialCard[] = [
 // instance (metadata's own `name` attribute is unreliable — see this
 // session's recurring FAQ-staleness note in every other page's
 // fallback.ts). Accordion is collapsed on canvas; answers authored in
-// the same voice as every other FAQ section this session.
-const FAQ_ITEMS: FaqItemModel[] = [
+// the same voice as every other FAQ section this session. Used only
+// when the singleType's own `listingFaqItems` is empty.
+const FALLBACK_FAQ_ITEMS: FaqItemModel[] = [
   { id: 'fallback-faq-learn', question: 'What can I learn from a Unimrkt case study?', answer: 'Each case study walks through a real business challenge, the research methodology used to address it, and the insights that shaped the client’s decisions.' },
   { id: 'fallback-faq-types', question: 'What types of research projects are featured in the case studies?', answer: 'Our case studies span primary and secondary research, qualitative and quantitative studies, and projects across consumer, B2B, and industrial markets.' },
   { id: 'fallback-faq-approach', question: 'How does Unimrkt approach a research challenge?', answer: 'We start by clarifying the business question, design a methodology suited to it, gather and analyze the data, and translate the findings into clear, actionable recommendations.' },
@@ -171,45 +163,51 @@ export interface ResolvedCaseStudy {
     researchTypeLabel: string;
     items: CaseStudySummary[];
   };
-  approach: { eyebrow: string; heading: string; steps: ApproachStep[] };
-  testimonials: { eyebrow: string; heading: string; items: TestimonialCard[] };
+  approach: { eyebrow: string; heading: string; steps: IndustryDetailCardModel[] };
+  testimonials: { eyebrow: string; heading: string; items: CaseStudyTestimonialCardModel[] };
+  faqHeading: string;
   faqItems: FaqItemModel[];
   about: { eyebrow: string; heading: string; body: string };
 }
 
-export function resolveCaseStudy(caseStudies: CaseStudySummary[]): ResolvedCaseStudy {
+export function resolveCaseStudy(caseStudies: CaseStudySummary[], settings: CaseStudyPageSettings): ResolvedCaseStudy {
   return {
     hero: {
-      eyebrow: 'CASE STUDIES',
-      heading: 'Turning Research Into Business Impact',
-      subheading: 'Unimrkt Research helps businesses uncover opportunities, understand consumers and make confident, data-driven decisions.',
-      image: localImage('cs-hero-bg.jpg', 'Turning Research Into Business Impact', 1900, 848),
-      cta: FALLBACK_HERO_CTA,
+      eyebrow: settings.heroEyebrow || 'CASE STUDIES',
+      heading: settings.heroHeading || 'Turning Research Into Business Impact',
+      subheading:
+        settings.heroSubheading ||
+        'Unimrkt Research helps businesses uncover opportunities, understand consumers and make confident, data-driven decisions.',
+      image: settings.heroImage || localImage('cs-hero-bg.jpg', 'Turning Research Into Business Impact', 1900, 848),
+      cta: settings.heroCta || FALLBACK_HERO_CTA,
     },
     explorer: {
-      eyebrow: 'Case Study Explorer',
-      heading: 'Explore Our Research Stories',
-      body: 'Discover how we solve complex research challenges across industries, markets and methodologies.',
-      allLabel: 'All',
-      industriesLabel: 'Industries',
-      researchTypeLabel: 'Research Type',
+      eyebrow: settings.explorerEyebrow || 'Case Study Explorer',
+      heading: settings.explorerHeading || 'Explore Our Research Stories',
+      body: settings.explorerBody || 'Discover how we solve complex research challenges across industries, markets and methodologies.',
+      allLabel: settings.allLabel || 'All',
+      industriesLabel: settings.industriesLabel || 'Industries',
+      researchTypeLabel: settings.researchTypeLabel || 'Research Type',
       items: caseStudies.length > 0 ? caseStudies : FALLBACK_CASE_STUDIES,
     },
     approach: {
-      eyebrow: 'Our Approach',
-      heading: 'Every Case Study Starts With the Right Question',
-      steps: APPROACH_STEPS,
+      eyebrow: settings.approachEyebrow || 'Our Approach',
+      heading: settings.approachHeading || 'Every Case Study Starts With the Right Question',
+      steps: settings.approachSteps.length > 0 ? settings.approachSteps : FALLBACK_APPROACH_STEPS,
     },
     testimonials: {
-      eyebrow: 'Testimonial',
-      heading: 'Trusted by Teams That Value Better Insights',
-      items: TESTIMONIALS,
+      eyebrow: settings.testimonialsEyebrow || 'Testimonial',
+      heading: settings.testimonialsHeading || 'Trusted by Teams That Value Better Insights',
+      items: settings.testimonials.length > 0 ? settings.testimonials : FALLBACK_TESTIMONIALS,
     },
-    faqItems: FAQ_ITEMS,
+    faqHeading: settings.listingFaqHeading || 'Frequently Asked Questions',
+    faqItems: settings.listingFaqItems.length > 0 ? settings.listingFaqItems : FALLBACK_FAQ_ITEMS,
     about: {
-      eyebrow: 'About Case Study',
-      heading: 'Research That Creates Real Impact',
-      body: 'Our case studies showcase how Unimrkt Research helps organizations navigate complex business challenges with meaningful, data-driven insights. From understanding consumer behavior to identifying market opportunities, each project demonstrates our ability to turn research into clear, actionable direction. Explore our work to see the challenges we addressed, the methodologies we applied and the insights that helped clients make more informed business decisions.',
+      eyebrow: settings.aboutEyebrow || 'About Case Study',
+      heading: settings.aboutHeading || 'Research That Creates Real Impact',
+      body:
+        settings.aboutBody ||
+        'Our case studies showcase how Unimrkt Research helps organizations navigate complex business challenges with meaningful, data-driven insights. From understanding consumer behavior to identifying market opportunities, each project demonstrates our ability to turn research into clear, actionable direction. Explore our work to see the challenges we addressed, the methodologies we applied and the insights that helped clients make more informed business decisions.',
     },
   };
 }

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getCaseStudyDetail, getCaseStudySlugList, getCaseStudyList } from '@/controllers/caseStudy';
+import { getCaseStudyPageContent } from '@/controllers/caseStudyPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { CaseStudyDetailView } from '@/views/case-study/detail/CaseStudyDetailView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
@@ -37,8 +38,13 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
 export default async function CaseStudyDetailPage({ params }: { params: RouteParams }) {
   let caseStudy: CaseStudyDetail | null;
   let allCaseStudies: Awaited<ReturnType<typeof getCaseStudyList>>;
+  let settings: Awaited<ReturnType<typeof getCaseStudyPageContent>>;
   try {
-    [caseStudy, allCaseStudies] = await Promise.all([getCaseStudyDetail(params.slug), getCaseStudyList()]);
+    [caseStudy, allCaseStudies, settings] = await Promise.all([
+      getCaseStudyDetail(params.slug),
+      getCaseStudyList(),
+      getCaseStudyPageContent(),
+    ]);
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     throw err;
@@ -47,5 +53,5 @@ export default async function CaseStudyDetailPage({ params }: { params: RoutePar
 
   const relatedCaseStudies = allCaseStudies.filter((cs) => cs.slug !== caseStudy.slug);
 
-  return <CaseStudyDetailView caseStudy={caseStudy} relatedCaseStudies={relatedCaseStudies} />;
+  return <CaseStudyDetailView caseStudy={caseStudy} relatedCaseStudies={relatedCaseStudies} settings={settings} />;
 }

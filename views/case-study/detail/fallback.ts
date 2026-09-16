@@ -3,22 +3,26 @@
  * node 1107:49842 ("Case Study Details Page", file
  * foaJFuv0vRX8nD43o0ylgB). Same architecture as
  * views/case-study/fallback.ts: Priority 1 is the matched
- * `api::case-study.case-study` entry's own detail fields; Priority 2
- * (whenever a field is null/empty) is this node's own verbatim copy —
- * per this task's own directive, applied per-field exactly like every
+ * `api::case-study.case-study` entry's own detail fields (per-entry
+ * content); Priority 2 is the `case-study-page` settings singleType's
+ * own shared chrome fields; Priority 3 (whenever both are empty) is
+ * this node's own verbatim copy — applied per-field exactly like every
  * other CMS-first page this session, not as an all-or-nothing switch.
  *
  * Section eyebrows ("THE CHALLENGE", "THE RESEARCH QUESTION", "OUR
  * APPROACH", "WHAT WE UNCOVERED", "THE IMPACT", "RELATED CASE STUDY"),
- * the "Our client needed to understand:" label, the FAQ heading, the
- * "Related Case Study" panel's own copy, and the bottom CTA are
- * template-level chrome identical across every case study (not
- * per-entry CMS content — see models/caseStudy.ts's header comment),
- * so they're plain constants here, not resolved fields.
+ * the "Our client needed to understand:" label, the "Trusted by Global
+ * Businesses" heading, the FAQ heading, the "Related Case Study"
+ * panel's own copy, and the bottom CTA are template-level chrome
+ * identical across every case study — not per-entry CMS content, see
+ * models/caseStudy.ts's header comment — but they're now CMS-editable
+ * via the `case-study-page` settings singleType (models/caseStudyPage.ts)
+ * rather than hardcoded constants.
  */
 import type { CaseStudyDetail } from '@/models/caseStudy';
+import type { CaseStudyPageSettings } from '@/models/caseStudyPage';
 import type { IndustryDetailCardModel, TrustLogoModel } from '@/models/industry';
-import type { FaqItemModel } from '@/models/domain';
+import type { FaqItemModel, LinkModel } from '@/models/domain';
 import type { ImageModel } from '@/models/domain';
 
 const ASSET_DIR = '/images/case-study-detail';
@@ -129,6 +133,14 @@ const FALLBACK_FAQ_ITEMS: FaqItemModel[] = [
   },
 ];
 
+const FALLBACK_BOTTOM_CTA_ACTION: LinkModel = {
+  id: 'fallback-case-study-detail-bottom-cta',
+  label: 'Talk to Our Experts',
+  href: '/contact',
+  isExternal: false,
+  variant: 'secondary',
+};
+
 export interface ResolvedCaseStudyDetail {
   title: string;
   category: string;
@@ -139,10 +151,13 @@ export interface ResolvedCaseStudyDetail {
   approach: { eyebrow: string; heading: string; body: string; steps: IndustryDetailCardModel[] };
   uncovered: { eyebrow: string; heading: string; body: string; panels: IndustryDetailCardModel[] };
   impact: { eyebrow: string; heading: string; body: string; image?: ImageModel; items: IndustryDetailCardModel[] };
+  related: { eyebrow: string; heading: string; body: string };
+  faqHeading: string;
   faqItems: FaqItemModel[];
+  bottomCta: { heading: string; body: string; action: LinkModel };
 }
 
-export function resolveCaseStudyDetail(cs: CaseStudyDetail): ResolvedCaseStudyDetail {
+export function resolveCaseStudyDetail(cs: CaseStudyDetail, settings: CaseStudyPageSettings): ResolvedCaseStudyDetail {
   return {
     title: cs.title,
     category: cs.category,
@@ -153,16 +168,16 @@ export function resolveCaseStudyDetail(cs: CaseStudyDetail): ResolvedCaseStudyDe
       image: cs.heroImage || cs.coverImage || localImage('csd-hero-photo.jpg', cs.title, 1250, 702),
     },
     trust: {
-      heading: 'Trusted by Global Businesses',
+      heading: settings.detailTrustHeading || 'Trusted by Global Businesses',
       logos: cs.trustLogos.length > 0 ? cs.trustLogos : FALLBACK_TRUST_LOGOS,
     },
     challenge: {
-      eyebrow: 'The Challenge',
+      eyebrow: settings.detailChallengeEyebrow || 'The Challenge',
       heading: cs.challengeHeading || 'Financial Expectations Were Changing Faster Than Ever',
       body:
         cs.challengeBody ||
         'As financial services become increasingly digital, customers expect more than competitive products. They want simplicity, transparency, personalization, speed, and seamless experiences across every interaction.',
-      needsLabel: 'Our client needed to understand:',
+      needsLabel: settings.detailChallengeNeedsLabel || 'Our client needed to understand:',
       bullets: cs.challengeBullets && cs.challengeBullets.length > 0 ? cs.challengeBullets : FALLBACK_CHALLENGE_BULLETS,
       closing:
         cs.challengeClosing ||
@@ -170,7 +185,7 @@ export function resolveCaseStudyDetail(cs: CaseStudyDetail): ResolvedCaseStudyDe
       photo: cs.challengePhoto || localImage('csd-challenge-photo.jpg', cs.title, 443, 653),
     },
     researchQuestion: {
-      eyebrow: 'The Research Question',
+      eyebrow: settings.detailResearchQuestionEyebrow || 'The Research Question',
       heading: cs.researchQuestionHeading || 'What Do Customers Really Expect From Their Financial Providers?',
       body:
         cs.researchQuestionBody ||
@@ -178,7 +193,7 @@ export function resolveCaseStudyDetail(cs: CaseStudyDetail): ResolvedCaseStudyDe
       items: cs.researchQuestionItems.length > 0 ? cs.researchQuestionItems : FALLBACK_RESEARCH_QUESTION_ITEMS,
     },
     approach: {
-      eyebrow: 'Our Approach',
+      eyebrow: settings.detailApproachEyebrow || 'Our Approach',
       heading: cs.approachHeading || 'Turning customer conversations into actionable intelligence',
       body:
         cs.approachBody ||
@@ -186,7 +201,7 @@ export function resolveCaseStudyDetail(cs: CaseStudyDetail): ResolvedCaseStudyDe
       steps: cs.approachSteps.length > 0 ? cs.approachSteps : FALLBACK_APPROACH_STEPS,
     },
     uncovered: {
-      eyebrow: 'What We Uncovered',
+      eyebrow: settings.detailUncoveredEyebrow || 'What We Uncovered',
       heading: cs.uncoveredHeading || 'Customers Wanted More Than Financial Products',
       body:
         cs.uncoveredBody ||
@@ -194,7 +209,7 @@ export function resolveCaseStudyDetail(cs: CaseStudyDetail): ResolvedCaseStudyDe
       panels: cs.uncoveredPanels.length > 0 ? cs.uncoveredPanels : FALLBACK_UNCOVERED_PANELS,
     },
     impact: {
-      eyebrow: 'The Impact',
+      eyebrow: settings.detailImpactEyebrow || 'The Impact',
       heading: cs.impactHeading || 'From Customer Understanding To Confident Decision-Making',
       body:
         cs.impactBody ||
@@ -202,6 +217,17 @@ export function resolveCaseStudyDetail(cs: CaseStudyDetail): ResolvedCaseStudyDe
       image: cs.impactImage || localImage('csd-impact-bg.jpg', cs.title, 1800, 987),
       items: cs.impactItems.length > 0 ? cs.impactItems : FALLBACK_IMPACT_ITEMS,
     },
+    related: {
+      eyebrow: settings.detailRelatedEyebrow || 'Related Case Study',
+      heading: settings.detailRelatedHeading || 'Discovering What Matters',
+      body: settings.detailRelatedBody || 'Uncovering insights that drive smarter decisions.',
+    },
+    faqHeading: settings.detailFaqHeading || 'Frequently Asked Questions',
     faqItems: cs.faqItems.length > 0 ? cs.faqItems : FALLBACK_FAQ_ITEMS,
+    bottomCta: {
+      heading: settings.bottomCtaHeading || 'A Better Way to Understand Your Market',
+      body: settings.bottomCtaBody || 'Your customers are already telling you what they expect. We help you listen, understand and act.',
+      action: settings.bottomCtaAction || FALLBACK_BOTTOM_CTA_ACTION,
+    },
   };
 }

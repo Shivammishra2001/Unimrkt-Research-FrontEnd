@@ -69,6 +69,12 @@ import type {
   CaseStudyDetail,
 } from '@/models/caseStudy';
 import type {
+  StrapiCaseStudyPageResponse,
+  StrapiCaseStudyTestimonialCard,
+  CaseStudyPageSettings,
+  CaseStudyTestimonialCardModel,
+} from '@/models/caseStudyPage';
+import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
   StrapiBlogSlugsResponse,
@@ -1066,4 +1072,67 @@ export function normalizeCaseStudyDetail(cs: StrapiCaseStudy): CaseStudyDetail {
 
 export function normalizeCaseStudyDetailResponse(response: StrapiCaseStudyDetailResponse): CaseStudyDetail | null {
   return response.data ? normalizeCaseStudyDetail(response.data) : null;
+}
+
+// ---------------------------------------------------------------------------
+// Case Study Page settings (singleType) — template-level copy shared by
+// every case study on both /case-study and /case-study/[slug], including
+// the detail page's "Trusted by Global Businesses" heading.
+// ---------------------------------------------------------------------------
+
+function normalizeCaseStudyTestimonialCard(item: StrapiCaseStudyTestimonialCard): CaseStudyTestimonialCardModel {
+  return {
+    id: `case-study-testimonial-${item.id}`,
+    heading: item.heading,
+    quote: item.quote,
+    roleLine: item.roleLine,
+    orgLine: item.orgLine,
+  };
+}
+
+export function normalizeCaseStudyPageSettings(res: StrapiCaseStudyPageResponse): CaseStudyPageSettings {
+  const data = res.data;
+
+  return {
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? 'Case Studies'),
+    heroCta: data.heroCta ? normalizeLink(data.heroCta) : undefined,
+    explorerEyebrow: data.explorerEyebrow ?? undefined,
+    explorerHeading: data.explorerHeading ?? undefined,
+    explorerBody: data.explorerBody ?? undefined,
+    allLabel: data.allLabel ?? undefined,
+    industriesLabel: data.industriesLabel ?? undefined,
+    researchTypeLabel: data.researchTypeLabel ?? undefined,
+    approachEyebrow: data.approachEyebrow ?? undefined,
+    approachHeading: data.approachHeading ?? undefined,
+    approachSteps: (data.approachSteps ?? []).map(normalizeIndustryDetailCard),
+    testimonialsEyebrow: data.testimonialsEyebrow ?? undefined,
+    testimonialsHeading: data.testimonialsHeading ?? undefined,
+    testimonials: (data.testimonials ?? []).map(normalizeCaseStudyTestimonialCard),
+    listingFaqHeading: data.listingFaqHeading ?? undefined,
+    listingFaqItems: (data.listingFaqItems ?? []).map((item): FaqItemModel => ({
+      id: `case-study-page-listing-faq-${item.id}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+    aboutEyebrow: data.aboutEyebrow ?? undefined,
+    aboutHeading: data.aboutHeading ?? undefined,
+    aboutBody: data.aboutBody ?? undefined,
+    detailTrustHeading: data.detailTrustHeading ?? undefined,
+    detailChallengeEyebrow: data.detailChallengeEyebrow ?? undefined,
+    detailChallengeNeedsLabel: data.detailChallengeNeedsLabel ?? undefined,
+    detailResearchQuestionEyebrow: data.detailResearchQuestionEyebrow ?? undefined,
+    detailApproachEyebrow: data.detailApproachEyebrow ?? undefined,
+    detailUncoveredEyebrow: data.detailUncoveredEyebrow ?? undefined,
+    detailImpactEyebrow: data.detailImpactEyebrow ?? undefined,
+    detailFaqHeading: data.detailFaqHeading ?? undefined,
+    detailRelatedEyebrow: data.detailRelatedEyebrow ?? undefined,
+    detailRelatedHeading: data.detailRelatedHeading ?? undefined,
+    detailRelatedBody: data.detailRelatedBody ?? undefined,
+    bottomCtaHeading: data.bottomCtaHeading ?? undefined,
+    bottomCtaBody: data.bottomCtaBody ?? undefined,
+    bottomCtaAction: data.bottomCtaAction ? normalizeLink(data.bottomCtaAction) : undefined,
+  };
 }

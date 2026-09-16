@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getCaseStudyList } from '@/controllers/caseStudy';
+import { getCaseStudyPageContent } from '@/controllers/caseStudyPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { CaseStudyView } from '@/views/case-study/CaseStudyView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
@@ -13,8 +14,8 @@ export const metadata: Metadata = {
 // generic catch-all. Mirrors app/work-with-us/page.tsx.
 export default async function CaseStudyPage() {
   try {
-    const caseStudies = await getCaseStudyList();
-    return <CaseStudyView caseStudies={caseStudies} />;
+    const [caseStudies, settings] = await Promise.all([getCaseStudyList(), getCaseStudyPageContent()]);
+    return <CaseStudyView caseStudies={caseStudies} settings={settings} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     throw err;

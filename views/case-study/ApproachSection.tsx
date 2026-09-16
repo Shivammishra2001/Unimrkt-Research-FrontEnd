@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import { Container } from '@/views/ui/Container';
+import { StrapiImage } from '@/views/ui/StrapiImage';
 import type { ResolvedCaseStudy } from './fallback';
 
 /** "Every Case Study Starts With the Right Question" — Figma node
@@ -12,9 +12,11 @@ import type { ResolvedCaseStudy } from './fallback';
  * this node's own bespoke illustrations (connection/analysis/dashboard/
  * growth), downloaded verbatim rather than substituted with a lucide
  * equivalent, per this task's explicit "download the exact SVG
- * icons... images" directive. CMS-first, template-fallback — always
- * renders (this section has no CMS backing at all — see fallback.ts's
- * header comment — so it always renders the node's own copy). */
+ * icons... images" directive. CMS-first, template-fallback: steps come
+ * from the case-study-page singleType's own `approachSteps` field
+ * (industries.detail-card component) whenever it's populated, falling
+ * back to this node's own verbatim 4 cards otherwise — see
+ * fallback.ts's header comment. */
 export function ApproachSection({ approach }: { approach: ResolvedCaseStudy['approach'] }) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to py-16 text-white sm:py-20 lg:py-24">
@@ -25,13 +27,13 @@ export function ApproachSection({ approach }: { approach: ResolvedCaseStudy['app
         </div>
 
         <ul className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {approach.steps.map((step) => (
+          {approach.steps.map((step, i) => (
             <li key={step.id} className="flex h-full flex-col items-center gap-4 rounded-[24px] border border-[#e0e0df] bg-white p-8 text-center shadow-blog">
-              <Image src={`/images/case-study/${step.icon}`} alt="" width={70} height={70} className="size-[70px]" />
+              {step.icon && <StrapiImage image={step.icon} sizes="70px" className="size-[70px]" />}
               <h3 className="text-lg font-semibold text-ink2">
-                {step.number}. {step.title}
+                {i + 1}. {step.title}
               </h3>
-              <p className="text-sm leading-[1.87] opacity-70">{step.body}</p>
+              <p className="text-sm leading-[1.87] opacity-70">{step.description}</p>
             </li>
           ))}
         </ul>

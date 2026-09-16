@@ -8,15 +8,27 @@ import type { CaseStudySummary } from '@/models/caseStudy';
 const PAGE_SIZE = 3;
 
 /** "Related Case Study" — Figma node 1107:49842 (y5878-6511). Left dark
- * maroon/red panel (static "RELATED CASE STUDY" / "Discovering What
- * Matters" / "Uncovering insights that drive smarter decisions."
- * copy — template-level chrome identical across every case study, see
- * fallback.ts's header comment) + prev/next controls, right: other
- * case studies (excluding the current one) using the exact same
- * CaseStudyCard as /case-study's own grid. Real pagination — prev/next
- * only render enabled when there is more than one page of the actual
- * other-case-study pool, never a fixed fake count. */
-export function RelatedCaseStudySection({ items }: { items: CaseStudySummary[] }) {
+ * maroon/red panel ("RELATED CASE STUDY" / "Discovering What Matters" /
+ * "Uncovering insights that drive smarter decisions." copy —
+ * template-level chrome identical across every case study, now
+ * CMS-first via the case-study-page settings singleType, falling back
+ * to this node's own verbatim copy — see fallback.ts's header comment)
+ * + prev/next controls, right: other case studies (excluding the
+ * current one) using the exact same CaseStudyCard as /case-study's own
+ * grid. Real pagination — prev/next only render enabled when there is
+ * more than one page of the actual other-case-study pool, never a
+ * fixed fake count. */
+export function RelatedCaseStudySection({
+  eyebrow,
+  heading,
+  body,
+  items,
+}: {
+  eyebrow: string;
+  heading: string;
+  body: string;
+  items: CaseStudySummary[];
+}) {
   const [page, setPage] = useState(0);
   if (items.length === 0) return null;
 
@@ -30,9 +42,9 @@ export function RelatedCaseStudySection({ items }: { items: CaseStudySummary[] }
         <div className="flex flex-col overflow-hidden rounded-[24px] lg:flex-row">
           <div className="flex shrink-0 flex-col justify-center gap-6 bg-gradient-to-br from-gradient-from to-gradient-to p-10 text-white lg:w-[420px] lg:rounded-l-[24px]">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-white">Related Case Study</p>
-              <h2 className="mt-3 text-3xl font-semibold leading-[1.2] text-white sm:text-[44px] sm:tracking-[-1px]">Discovering What Matters</h2>
-              <p className="mt-4 text-sm leading-[1.9] text-white/80">Uncovering insights that drive smarter decisions.</p>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-white">{eyebrow}</p>
+              <h2 className="mt-3 text-3xl font-semibold leading-[1.2] text-white sm:text-[44px] sm:tracking-[-1px]">{heading}</h2>
+              <p className="mt-4 text-sm leading-[1.9] text-white/80">{body}</p>
             </div>
             {pageCount > 1 && (
               <div className="flex gap-3">

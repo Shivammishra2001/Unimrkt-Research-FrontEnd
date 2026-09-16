@@ -12,8 +12,10 @@ import type { ResolvedCaseStudy } from './fallback';
  * dots are rendered exactly as drawn but purely decorative: all 3
  * cards already render at once on desktop (no more content sits behind
  * them to page through), so wiring real carousel state here would have
- * nothing to navigate to. CMS-first, template-fallback — always
- * renders (no CMS backing — see fallback.ts's header comment). */
+ * nothing to navigate to. CMS-first, template-fallback: items come from
+ * the case-study-page singleType's own `testimonials` field whenever
+ * it's populated, falling back to this node's own verbatim 3 cards
+ * otherwise — see fallback.ts's header comment. */
 export function TestimonialsSection({ testimonials }: { testimonials: ResolvedCaseStudy['testimonials'] }) {
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">

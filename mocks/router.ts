@@ -30,6 +30,7 @@ import { MOCK_OUR_COMPANY_PAGE_RESPONSE } from './fixtures/ourCompanyPage';
 import { MOCK_CONTACT_PAGE_RESPONSE } from './fixtures/contactPage';
 import { MOCK_WORK_WITH_US_PAGE_RESPONSE } from './fixtures/workWithUsPage';
 import { MOCK_CASE_STUDIES_RESPONSE, mockCaseStudyDetailResponse, MOCK_CASE_STUDY_SLUGS_RESPONSE } from './fixtures/caseStudy';
+import { MOCK_CASE_STUDY_PAGE_RESPONSE } from './fixtures/caseStudyPage';
 
 function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -146,6 +147,10 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
     const res = mockCaseStudyDetailResponse(slug);
     if (!res) throw new StrapiError('Case study not found', 404, endpoint);
     return res as unknown as T;
+  }
+
+  if (endpoint === 'case-study-page') {
+    return MOCK_CASE_STUDY_PAGE_RESPONSE as unknown as T;
   }
 
   throw new StrapiError(`No mock fixture registered for endpoint "${endpoint}"`, 501, endpoint);
