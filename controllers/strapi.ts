@@ -38,6 +38,8 @@ import type { StrapiWorkWithUsPageResponse } from '@/models/workWithUsPage';
 import type { StrapiCaseStudyListResponse, StrapiCaseStudyDetailResponse, StrapiCaseStudySlugsResponse } from '@/models/caseStudy';
 import type { StrapiCaseStudyPageResponse } from '@/models/caseStudyPage';
 import type { StrapiPrivacyPolicyPageResponse } from '@/models/privacyPolicyPage';
+import type { StrapiTeamMemberListResponse } from '@/models/teamMember';
+import type { StrapiOurTeamPageResponse } from '@/models/ourTeamPage';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -358,5 +360,22 @@ export function getCaseStudyPageSettings(): Promise<StrapiCaseStudyPageResponse>
  * populate; no query sent (same convention as getCaseStudyPageSettings()). */
 export function getPrivacyPolicyPageSettings(): Promise<StrapiPrivacyPolicyPageResponse> {
   return strapiFetch<StrapiPrivacyPolicyPageResponse>('privacy-policy-page', { tag: 'privacy-policy-page' });
+}
+
+/** GET /team-members — the backend forces its own photo populate +
+ * order:asc sort (matching this node's own top-to-bottom, left-to-right
+ * grid sequence); no query sent. pageSize 30 is a generous ceiling past
+ * the 19-card seed (same convention as getGalleryItems()). */
+export function getTeamMembers(): Promise<StrapiTeamMemberListResponse> {
+  return strapiFetch<StrapiTeamMemberListResponse>('team-members', {
+    query: { pagination: { pageSize: 30 } },
+    tag: 'team-members',
+  });
+}
+
+/** GET /our-team-page — singleType, backend forces its own deep
+ * populate; no query sent (same convention as getPrivacyPolicyPageSettings()). */
+export function getOurTeamPageSettings(): Promise<StrapiOurTeamPageResponse> {
+  return strapiFetch<StrapiOurTeamPageResponse>('our-team-page', { tag: 'our-team-page' });
 }
 

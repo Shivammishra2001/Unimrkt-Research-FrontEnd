@@ -82,6 +82,8 @@ import type {
   PrivacyPolicyTocItemModel,
   PrivacyPolicyListItemModel,
 } from '@/models/privacyPolicyPage';
+import type { StrapiTeamMember, StrapiTeamMemberListResponse, TeamMemberModel } from '@/models/teamMember';
+import type { StrapiOurTeamPageResponse, OurTeamPageSettings } from '@/models/ourTeamPage';
 import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
@@ -1142,6 +1144,40 @@ export function normalizeCaseStudyPageSettings(res: StrapiCaseStudyPageResponse)
     bottomCtaHeading: data.bottomCtaHeading ?? undefined,
     bottomCtaBody: data.bottomCtaBody ?? undefined,
     bottomCtaAction: data.bottomCtaAction ? normalizeLink(data.bottomCtaAction) : undefined,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Team Member (/our-team, Figma node 1126:54624)
+// ---------------------------------------------------------------------------
+
+export function normalizeTeamMember(item: StrapiTeamMember): TeamMemberModel {
+  return {
+    id: `team-member-${item.id}`,
+    name: item.name,
+    role: item.role,
+    photo: toImageModel(item.photo, item.name),
+    order: item.order,
+  };
+}
+
+export function normalizeTeamMemberList(res: StrapiTeamMemberListResponse): TeamMemberModel[] {
+  return (res.data ?? []).map(normalizeTeamMember);
+}
+
+export function normalizeOurTeamPageSettings(res: StrapiOurTeamPageResponse): OurTeamPageSettings {
+  const data = res.data;
+
+  return {
+    heroEyebrow: data.heroEyebrow ?? undefined,
+    heroHeading: data.heroHeading ?? undefined,
+    heroSubheading: data.heroSubheading ?? undefined,
+    heroImage: toImageModel(data.heroImage, data.heroHeading ?? 'Our Team'),
+    membersHeading: data.membersHeading ?? undefined,
+    bottomCtaHeading: data.bottomCtaHeading ?? undefined,
+    bottomCtaBody: data.bottomCtaBody ?? undefined,
+    bottomCtaAction: data.bottomCtaAction ? normalizeLink(data.bottomCtaAction) : undefined,
+    seo: normalizeSeo(data.seo, data.heroHeading ?? 'Our Team'),
   };
 }
 
