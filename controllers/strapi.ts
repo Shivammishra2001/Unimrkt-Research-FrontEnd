@@ -35,6 +35,7 @@ import type { StrapiCategoryListResponse } from '@/models/category';
 import type { StrapiOurCompanyPageResponse } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse } from '@/models/workWithUsPage';
+import type { StrapiCaseStudyListResponse } from '@/models/caseStudy';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -312,5 +313,18 @@ export function getContactPageSettings(): Promise<StrapiContactPageResponse> {
  * populate; no query sent (same convention as getContactPageSettings()). */
 export function getWorkWithUsPageSettings(): Promise<StrapiWorkWithUsPageResponse> {
   return strapiFetch<StrapiWorkWithUsPageResponse>('work-with-us-page', { tag: 'work-with-us-page' });
+}
+
+/** GET /case-studies?populate=* — collectionType, `case-study`'s bare
+ * factory `find` controller does NOT force its own populate (same as
+ * `blog`'s), so `populate: '*'` is sent explicitly. pageSize 100 is a
+ * generous ceiling past the 6-card seed (same convention as
+ * getGalleryItems()/getBlogs()) — /case-study filters/paginates the
+ * whole set client-side rather than round-tripping a page param. */
+export function getCaseStudies(): Promise<StrapiCaseStudyListResponse> {
+  return strapiFetch<StrapiCaseStudyListResponse>('case-studies', {
+    query: { populate: '*', pagination: { pageSize: 100 } },
+    tag: 'case-studies',
+  });
 }
 

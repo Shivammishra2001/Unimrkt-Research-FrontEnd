@@ -61,6 +61,7 @@ import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/
 import type { StrapiOurCompanyPageResponse, OurCompanySettings } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse, StrapiOfficeLocation, ContactPageSettings, OfficeLocationModel } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse, StrapiJobListing, WorkWithUsSettings, JobListingModel } from '@/models/workWithUsPage';
+import type { StrapiCaseStudy, StrapiCaseStudyListResponse, CaseStudySummary } from '@/models/caseStudy';
 import type {
   StrapiBlogDetailResponse,
   StrapiBlogListResponse,
@@ -995,4 +996,22 @@ export function normalizeWorkWithUsPageSettings(res: StrapiWorkWithUsPageRespons
     aboutCareersBody: data.aboutCareersBody ?? undefined,
     seo: normalizeSeo(data.seo, data.heroHeading ?? 'Work With Us'),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Case Study (/case-study, Figma node 1023:45614)
+// ---------------------------------------------------------------------------
+
+export function normalizeCaseStudy(cs: StrapiCaseStudy): CaseStudySummary {
+  return {
+    id: `case-study-${cs.id}`,
+    title: cs.title,
+    excerpt: cs.excerpt,
+    category: cs.category,
+    coverImage: toImageModel(cs.coverImage, cs.title),
+  };
+}
+
+export function normalizeCaseStudyList(response: StrapiCaseStudyListResponse): CaseStudySummary[] {
+  return (response.data ?? []).map(normalizeCaseStudy);
 }
