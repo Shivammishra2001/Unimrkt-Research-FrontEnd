@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { ChatIcon } from './icons/ChatIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { SendArrowIcon } from './icons/SendArrowIcon';
 
@@ -200,8 +199,8 @@ export function ChatWidget() {
         </form>
       </div>
 
-      {/* Trigger — unchanged position/size/shape from the original
-          decorative button; now toggles the panel and swaps its icon. */}
+      {/* Trigger — Figma 1794:16995: a 60px tab flush against the right edge,
+          ~74% of the way down the first screen. Toggles the panel. */}
       <button
         ref={triggerRef}
         type="button"
@@ -209,9 +208,14 @@ export function ChatWidget() {
         aria-expanded={isOpen}
         aria-controls={PANEL_ID}
         onClick={() => setIsOpen((v) => !v)}
-        className="fixed bottom-6 right-6 z-40 flex size-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition-transform hover:scale-105"
+        className="fixed right-0 top-[74%] z-40 flex size-[60px] items-center justify-center rounded-l-[10px] bg-[#ba2c2a] text-white shadow-lg transition-transform hover:-translate-x-1"
       >
-        {isOpen ? <CloseIcon className="size-6" aria-hidden="true" /> : <ChatIcon className="size-6" aria-hidden="true" />}
+        {isOpen ? (
+          <CloseIcon className="size-6" aria-hidden="true" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src="/figma-home/chat-messages.svg" alt="" aria-hidden="true" className="size-6" />
+        )}
       </button>
     </>
   );

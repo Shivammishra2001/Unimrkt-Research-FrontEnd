@@ -1,5 +1,7 @@
 import type { ComponentType } from 'react';
 import type { BlockKind, BlockModel } from '@/models/domain';
+import type { OfficeLocationModel } from '@/models/contactPage';
+import { getContactPageContent } from './contactPage';
 import { HeroView } from '@/views/sections/HeroView';
 import { ContentView } from '@/views/sections/ContentView';
 import { FeatureGridView } from '@/views/sections/FeatureGridView';
@@ -49,10 +51,28 @@ const BLOCK_MAP: BlockMap = {
  * type-checked flow — it exists as defense-in-depth for the one path that
  * could still hit it: a manual/unsafe cast bypassing the type system.
  */
-export function BlockDispatcher({ blocks }: { blocks: BlockModel[] }) {
+export async function BlockDispatcher({ blocks }: { blocks: BlockModel[] }) {
+  // "Unlock the Power of Marketplaces" (a `content` block that sits its media
+  // `below` and carries a contact email) shows the same three offices the
+  // /contact page manages — read them once here rather than duplicating the
+  // data into the block.
+  const needsOffices = blocks.some((b) => b.kind === 'content' && b.mediaAlignment === 'below' && !!b.contactEmail);
+  let offices: OfficeLocationModel[] = [];
+  if (needsOffices) {
+    try {
+      offices = (await getContactPageContent()).offices;
+    } catch {
+      // Contact settings unavailable — the block falls back to its plain layout.
+    }
+  }
+
   return (
     <>
       {blocks.map((block, index) => {
+        if (block.kind === 'content') {
+          return <ContentView key={block.id} block={block} index={index} offices={offices} />;
+        }
+
         // TypeScript cannot verify, from a single runtime `block.kind`
         // lookup, that the component pulled out of BLOCK_MAP is the one
         // whose prop type was narrowed to match `block` — that link only

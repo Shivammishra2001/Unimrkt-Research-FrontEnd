@@ -2,36 +2,35 @@ import Link from 'next/link';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import type { IndustrySummary } from '@/models/industry';
 
-/** /industries grid card — Figma node 363:3230 ("Component 911"): white,
- * `#eee` border, `rounded-blog`/`shadow-blog` (already tokenized for
- * exactly this card shape, tailwind.config.ts node 740:4782), image
- * inset with rounded top corners, title Montserrat SemiBold 20px `ink2`,
- * summary Montserrat Regular 14px black/70. Links to
- * /industries/${industry.slug} — same underlying IndustrySummary data,
- * no schema change. */
+/** /industries grid card — Figma node 363:3230 ("Component 911") as placed
+ * on 1384:26772: 509x430, white, 1px #eee, r24, shadow 6 6 54
+ * rgba(0,0,0,.08). Image panel inset 20px (469x260, r20); title
+ * Montserrat 600 20/26.8px #04264e at x=39; summary 14/22.8px @ 70%
+ * black, clamped to 2 lines. Links to /industries/${slug}. The node
+ * draws no hover state: the image zooms 5% over 300ms. */
 export function IndustryCard({ industry, priority }: { industry: IndustrySummary; priority?: boolean }) {
   return (
     <Link
       href={`/industries/${industry.slug}`}
-      className="group flex h-full w-full flex-col overflow-hidden rounded-blog border border-card-border bg-white shadow-blog transition-transform duration-200 hover:-translate-y-1"
+      className="group flex h-full w-full flex-col rounded-[24px] border border-[#eee] bg-white p-[19px] pb-[43px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)]"
     >
-      <div className="relative m-4 aspect-[469/260] shrink-0 overflow-hidden rounded-2xl bg-slate-100">
+      <div className="relative aspect-[469/260] w-full shrink-0 overflow-hidden rounded-[20px] bg-[#d1d1d1]">
         {industry.icon && (
           <StrapiImage
             image={industry.icon}
-            sizes="(min-width: 1024px) 33vw, 100vw"
+            sizes="(min-width: 1700px) 469px, (min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"
             priority={priority}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 motion-reduce:transition-none"
           />
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-6 pt-2">
-        <h3 className="font-sans text-xl font-semibold leading-[1.34] text-ink2">{industry.title}</h3>
-        {industry.summary && (
-          <p className="font-sans text-sm leading-[1.73] text-black/70 line-clamp-2">{industry.summary}</p>
-        )}
-      </div>
+      <h3 className="mt-[26.4px] px-[19px] font-sans text-[20px] font-semibold leading-[26.8px] text-[#04264e]">{industry.title}</h3>
+      {industry.summary && (
+        <p className="mt-[7.2px] line-clamp-2 pl-[19px] font-sans text-[14px] font-normal leading-[22.8px] text-black opacity-70">
+          {industry.summary}
+        </p>
+      )}
     </Link>
   );
 }

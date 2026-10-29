@@ -16,7 +16,10 @@ export function Reveal({ children, delay = 0, className }: RevealProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+      // `initial` is server-rendered, so it must not depend on
+      // useReducedMotion() (client-only) or hydration mismatches; reduced
+      // motion instead collapses the transition to ~instant below.
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{

@@ -14,23 +14,34 @@ import type { FaqModel } from '@/models/domain';
  * rotation (45°) rather than swapping icon assets. Reduced motion collapses
  * both the height spring and the icon rotation to a near-instant toggle. */
 export function FaqView({ block }: { block: FaqModel; index: number }) {
-  const [openId, setOpenId] = useState<string | null>(block.items[0]?.id ?? null);
+  // Figma 267:1242..1246: every row is collapsed at rest.
+  const [openId, setOpenId] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <Section theme={block.theme} anchorId={block.anchorId} className="relative overflow-hidden">
+    <Section theme={block.theme} anchorId={block.anchorId} className="relative lg:!pb-[92px] lg:!pt-[114.5px]">
       {block.background && (
-        <StrapiImage image={block.background} sizes="100vw" fill className="absolute inset-0 object-cover opacity-[0.06]" />
+        // Figma 267:1240/1241: a 1900x719 clip with the world map (1377x787 at -71px) @ 8% opacity.
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[719px] overflow-hidden" aria-hidden="true">
+          <div className="absolute left-1/2 top-[-71px] h-[787px] w-[1377px] -translate-x-1/2 opacity-[0.08]">
+            <StrapiImage image={block.background} sizes="1377px" fill className="object-cover" />
+          </div>
+        </div>
       )}
       <Container className="relative flex flex-col items-center">
         {/* Figma node 267:1274 — "Browse Blogs" on the homepage's FAQ
-            section, centered above the heading. Optional: no other page
-            using blocks.faq sets a cta. */}
-        {block.cta && <Button link={block.cta} className="mb-6" />}
+            section, centered; on desktop it straddles the section's top edge
+            (its top sits 51px above it). Optional: no other page using
+            blocks.faq sets a cta. */}
+        {block.cta && (
+          <div className="mb-6 lg:absolute lg:left-1/2 lg:top-[-165.5px] lg:mb-0 lg:-translate-x-1/2">
+            <Button link={block.cta} />
+          </div>
+        )}
         <Heading as="h2" size="h2" className="text-center">
           {block.heading}
         </Heading>
-        <div className="mx-auto mt-10 flex max-w-3xl flex-col gap-4">
+        <div className="mx-auto mt-10 flex w-full max-w-[1160px] flex-col gap-4 lg:mt-[44.5px]">
           {block.items.map((item) => {
             const isOpen = openId === item.id;
             return (
@@ -38,10 +49,10 @@ export function FaqView({ block }: { block: FaqModel; index: number }) {
                 <button
                   type="button"
                   onClick={() => setOpenId(isOpen ? null : item.id)}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                  className="flex min-h-[88px] w-full items-center justify-between gap-4 px-6 py-5 text-left lg:px-7"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-accent text-lg font-bold text-faq-text">{item.question}</span>
+                  <span className="font-accent text-lg font-bold !leading-[1.26] text-faq-text">{item.question}</span>
                   <motion.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
                     transition={{ duration: shouldReduceMotion ? 0.01 : 0.2 }}
@@ -59,7 +70,7 @@ export function FaqView({ block }: { block: FaqModel; index: number }) {
                       transition={{ duration: shouldReduceMotion ? 0.01 : 0.25, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="px-6 pb-5 text-sm leading-relaxed opacity-80">{item.answer}</p>
+                      <p className="px-6 pb-5 text-sm leading-relaxed opacity-80 lg:px-7">{item.answer}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>

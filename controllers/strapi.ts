@@ -29,7 +29,6 @@ import type {
   StrapiIndustrySlugsResponse,
 } from '@/models/industry';
 import type { StrapiGalleryItemListResponse } from '@/models/gallery';
-import type { StrapiServicesPageResponse } from '@/models/servicesPage';
 import type { StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsResponse } from '@/models/blog';
 import type { StrapiCategoryListResponse } from '@/models/category';
 import type { StrapiOurCompanyPageResponse } from '@/models/ourCompanyPage';
@@ -256,12 +255,6 @@ export function getGalleryItems(): Promise<StrapiGalleryItemListResponse> {
   });
 }
 
-/** GET /services-page — singleType, backend forces its own deep populate;
- * no query sent (same convention as getGlobal()). */
-export function getServicesPageSettings(): Promise<StrapiServicesPageResponse> {
-  return strapiFetch<StrapiServicesPageResponse>('services-page', { tag: 'services-page' });
-}
-
 /** GET /blogs?populate=* — unlike getServices/getIndustries, `blog`'s `find`
  * controller does NOT force its own populate, so `populate: '*'` is sent
  * explicitly here rather than left for the backend to fill in. pageSize
@@ -300,23 +293,27 @@ export function getCategories(): Promise<StrapiCategoryListResponse> {
   });
 }
 
-/** GET /our-company-page — singleType, backend forces its own deep
- * populate; no query sent (same convention as getServicesPageSettings()/
- * getGlobal()). */
+/** Dedicated pages (About Us, Contact, Careers, Case Studies) are `page`
+ * entries holding one `page-content.*` block carrying the full field set.
+ * Unwraps that block into the `{ data }` envelope the normalizers expect;
+ * a page without the block is treated as not found. */
+async function getPageContentBlock<T>(slug: string, component: string): Promise<T> {
+  const res = (await getPageBySlug(slug)) as unknown as { data: { blocks?: Array<{ __component: string }> } };
+  const block = res.data.blocks?.find((b) => b.__component === component);
+  if (!block) throw new StrapiError('Not found', 404, `pages/slug/${slug}`);
+  return { data: block } as unknown as T;
+}
+
 export function getOurCompanyPageSettings(): Promise<StrapiOurCompanyPageResponse> {
-  return strapiFetch<StrapiOurCompanyPageResponse>('our-company-page', { tag: 'our-company-page' });
+  return getPageContentBlock<StrapiOurCompanyPageResponse>('about-us', 'page-content.our-company');
 }
 
-/** GET /contact-page — singleType, backend forces its own deep populate;
- * no query sent (same convention as getOurCompanyPageSettings()). */
 export function getContactPageSettings(): Promise<StrapiContactPageResponse> {
-  return strapiFetch<StrapiContactPageResponse>('contact-page', { tag: 'contact-page' });
+  return getPageContentBlock<StrapiContactPageResponse>('contact', 'page-content.contact');
 }
 
-/** GET /work-with-us-page — singleType, backend forces its own deep
- * populate; no query sent (same convention as getContactPageSettings()). */
 export function getWorkWithUsPageSettings(): Promise<StrapiWorkWithUsPageResponse> {
-  return strapiFetch<StrapiWorkWithUsPageResponse>('work-with-us-page', { tag: 'work-with-us-page' });
+  return getPageContentBlock<StrapiWorkWithUsPageResponse>('work-with-us', 'page-content.work-with-us');
 }
 
 /** GET /case-studies?populate=* — collectionType, `case-study`'s bare
@@ -346,20 +343,12 @@ export function getCaseStudySlugs(): Promise<StrapiCaseStudySlugsResponse> {
   return strapiFetch<StrapiCaseStudySlugsResponse>('case-studies/slugs', { tag: 'case-studies' });
 }
 
-/** GET /case-study-page — singleType, backend forces its own deep
- * populate; no query sent (same convention as getContactPageSettings()/
- * getWorkWithUsPageSettings()). Holds the template-level copy shared by
- * every case study — including the detail page's "Trusted by Global
- * Businesses" heading — so it's editable in the CMS instead of
- * hardcoded in the frontend template. */
 export function getCaseStudyPageSettings(): Promise<StrapiCaseStudyPageResponse> {
-  return strapiFetch<StrapiCaseStudyPageResponse>('case-study-page', { tag: 'case-study-page' });
+  return getPageContentBlock<StrapiCaseStudyPageResponse>('case-studies', 'page-content.case-study');
 }
 
-/** GET /privacy-policy-page — singleType, backend forces its own deep
- * populate; no query sent (same convention as getCaseStudyPageSettings()). */
 export function getPrivacyPolicyPageSettings(): Promise<StrapiPrivacyPolicyPageResponse> {
-  return strapiFetch<StrapiPrivacyPolicyPageResponse>('privacy-policy-page', { tag: 'privacy-policy-page' });
+  return getPageContentBlock<StrapiPrivacyPolicyPageResponse>('privacy-policy', 'page-content.privacy-policy');
 }
 
 /** GET /team-members — the backend forces its own photo populate +
@@ -373,9 +362,7 @@ export function getTeamMembers(): Promise<StrapiTeamMemberListResponse> {
   });
 }
 
-/** GET /our-team-page — singleType, backend forces its own deep
- * populate; no query sent (same convention as getPrivacyPolicyPageSettings()). */
 export function getOurTeamPageSettings(): Promise<StrapiOurTeamPageResponse> {
-  return strapiFetch<StrapiOurTeamPageResponse>('our-team-page', { tag: 'our-team-page' });
+  return getPageContentBlock<StrapiOurTeamPageResponse>('our-team', 'page-content.our-team');
 }
 

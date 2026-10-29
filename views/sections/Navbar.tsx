@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { StrapiImage } from '@/views/ui/StrapiImage';
+import Image from 'next/image';
 import { Button } from '@/views/ui/Button';
 import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import { HamburgerIcon } from '@/views/ui/icons/HamburgerIcon';
@@ -43,7 +43,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         href={item.href}
         target={item.isExternal ? '_blank' : undefined}
         rel={item.isExternal ? 'noopener noreferrer' : undefined}
-        className="flex items-center gap-1.5 font-nav text-sm font-medium uppercase tracking-wider text-white/90 transition-colors hover:text-white"
+        className="flex items-center gap-1 whitespace-nowrap font-nav text-[16px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
       >
         {item.label}
         {/* `showIndicator`: Figma shows this chevron on "About unimrkt"
@@ -52,7 +52,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
             aria-expanded) rather than faking an interactive control with
             no menu behind it. */}
         {item.showIndicator && (
-          <ChevronIcon className="size-3.5 rotate-90 text-white/80" aria-hidden="true" />
+          <ChevronIcon className="size-3.5 rotate-90 text-white" aria-hidden="true" />
         )}
       </Link>
     );
@@ -64,14 +64,14 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         type="button"
         // onClick toggles for touch devices, which never fire onMouseEnter.
         onClick={() => (open ? closeWithDelay() : openNow())}
-        className="flex items-center gap-1.5 font-nav text-sm font-medium uppercase tracking-wider text-white/90 transition-colors hover:text-white"
+        className="flex items-center gap-1 whitespace-nowrap font-nav text-[16px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
         aria-expanded={open}
       >
         {item.label}
         {/* Native asset points right; rotate-90 (down) at rest matches
             Figma, -rotate-90 (up) while open signals "collapse". */}
         <ChevronIcon
-          className={`size-3.5 text-white/80 transition-transform ${open ? '-rotate-90' : 'rotate-90'}`}
+          className={`size-3.5 text-white transition-transform ${open ? '-rotate-90' : 'rotate-90'}`}
           aria-hidden="true"
         />
       </button>
@@ -121,6 +121,10 @@ export function Navbar({
 }) {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
+  // Pages whose hero runs under the fixed header (Figma 827:7965 /gallery, 1126:54628 /our-team, 1384:26787 /industries)
+  // and whose header CTA is the top-most gradient frame (827:8010, 1126:54673).
+  const isGradientCtaPage = pathname === '/gallery' || pathname === '/our-team' || pathname === '/industries';
+  const hasHeroUnderHeader = isHomePage || isGradientCtaPage;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -153,7 +157,7 @@ export function Navbar({
     };
   }, [isMobileOpen]);
 
-  const surfaceClassName = !isHomePage
+  const surfaceClassName = !hasHeroUnderHeader
     ? 'bg-[#0a0f1d] shadow-md border-b border-slate-800'
     : isScrolled
       ? 'bg-[#0a0f1d]/95 backdrop-blur-md shadow-lg border-b border-white/10'
@@ -162,31 +166,22 @@ export function Navbar({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 z-50 w-full py-2.5 text-white transition-all duration-300 sm:py-3 ${surfaceClassName}`}
+        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ${hasHeroUnderHeader && !isScrolled ? 'py-2.5 sm:py-3 lg:py-7' : 'py-2.5 sm:py-3'} ${surfaceClassName}`}
       >
-        <div className="mx-auto flex w-full max-w-container items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex w-full max-w-[1740px] items-center justify-between px-4 sm:px-6 lg:px-0">
           <Link href="/" className="shrink-0">
-            {/* `logo` is a required field in the Model (global.logo), but that's
-                a CMS-side guarantee, not a runtime one — an entry mid-edit, or
-                (as here) a seed run whose asset upload failed, can still reach
-                this component with no logo. Every other StrapiImage call site
-                in this codebase guards optional media the same way; this one
-                needs the same guard despite the domain type saying non-optional,
-                rather than crash the fixed header on every single page. */}
-            {navigation.logo ? (
-              <span className="inline-flex h-[95px] w-[130px] items-center justify-center rounded-[50%] bg-white px-3 py-2 shadow-lg">
-                <StrapiImage
-                  image={navigation.logo}
-                  sizes="130px"
-                  priority
-                  className="h-auto w-[88%] object-contain"
-                />
-              </span>
-            ) : (
-              <span className="font-sans text-lg font-bold text-white">{navigation.siteName}</span>
-            )}
+            {/* Figma 1794:16994: the exact brand PNG (white field, red arc) at 138x99,
+                placed as-is — no wrapper, padding or radius around it. */}
+            <Image
+              src="/images/brand/logo.png"
+              alt={navigation.siteName}
+              width={138}
+              height={99}
+              priority
+              className="block h-[99px] w-[138px] max-w-none object-cover"
+            />
           </Link>
-          <nav className="hidden items-center gap-16 lg:flex">
+          <nav className="hidden items-center gap-[72px] lg:absolute lg:left-1/2 lg:top-1/2 lg:flex lg:-translate-x-1/2 lg:-translate-y-1/2">
             {navigation.items.map((item) => (
               <NavLink key={item.id} item={item} />
             ))}
@@ -195,7 +190,9 @@ export function Navbar({
             <Button
               link={navigation.cta}
               variant={navigation.cta.variant}
-              className="hidden !px-4 !py-2 !text-xs !font-semibold sm:!text-sm sm:inline-flex"
+              // Home (Figma 1794:16957): flat #cc1f1f, 234x60, 4px radius. Gallery (827:8010,
+              // the top of the two stacked frames): #6c2a4a -> #be2c28 gradient, same box.
+              className={`hidden sm:inline-flex ${isGradientCtaPage ? '' : '!bg-none bg-[#cc1f1f]'}`}
             />
           )}
           <button

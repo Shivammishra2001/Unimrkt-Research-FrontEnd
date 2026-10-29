@@ -125,6 +125,8 @@ export interface CtaModel extends BlockBase {
   body?: string;
   actions: LinkModel[];
   background?: ImageModel;
+  /** Set instead of `background` when the CMS upload is a video (mp4). */
+  backgroundVideo?: string;
   // Per-instance override — falls back to the shared `theme` preset
   // (light/dark/accent) when unset, so most CTAs need no change at all.
   backgroundColor?: string;
@@ -134,6 +136,8 @@ export interface StatItemModel {
   id: string;
   value: string;
   label: string;
+  description?: string;
+  image?: ImageModel;
 }
 
 export interface StatsBandModel extends BlockBase {
@@ -148,6 +152,12 @@ export interface ServiceBandItemModel {
   href: string;
   isActive?: boolean;
   description?: string;
+  /** Hero side-menu only — the left-hand copy shown while this row is selected;
+   * any field left empty falls back to the hero block's own eyebrow / heading /
+   * subheading / first action. */
+  tag?: string;
+  headline?: string;
+  ctaLabel?: string;
 }
 
 export interface ServiceBandModel extends BlockBase {
@@ -155,6 +165,8 @@ export interface ServiceBandModel extends BlockBase {
   heading: string;
   body?: string;
   background?: ImageModel;
+  /** Set instead of `background` when the CMS upload is a video (mp4). */
+  backgroundVideo?: string;
   cta?: LinkModel;
   items: ServiceBandItemModel[];
 }
@@ -162,6 +174,8 @@ export interface ServiceBandModel extends BlockBase {
 export interface IndustryItemModel {
   id: string;
   title: string;
+  /** Hover-state copy (Figma 363:6474). */
+  description?: string;
   image?: ImageModel;
   accentColor: string;
 }
@@ -171,6 +185,8 @@ export interface IndustryGridModel extends BlockBase {
   heading: string;
   subheading?: string;
   background?: ImageModel;
+  /** Set instead of `background` when the CMS upload is a video (mp4). */
+  backgroundVideo?: string;
   cta?: LinkModel;
   items: IndustryItemModel[];
 }

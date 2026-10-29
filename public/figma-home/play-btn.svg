@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="play btn">
+<circle id="Ellipse 12" cx="60" cy="60" r="59.6667" stroke="white" stroke-opacity="0.65" stroke-width="0.666667"/>
+<circle id="Ellipse 11" cx="59.9999" cy="59.9999" r="49" stroke="white" stroke-opacity="0.65" stroke-width="0.666667"/>
+<circle id="Ellipse 10" cx="59.9998" cy="59.9998" r="38.3333" stroke="white" stroke-opacity="0.65" stroke-width="0.666667"/>
+<g id="la:play">
+<path id="Vector" d="M51.7083 45.0897V74.9107L53.8134 73.5357L74.8688 60.0002L53.812 46.4647L51.7083 45.0897ZM54.4583 50.1181L69.7978 60.0002L54.4583 69.8837V50.1181Z" fill="white"/>
+</g>
+</g>
+</svg>

@@ -23,6 +23,8 @@ export interface StrapiTeamMember {
   photo: StrapiMedia | null;
   order: number;
   bio: string | null;
+  /** Not in the Strapi schema yet — read if the API ever returns it. */
+  linkedinUrl?: string | null;
 }
 
 export type StrapiTeamMemberListResponse = StrapiResponse<StrapiTeamMember[]>;
@@ -38,4 +40,5 @@ export interface TeamMemberModel {
   photo?: ImageModel;
   order: number;
   bio?: string;
+  linkedinUrl?: string;
 }

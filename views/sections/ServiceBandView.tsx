@@ -1,65 +1,125 @@
-import { Container } from '@/views/ui/Container';
-import { Heading } from '@/views/ui/Heading';
 import { Button } from '@/views/ui/Button';
-import { ArrowRightIcon } from '@/views/ui/icons/ArrowRightIcon';
+import { LoopingVideo } from '@/views/ui/LoopingVideo';
+import { SendArrowIcon } from '@/views/ui/icons/SendArrowIcon';
+import type { CSSProperties } from 'react';
+import { cq, geometry } from '@/views/ui/stage';
 import type { ServiceBandModel } from '@/models/domain';
 
-/** blocks.service-band — dark glassmorphic band: a gradient highlight
- * panel + a row of frosted-glass service cards over a background photo.
- * Every card sits collapsed (title + outline arrow) until hovered/focused,
- * then lifts, reveals its description, and the arrow fills solid —
- * a hover-expand interaction, not a static grid of equal-height pills.
+/** Design canvas of Figma 267:3472 (Component 176): 1900 x 657. Text tops below are
+ * line-box tops: Figma's trimmed cap-height tops minus the half-leading. */
+const CANVAS_H = 657;
+
+const ABS = 'xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:w-[var(--w)]';
+
+/** Card x positions on the canvas: one left of the gradient panel, three right of it. */
+const CARD_LEFT = [11, 874, 1217, 1560] as const;
+const PANEL = { l: 354, w: 510 } as const;
+/** Active-state card height on the 1900px canvas (resting is 155). */
+const EXPANDED_H = 250;
+
+/** blocks.service-band — Figma 267:3472. A dark photo band with a gradient
+ * highlight panel in the middle and four frosted-glass service cards sitting
+ * flush along the bottom edge. From xl up the band is a fixed 1900x657
+ * composition scaled with container units (see `cq`); below xl it stacks.
  * This component has no `theme` field on its Strapi schema — it is always
  * dark, unconditionally, never driven by block.theme. */
 export function ServiceBandView({ block }: { block: ServiceBandModel; index: number }) {
   return (
-    <section id={block.anchorId} className="relative overflow-hidden bg-ink-700 py-16 text-white sm:py-20 lg:py-24">
+    <section
+      id={block.anchorId}
+      className="relative overflow-hidden bg-[#0b0c0e] text-white xl:[container-type:inline-size]"
+    >
       {block.background && (
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-30"
+          className="absolute inset-0 bg-cover bg-center xl:[background-position:-5.42cqw_-6.68cqw] xl:[background-size:154.84cqw_auto]"
           style={{ backgroundImage: `url(${block.background.src})` }}
           aria-hidden="true"
         />
       )}
-      <Container className="relative">
-        <div className="grid gap-6 lg:grid-cols-4">
-          {/* Figma's real (Component 176) treatment is the gradient panel,
-              not a flat brand-600 fill — same tokens the CTA/footer bands
-              already use. */}
-          <div className="rounded-lg bg-gradient-to-br from-gradient-from to-gradient-to p-8 lg:col-span-1">
-            <Heading as="h2" size="h3" className="!text-white">
+      {block.backgroundVideo && (
+        <LoopingVideo
+          sources={[{ src: block.backgroundVideo, type: 'video/mp4' }]}
+          className="absolute inset-0 z-0 h-full w-full object-cover"
+        />
+      )}
+      <div className="absolute inset-0 z-[1] bg-[#010913]/60" aria-hidden="true" />
+      <div className="relative z-10 px-4 py-16 sm:px-6 sm:py-20 xl:h-[34.5789cqw] xl:p-0">
+        <div className="grid gap-6 xl:block">
+          <div
+            className={`relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to p-8 xl:h-[var(--h)] xl:p-0 ${ABS}`}
+            style={geometry({ l: PANEL.l, t: 0, w: PANEL.w, h: CANVAS_H })}
+          >
+            {/* Figma 267:3128: wallpaper blended over the panel, luminosity @ 30%. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/figma-home/services-gradient-wallpaper.png"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-luminosity"
+            />
+            <h2
+              className="relative text-3xl font-semibold capitalize !leading-[1.15] tracking-[-0.0208em] text-white sm:text-4xl xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:w-[var(--w)] xl:text-[length:var(--fs)]"
+              style={geometry({ l: 64, t: 113, w: 368, fs: 48 })}
+            >
               {block.heading}
-            </Heading>
-            {block.body && <p className="mt-4 text-sm leading-relaxed opacity-90">{block.body}</p>}
-            {block.cta && <Button link={block.cta} variant={block.cta.variant} className="mt-6" />}
-          </div>
-          {/* items-end + overflow-visible: a hovered card lifts up and
-              grows via transform/max-height without shoving its siblings
-              (transforms don't consume layout space) or getting clipped by
-              the grid's own bounds. */}
-          <div className="grid items-end gap-4 overflow-visible sm:grid-cols-2 lg:col-span-3">
-            {block.items.map((item) => (
-              <a
-                key={item.id}
-                href={item.href}
-                className="group relative flex flex-col justify-end gap-3 rounded-lg border border-white/10 bg-glass p-6 backdrop-blur-glass transition-all duration-300 ease-out hover:-translate-y-8 hover:bg-white/15 hover:shadow-2xl hover:shadow-black/40 lg:hover:-translate-y-12"
+            </h2>
+            {block.body && (
+              <p
+                className="relative mt-4 text-base font-medium leading-[1.9] text-white/90 xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:mt-0 xl:w-[var(--w)] xl:text-[length:var(--fs)]"
+                style={geometry({ l: 64, t: 289, w: 368, fs: 16 })}
               >
-                {item.description && (
-                  <p className="max-h-0 overflow-hidden text-sm leading-relaxed text-white/80 opacity-0 transition-all duration-300 ease-out group-hover:max-h-40 group-hover:opacity-100">
-                    {item.description}
-                  </p>
-                )}
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="font-sans text-lg font-semibold">{item.label}</h3>
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 ease-out group-hover:border-brand-600 group-hover:bg-brand-600">
-                    <ArrowRightIcon className="size-4" aria-hidden="true" />
-                  </span>
-                </div>
-              </a>
-            ))}
+                {block.body}
+              </p>
+            )}
+            {block.cta && (
+              <div className="relative mt-6 xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:mt-0" style={geometry({ l: 64, t: 482 })}>
+                <Button link={block.cta} variant={block.cta.variant} />
+              </div>
+            )}
           </div>
+          {block.items.map((item, i) => (
+            <a
+              key={item.id}
+              href={item.href}
+              // Resting geometry is Figma 267:3472 (331x155, flush with the band's bottom edge).
+              // The hover/active expansion is not drawn in Figma: the card grows upward (bottom
+              // anchored) to EXPANDED_H, the title stays at the card's top, the description
+              // fades/slides in and the arrow swaps to the red active button.
+              className="group relative flex min-h-[155px] flex-col justify-end gap-3 rounded-t-[5px] bg-[#160415]/50 p-6 backdrop-blur-glass xl:absolute xl:bottom-[0.0526cqw] xl:left-[var(--l)] xl:h-[var(--h)] xl:w-[var(--w)] xl:p-0 xl:transition-[height] xl:duration-300 xl:ease-in-out xl:hover:h-[var(--hx)] xl:focus-visible:h-[var(--hx)] motion-reduce:transition-none"
+              style={{
+                ...geometry({ l: CARD_LEFT[i] ?? CARD_LEFT[CARD_LEFT.length - 1], w: 331, h: 155 }),
+                '--hx': cq(EXPANDED_H),
+              } as CSSProperties}
+            >
+              <span className="absolute inset-0 rounded-t-[5px] bg-white/[0.07] backdrop-blur-[12px]" aria-hidden="true" />
+              <h3
+                className="relative font-nav text-[21px] font-semibold capitalize leading-[1.24] text-white xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:text-[length:var(--fs)]"
+                style={geometry({ l: 40, t: 27, fs: 21 })}
+              >
+                {item.label}
+              </h3>
+              {item.description && (
+                <p
+                  className="relative text-sm font-medium leading-[1.6] text-white/80 transition-[opacity,transform] duration-300 ease-in-out motion-reduce:transition-none xl:pointer-events-none xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:w-[var(--w)] xl:translate-y-2 xl:text-[length:var(--fs)] xl:opacity-0 xl:group-hover:translate-y-0 xl:group-hover:opacity-100 xl:group-focus-visible:translate-y-0 xl:group-focus-visible:opacity-100"
+                  style={geometry({ l: 40, t: 70, w: 251, fs: 14 })}
+                >
+                  {item.description}
+                </p>
+              )}
+              <span
+                className="relative flex size-11 items-center justify-center rounded-[17px] bg-white/[0.04] transition-[background-color,box-shadow] duration-300 ease-in-out group-hover:bg-[#cc1f1f] group-hover:shadow-[0_0_24px_rgba(204,31,31,0.65)] group-focus-visible:bg-[#cc1f1f] group-focus-visible:shadow-[0_0_24px_rgba(204,31,31,0.65)] xl:absolute xl:bottom-[var(--b)] xl:left-[var(--l)] xl:size-[var(--w)]"
+                style={{ ...geometry({ l: 40, w: 44 }), '--b': cq(18) } as CSSProperties}
+              >
+                {/* Authored pointing up-right; a 45deg turn makes it a right arrow when active. */}
+                <SendArrowIcon
+                  className="size-[48%] transition-transform duration-300 ease-in-out group-hover:rotate-45 group-focus-visible:rotate-45 motion-reduce:transition-none"
+                  aria-hidden="true"
+                />
+              </span>
+            </a>
+          ))}
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

@@ -1,15 +1,13 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Container } from '@/views/ui/Container';
+import Image from 'next/image';
+import { SectionHeader } from './listing/shared';
 import { DotPagination } from './DotPagination';
 
-// Figma nodes 363:3230/3501/3504 ("Component 920/921/922") — copy pulled
-// verbatim from the 3 actual card instances. Deliberately NOT the seeded
-// `testimonial` collection type: that content is placeholder dev-CMS-demo
-// copy about the CMS platform itself, not real client work (confirmed
-// while building /blogs this session) — using it here would present fake
-// quotes as real client testimonials.
+// Figma nodes 1384:27214-27216 (Components 920-922), copy verbatim from the
+// 3 card instances. Deliberately NOT the seeded `testimonial` collection:
+// that content is dev-CMS placeholder copy, not real client work.
 const TESTIMONIALS = [
   {
     title: 'Exceptional Research. Actionable Results.',
@@ -34,11 +32,12 @@ const TESTIMONIALS = [
   },
 ];
 
-/** "Client Success Stories" — Figma node 384:5916-5930. 3 white cards
- * (rounded-blog/shadow-blog, same shell as blog/industry cards) in a
- * horizontally-scrolling row on narrow viewports, with dot pagination
- * tracking scroll position — same scroll-snap mechanic FeaturedBlogSection
- * already uses for its card row. */
+/** "Trusted Research Partner for Businesses Worldwide" — Figma
+ * 1384:26772, y8668-9489. Three 590x385 cards (1px #eee, r24, shadow 6 6
+ * 54 rgba(0,0,0,.08)) at x=150 with 32px gaps, y=8956 — the third runs off
+ * the frame, so the row scrolls — with 78x15 dots at y=9377. Quote glyph
+ * 50x34 at (49,48) (#a82c31), title 21/28.1px #04264e, quote 14/26.18px @
+ * 70%, name 16px semibold + role 14px @ 70% at y=294. */
 export function ClientSuccessStories() {
   const trackRef = useRef<HTMLUListElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -53,50 +52,40 @@ export function ClientSuccessStories() {
 
   function handleScroll() {
     const track = trackRef.current;
-    if (!track) return;
-    const card = track.children[0] as HTMLElement | undefined;
-    if (!card) return;
-    const step = card.offsetWidth + 32;
-    setActiveIndex(Math.round(track.scrollLeft / step));
+    const card = track?.children[0] as HTMLElement | undefined;
+    if (!track || !card) return;
+    setActiveIndex(Math.min(TESTIMONIALS.length - 1, Math.round(track.scrollLeft / (card.offsetWidth + 32))));
   }
 
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
-      <Container>
-        <header className="mx-auto max-w-[900px] text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-600">Client Success Stories</p>
-          <h2 className="mt-3 text-3xl font-semibold leading-[1.2] text-heading sm:text-4xl lg:text-[44px] lg:tracking-[-1px]">
-            Trusted Research Partner for Businesses Worldwide
-          </h2>
-        </header>
-
-        <ul
-          ref={trackRef}
-          onScroll={handleScroll}
-          className="mt-12 flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] lg:grid lg:grid-cols-3 lg:overflow-visible [&::-webkit-scrollbar]:hidden"
-        >
-          {TESTIMONIALS.map((t) => (
-            <li
-              key={t.name}
-              className="w-[85vw] shrink-0 snap-start rounded-blog border border-card-border bg-white p-8 shadow-blog sm:w-[420px] lg:w-auto"
-            >
-              <span className="font-serif text-5xl leading-none text-brand-600" aria-hidden="true">
-                &ldquo;
-              </span>
-              <h3 className="mt-4 font-sans text-xl font-semibold leading-[1.34] text-ink2">{t.title}</h3>
-              <p className="mt-4 font-sans text-sm leading-[1.87] text-black/70">{t.quote}</p>
-              <div className="mt-6 flex flex-col gap-1">
-                <p className="font-sans text-base font-semibold leading-[1.34] text-ink2">{t.name}</p>
-                <p className="font-sans text-sm leading-[1.87] text-black/70">{t.role}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-8 flex justify-center lg:hidden">
-          <DotPagination count={TESTIMONIALS.length} activeIndex={activeIndex} onSelect={scrollToIndex} />
-        </div>
-      </Container>
+    <section className="bg-white py-16 lg:h-[821px] lg:pb-0 lg:pt-[99.6px]">
+      <SectionHeader
+        eyebrow="Client Success Stories"
+        title="Trusted Research Partner for Businesses Worldwide"
+        titleMaxWidth="704px"
+        className="px-4 sm:px-6"
+      />
+      <ul
+        ref={trackRef}
+        onScroll={handleScroll}
+        className="mt-[45.9px] flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-4 pb-6 [scrollbar-width:none] sm:px-6 lg:scroll-pl-[max(32px,calc(50vw-800px))] lg:pl-[max(32px,calc(50vw-800px))] lg:pr-8 [&::-webkit-scrollbar]:hidden"
+      >
+        {TESTIMONIALS.map((t) => (
+          <li
+            key={t.name}
+            className="w-[85vw] shrink-0 snap-start rounded-[24px] border border-[#eee] bg-white pb-[34px] pl-[48px] pr-[48px] pt-[47px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] sm:w-[590px] lg:min-h-[385px]"
+          >
+            <Image src="/icons/industries/quote.svg" alt="" width={50} height={34} className="h-[34px] w-[50px]" aria-hidden="true" />
+            <h3 className="mt-[22.7px] font-sans text-[21px] font-semibold leading-[28.14px] text-[#04264e]">{t.title}</h3>
+            <p className="mt-[19.5px] font-sans text-[14px] font-normal leading-[26.18px] text-black opacity-70 lg:pr-[8px]">{t.quote}</p>
+            <p className="mt-[37.3px] font-sans text-[16px] font-semibold leading-[21.44px] text-[#04264e]">{t.name}</p>
+            <p className="mt-[8px] font-sans text-[14px] font-normal leading-[26.18px] text-black opacity-70">{t.role}</p>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-[1px] flex justify-center">
+        <DotPagination count={TESTIMONIALS.length} activeIndex={activeIndex} onSelect={scrollToIndex} />
+      </div>
     </section>
   );
 }

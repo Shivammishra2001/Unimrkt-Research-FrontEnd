@@ -30,7 +30,7 @@ function localImage(filename: string, alt: string, width: number, height: number
   return { src: `${ASSET_DIR}/${filename}`, alt, width, height };
 }
 
-const FALLBACK_HERO_IMAGE = localImage('team-hero-bg.jpg', 'Meet the Minds Behind Unimrkt', 1900, 926);
+const FALLBACK_HERO_IMAGE = localImage('team-hero-bg.jpg', 'Meet the Minds Behind Unimrkt', 2050, 1033);
 
 function member(idSuffix: string, name: string, role: string, photoFile: string, order: number, bio?: string): TeamMemberModel {
   return { id: `fallback-team-${idSuffix}`, name, role, photo: localImage(photoFile, name, 700, 860), order, bio };
@@ -43,25 +43,25 @@ const ANURAG_MAGOO_BIO =
 // grid reading order (row 1: cols 1-4, row 2: cols 1-4, ... row 5: cols
 // 1-3 only — the grid's last row has 3 cards, not 4, exactly as drawn).
 const FALLBACK_MEMBERS: TeamMemberModel[] = [
-  member('anurag-magoo', 'Anurag Magoo', 'Co-Founder', 'team-anurag-magoo.jpg', 1, ANURAG_MAGOO_BIO),
-  member('sandeep-kumar', 'Sandeep Kumar', 'Co-Founder', 'team-sandeep-kumar.jpg', 2),
-  member('kanishk-sheel', 'Kanishk Sheel', 'Co-Founder & Managing Director', 'team-kanishk-sheel.jpg', 3),
-  member('james-west', 'James West', 'Managing Director - North America', 'team-james-west.jpg', 4),
-  member('bharat-sharma', 'Bharat Sharma', 'Senior Director - Operations', 'team-bharat-sharma.jpg', 5),
-  member('veronika-sharma', 'Veronika Sharma', 'Director - Client Services', 'team-veronika-sharma.jpg', 6),
-  member('alex-parkman', 'Alex Parkman', 'Director – Sales, EMEA/UK', 'team-alex-parkman.jpg', 7),
-  member('sanjay-kumar', 'Sanjay Kumar', 'Director - Strategy & Business Development', 'team-sanjay-kumar.jpg', 8),
-  member('rahul-shah', 'Rahul Shah', 'Senior Manager – Business Development', 'team-rahul-shah.jpg', 9),
-  member('chris-schaedel', 'Chris Schaedel', 'Senior Manager - Business Development', 'team-chris-schaedel.jpg', 10),
-  member('robin-singh-chauhan', 'Robin Singh Chauhan', 'Associate Director - Risk & Compliance', 'team-robin-singh-chauhan.jpg', 11),
-  member('vishal-pathak', 'Vishal Pathak', 'Head – Competitive Intelligence', 'team-vishal-pathak.jpg', 12),
-  member('narender-vadhava', 'Narender Vadhava', 'Associate Director - Data Quality', 'team-narender-vadhava.jpg', 13),
-  member('yashodhara-badoni-bhatt', 'Yashodhara Badoni Bhatt', 'Head – Voice Quality and Training', 'team-yashodhara-badoni-bhatt.jpg', 14),
-  member('dashwant-singh', 'Dashwant Singh', 'Director - Client Services', 'team-dashwant-singh.jpg', 15),
-  member('shradha-chauhan', 'Shradha Chauhan', 'Head - Operations', 'team-shradha-chauhan.jpg', 16),
-  member('elliot-neziri', 'Elliot Neziri', 'Executive- Business Development', 'team-elliot-neziri.jpg', 17),
-  member('julia-alves', 'Júlia Alves', 'Manager - Client Servicing', 'team-julia-alves.jpg', 18),
-  member('krystal-richardson', 'Krystal Richardson', 'Manager - Business Development', 'team-krystal-richardson.jpg', 19),
+  member('anurag-magoo', 'Anurag Magoo', 'Co-Founder', 'team-anurag-magoo.webp', 1, ANURAG_MAGOO_BIO),
+  member('sandeep-kumar', 'Sandeep Kumar', 'Co-Founder', 'team-sandeep-kumar.webp', 2),
+  member('kanishk-sheel', 'Kanishk Sheel', 'Co-Founder & Managing Director', 'team-kanishk-sheel.webp', 3),
+  member('james-west', 'James West', 'Managing Director - North America', 'team-james-west.webp', 4),
+  member('bharat-sharma', 'Bharat Sharma', 'Senior Director - Operations', 'team-bharat-sharma.webp', 5),
+  member('veronika-sharma', 'Veronika Sharma', 'Director - Client Services', 'team-veronika-sharma.webp', 6),
+  member('alex-parkman', 'Alex Parkman', 'Director – Sales, EMEA/UK', 'team-alex-parkman.webp', 7),
+  member('sanjay-kumar', 'Sanjay Kumar', 'Director - Strategy & Business Development', 'team-sanjay-kumar.webp', 8),
+  member('rahul-shah', 'Rahul Shah', 'Senior Manager – Business Development', 'team-rahul-shah.webp', 9),
+  member('chris-schaedel', 'Chris Schaedel', 'Senior Manager - Business Development', 'team-chris-schaedel.webp', 10),
+  member('robin-singh-chauhan', 'Robin Singh Chauhan', 'Associate Director - Risk & Compliance', 'team-robin-singh-chauhan.webp', 11),
+  member('vishal-pathak', 'Vishal Pathak', 'Head – Competitive Intelligence', 'team-vishal-pathak.webp', 12),
+  member('narender-vadhava', 'Narender Vadhava', 'Associate Director - Data Quality', 'team-narender-vadhava.webp', 13),
+  member('yashodhara-badoni-bhatt', 'Yashodhara Badoni Bhatt', 'Head – Voice Quality and Training', 'team-yashodhara-badoni-bhatt.webp', 14),
+  member('dashwant-singh', 'Dashwant Singh', 'Director - Client Services', 'team-dashwant-singh.webp', 15),
+  member('shradha-chauhan', 'Shradha Chauhan', 'Head - Operations', 'team-shradha-chauhan.webp', 16),
+  member('elliot-neziri', 'Elliot Neziri', 'Executive- Business Development', 'team-elliot-neziri.webp', 17),
+  member('julia-alves', 'Júlia Alves', 'Manager - Client Servicing', 'team-julia-alves.webp', 18),
+  member('krystal-richardson', 'Krystal Richardson', 'Manager - Business Development', 'team-krystal-richardson.webp', 19),
 ];
 
 const FALLBACK_BOTTOM_CTA_ACTION: LinkModel = {

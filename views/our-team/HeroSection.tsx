@@ -3,55 +3,63 @@ import { StrapiImage } from '@/views/ui/StrapiImage';
 import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import type { ResolvedOurTeam } from './fallback';
 
-/** /our-team hero + breadcrumb — Figma node 1126:54624 (y0-828). Same
- * dark full-bleed shell as every other page's hero this session, no CTA
- * button (none is drawn under the subheading on this node). Breadcrumb
- * is 3 levels here (Home > About Us > Our Team), unlike every other
- * page's 2 — "About Us" is styled in the same red as "Home" (per the
- * node's own text color) and links to /our-company, the site's actual
- * About page; no href is drawn on the node itself, so this is inferred
- * from the site's own route structure the same way "Home" -> "/" is. */
+/** /our-team hero + breadcrumb — Figma node 1126:54624 (y0-828).
+ * Hero group 1126:54628: 768px, #040112 base, the photo at 70% opacity
+ * (2050x1033 at 0,-205), a 40% #010913 wash, a left dark gradient
+ * (1064px, 80%) and a top fade under the transparent navbar (255px,
+ * 85%). The navbar itself is global and goes transparent on this route
+ * (views/sections/Navbar.tsx). Breadcrumb is 3 levels (Home > About Us >
+ * Our Team); "About Us" links to /our-company, the site's About page. */
 export function HeroSection({ hero }: { hero: ResolvedOurTeam['hero'] }) {
   const headingLines = hero.heading.split('\n');
 
   return (
     <>
-      <section className="relative flex min-h-[480px] w-full flex-col justify-end overflow-hidden text-white sm:min-h-[560px] lg:min-h-[768px]">
-        {hero.image ? (
-          <StrapiImage image={hero.image} sizes="100vw" priority fill className="object-cover" />
-        ) : (
-          <div className="absolute inset-0 bg-[#040112]" aria-hidden="true" />
+      <section className="relative w-full overflow-hidden bg-[#040112] text-white lg:h-[768px]">
+        {hero.image && (
+          <div className="absolute inset-0 opacity-70 lg:inset-auto lg:left-0 lg:top-[-205px] lg:h-[1033px] lg:w-[2050px]">
+            <StrapiImage image={hero.image} sizes="(min-width: 1024px) 2050px, 100vw" priority fill className="object-cover object-[60%_center]" />
+          </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040112] via-[#040112]/75 to-[#040112]/40" />
-        <div className="absolute inset-0 bg-[#040112]/35" />
-        <div className="relative z-10 mx-auto w-full max-w-container px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-[70px] lg:pt-40">
-          <p className="inline-flex items-center gap-3 rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] backdrop-blur-[2px] font-sans text-[13px] font-bold uppercase tracking-[3px] text-white">
-            <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[#010913]/40" aria-hidden="true" />
+        <div
+          className="absolute inset-y-0 left-0 w-full opacity-80 lg:w-[1064px]"
+          style={{ backgroundImage: 'linear-gradient(to right, #02050e 37%, rgba(2,5,14,0) 100%)' }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-x-0 top-0 h-[255px] opacity-[0.85]"
+          style={{ backgroundImage: 'linear-gradient(to bottom, #06070d 37%, rgba(6,7,13,0) 100%)' }}
+          aria-hidden="true"
+        />
+        <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-0 lg:pt-[305px] min-[1500px]:px-0">
+          <p className="inline-flex h-10 w-[196px] items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
+            <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
             {hero.eyebrow}
           </p>
-          <h1 className="mt-3 max-w-[830px] text-4xl font-semibold capitalize leading-[1.2] text-white sm:text-5xl lg:text-[60px] lg:tracking-[-3px]">
+          <h1 className="mt-[15px] max-w-[830px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
             {headingLines.map((line, i) => (
               <span key={i} className="block">
                 {line}
               </span>
             ))}
           </h1>
-          <p className="mt-6 max-w-[670px] text-base leading-[1.9] text-white/80 sm:text-lg">{hero.subheading}</p>
+          <p className="mt-[10px] max-w-[514px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">{hero.subheading}</p>
         </div>
       </section>
 
-      {/* Breadcrumb — Home > About Us > Our Team */}
-      <div className="w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto flex w-full max-w-container items-center gap-2 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
+      {/* Breadcrumb bar — 60px, shadow 0 2 8 rgba(0,0,0,.04) */}
+      <div className="relative z-10 w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
+        <div className="mx-auto flex h-[60px] w-full max-w-container items-center gap-[7px] px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
+          <Link href="/" className="shrink-0 font-sans text-[14px] font-semibold leading-[16.8px] text-[#b52c2c]">
             Home
           </Link>
-          <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <Link href="/our-company" className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
+          <ChevronIcon className="size-3 shrink-0 -rotate-90 text-[#868484]" aria-hidden="true" />
+          <Link href="/our-company" className="shrink-0 font-sans text-[14px] font-semibold leading-[16.8px] text-[#b52c2c]">
             About Us
           </Link>
-          <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate font-sans text-sm text-[#868484]">Our Team</span>
+          <ChevronIcon className="size-3 shrink-0 -rotate-90 text-[#868484]" aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate font-sans text-[14px] font-normal leading-[16.8px] text-[#868484]">Our Team</span>
         </div>
       </div>
     </>

@@ -185,6 +185,7 @@ export function normalizeIndustryItem(item: StrapiIndustryItem): IndustryItemMod
   return {
     id: `industry-${item.id}`,
     title: item.title,
+    description: item.description ?? undefined,
     image: toImageModel(item.image, item.title),
     accentColor: item.accentColor ?? '#7f3856',
   };
@@ -244,6 +245,10 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
           label: item.label,
           href: item.href,
           isActive: item.isActive ?? false,
+          description: item.description ?? undefined,
+          tag: item.tag ?? undefined,
+          headline: item.headline ?? undefined,
+          ctaLabel: item.ctaLabel ?? undefined,
         })),
         headingSize: block.headingSize ?? 'display',
         statValue: block.statValue ?? undefined,
@@ -297,7 +302,10 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         heading: block.heading,
         body: block.body ?? undefined,
         actions: (block.actions ?? []).map(normalizeLink),
-        background: toImageModel(block.background, block.heading),
+        // Image or mp4 upload; a video's src goes to `backgroundVideo`.
+        ...(block.background?.mime?.startsWith('video/')
+          ? { backgroundVideo: toImageModel(block.background, block.heading)?.src }
+          : { background: toImageModel(block.background, block.heading) }),
         backgroundColor: block.backgroundColor ?? undefined,
       };
     case 'blocks.stats-band':
@@ -307,7 +315,13 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         anchorId,
         theme,
         heading: block.heading ?? undefined,
-        items: block.items.map((item) => ({ id: `stat-${item.id}`, value: item.value, label: item.label })),
+        items: block.items.map((item) => ({
+          id: `stat-${item.id}`,
+          value: item.value,
+          label: item.label,
+          description: item.description ?? undefined,
+          image: toImageModel(item.image, item.label),
+        })),
       };
     case 'blocks.service-band':
       return {
@@ -317,7 +331,11 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         theme,
         heading: block.heading,
         body: block.body ?? undefined,
-        background: toImageModel(block.background, block.heading),
+        // The background slot accepts an image or an mp4 upload; a video's
+        // src goes to `backgroundVideo` so the view renders <video>.
+        ...(block.background?.mime?.startsWith('video/')
+          ? { backgroundVideo: toImageModel(block.background, block.heading)?.src }
+          : { background: toImageModel(block.background, block.heading) }),
         cta: block.cta ? normalizeLink(block.cta) : undefined,
         items: block.items.map((item) => ({
           id: `svc-${item.id}`,
@@ -335,7 +353,10 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         theme,
         heading: block.heading,
         subheading: block.subheading ?? undefined,
-        background: toImageModel(block.background, block.heading),
+        // Image or mp4 upload; a video's src goes to `backgroundVideo`.
+        ...(block.background?.mime?.startsWith('video/')
+          ? { backgroundVideo: toImageModel(block.background, block.heading)?.src }
+          : { background: toImageModel(block.background, block.heading) }),
         cta: block.cta ? normalizeLink(block.cta) : undefined,
         items: block.items.map(normalizeIndustryItem),
       };
@@ -1159,6 +1180,7 @@ export function normalizeTeamMember(item: StrapiTeamMember): TeamMemberModel {
     photo: toImageModel(item.photo, item.name),
     order: item.order,
     bio: item.bio ?? undefined,
+    linkedinUrl: item.linkedinUrl ?? undefined,
   };
 }
 

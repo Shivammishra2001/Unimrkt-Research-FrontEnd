@@ -23,7 +23,6 @@ import {
   mockIndustryListResponse,
 } from './fixtures/industries';
 import { MOCK_GALLERY_ITEMS_RESPONSE } from './fixtures/gallery';
-import { MOCK_SERVICES_PAGE_RESPONSE } from './fixtures/servicesPage';
 import { MOCK_BLOG_SLUGS_RESPONSE, mockBlogDetailResponse, mockBlogListResponse } from './fixtures/blog';
 import { MOCK_CATEGORIES_RESPONSE } from './fixtures/category';
 import { MOCK_OUR_COMPANY_PAGE_RESPONSE } from './fixtures/ourCompanyPage';
@@ -99,10 +98,6 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
     return MOCK_GALLERY_ITEMS_RESPONSE as unknown as T;
   }
 
-  if (endpoint === 'services-page') {
-    return MOCK_SERVICES_PAGE_RESPONSE as unknown as T;
-  }
-
   if (endpoint === 'blogs/slugs') {
     return MOCK_BLOG_SLUGS_RESPONSE as unknown as T;
   }
@@ -124,16 +119,19 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
     return MOCK_CATEGORIES_RESPONSE as unknown as T;
   }
 
-  if (endpoint === 'our-company-page') {
-    return MOCK_OUR_COMPANY_PAGE_RESPONSE as unknown as T;
-  }
-
-  if (endpoint === 'contact-page') {
-    return MOCK_CONTACT_PAGE_RESPONSE as unknown as T;
-  }
-
-  if (endpoint === 'work-with-us-page') {
-    return MOCK_WORK_WITH_US_PAGE_RESPONSE as unknown as T;
+  // Dedicated pages are `page` entries wrapping one `page-content.*` block.
+  const dedicatedPageMatch = endpoint.match(/^pages\/slug\/(about-us|contact|work-with-us|case-studies|our-team|privacy-policy)$/);
+  if (dedicatedPageMatch) {
+    const slug = dedicatedPageMatch[1];
+    const [component, mock] = {
+      'about-us': ['page-content.our-company', MOCK_OUR_COMPANY_PAGE_RESPONSE],
+      contact: ['page-content.contact', MOCK_CONTACT_PAGE_RESPONSE],
+      'work-with-us': ['page-content.work-with-us', MOCK_WORK_WITH_US_PAGE_RESPONSE],
+      'case-studies': ['page-content.case-study', MOCK_CASE_STUDY_PAGE_RESPONSE],
+      'our-team': ['page-content.our-team', MOCK_OUR_TEAM_PAGE_RESPONSE],
+      'privacy-policy': ['page-content.privacy-policy', MOCK_PRIVACY_POLICY_PAGE_RESPONSE],
+    }[slug] as [string, { data: Record<string, unknown> }];
+    return { data: { title: slug, slug, seo: null, blocks: [{ __component: component, ...mock.data }] } } as unknown as T;
   }
 
   if (endpoint === 'case-studies') {
@@ -152,20 +150,8 @@ export function resolveMock<T>(endpoint: string, query: Record<string, unknown>)
     return res as unknown as T;
   }
 
-  if (endpoint === 'case-study-page') {
-    return MOCK_CASE_STUDY_PAGE_RESPONSE as unknown as T;
-  }
-
-  if (endpoint === 'privacy-policy-page') {
-    return MOCK_PRIVACY_POLICY_PAGE_RESPONSE as unknown as T;
-  }
-
   if (endpoint === 'team-members') {
     return MOCK_TEAM_MEMBERS_RESPONSE as unknown as T;
-  }
-
-  if (endpoint === 'our-team-page') {
-    return MOCK_OUR_TEAM_PAGE_RESPONSE as unknown as T;
   }
 
   throw new StrapiError(`No mock fixture registered for endpoint "${endpoint}"`, 501, endpoint);

@@ -44,6 +44,7 @@ const config: Config = {
         sans: ['var(--font-montserrat)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         nav: ['var(--font-inter)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         accent: ['var(--font-quicksand)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        noto: ['var(--font-noto-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         // Substitution: real Figma typeface is "Mango Grotesque" (commercial,
         // no next/font/google entry). Anton is the closest free,
         // license-clean match for the ultra-bold condensed stat-numeral

@@ -6,7 +6,7 @@ import type { LinkModel, LinkVariant } from '@/models/domain';
 import { SendArrowIcon } from './icons/SendArrowIcon';
 
 const BASE_CLASSES =
-  'inline-flex items-center justify-center gap-2 rounded-btn px-8 py-4 font-sans text-[13px] font-bold uppercase tracking-[0.06em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transition-none disabled:opacity-50 disabled:pointer-events-none';
+  'inline-flex items-center justify-center gap-1 rounded-btn px-10 min-h-[60px] font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.06em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transition-none disabled:opacity-50 disabled:pointer-events-none';
 
 // The only place a semantic variant becomes a color. `primary`'s
 // gradient (not a flat fill) is confirmed against a real hero screenshot
@@ -51,9 +51,15 @@ export function Button({ link, variant, className, icon = true, children, ...res
   const classes = `${BASE_CLASSES} ${VARIANT_CLASSES[resolvedVariant]} ${className ?? ''}`.trim();
   const showIcon = icon && resolvedVariant !== 'link';
 
-  const motionProps = shouldReduceMotion
-    ? {}
-    : { whileHover: { scale: 1.03 }, whileTap: { scale: 0.98 }, transition: { duration: 0.15 } };
+  // Always pass the gesture props (as no-ops under reduced motion): framer
+  // adds tabindex="0" whenever whileTap is set, and useReducedMotion() is
+  // only known on the client — dropping the props would make the server and
+  // client markup differ (hydration warning).
+  const motionProps = {
+    whileHover: { scale: shouldReduceMotion ? 1 : 1.03 },
+    whileTap: { scale: shouldReduceMotion ? 1 : 0.98 },
+    transition: { duration: 0.15 },
+  };
 
   const content = (
     <>

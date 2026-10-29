@@ -2,77 +2,65 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/views/ui/Button';
 import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
-import { MedalIcon } from '@/views/ui/icons/MedalIcon';
-import { LocationPinIcon } from '@/views/ui/icons/LocationPinIcon';
-import { LanguageIcon } from '@/views/ui/icons/LanguageIcon';
-import { LikeIcon } from '@/views/ui/icons/LikeIcon';
 
-const EXPLORE_LINK = { id: 'industries-hero-explore', label: 'Explore Industries', href: '#industries-grid', isExternal: false, variant: 'secondary' as const };
-const TALK_LINK = { id: 'industries-hero-talk', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'primary' as const };
+const EXPLORE_LINK = { id: 'industries-hero-explore', label: 'Explore Industries', href: '#industries-grid', isExternal: false, variant: 'primary' as const };
+const TALK_LINK = { id: 'industries-hero-talk', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'ghost' as const };
 
-// Figma node 384:5881 — verbatim figures, already used elsewhere sitewide
-// (homepage stats-band / About-Unimrkt hero), just laid out here as an
-// icon+value+label row inside the hero's dark band.
-const STATS = [
-  { Icon: MedalIcon, value: '16+', label: 'Years of Excellence' },
-  { Icon: LocationPinIcon, value: '90+', label: 'Countries Covered' },
-  { Icon: LanguageIcon, value: '22+', label: 'Languages Supported' },
-  { Icon: LikeIcon, value: '250K+', label: 'Surveys Annually' },
-] as const;
-
-/** /industries hero — Figma node 384:5771 (y0-881). Dark bg photo
- * ("2432629_Electricity_Power"), eyebrow, H1, subheading, two CTAs, and
- * the 4-stat row inside the same dark band (confirmed by y-coordinates —
- * not a separate section), followed by the breadcrumb bar. */
+/** /industries hero + breadcrumb — Figma node 1384:26772 (y0-828).
+ * Hero group: 768px, #040112 base, the electricity-power photo at 70%
+ * (2645x1487 at 3.95,-70.25), a 40% #010913 wash and a 255px top fade
+ * (#06070d, 85%) under the transparent navbar (views/sections/Navbar.tsx
+ * makes the header transparent on this route). Pill 273x40 at y=276,
+ * title cap-top 346 (60/72px, -3px), subtitle 16/30.4px @ 80%, buttons
+ * 264x60 (gradient) and 272x60 (1px white outline), 20px apart. */
 export function IndustryHero() {
   return (
     <>
-      <section className="relative flex min-h-[560px] w-full flex-col justify-end overflow-hidden text-white sm:min-h-[680px] lg:min-h-[830px]">
-        <Image src="/images/industries/hero-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040112] via-[#040112]/75 to-[#040112]/40" />
-        <div className="absolute inset-0 bg-[#040112]/35" />
-        <div className="relative z-10 mx-auto flex w-full max-w-container flex-col gap-10 px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-[65px] lg:pt-40">
-          <div>
-            <p className="inline-flex items-center gap-3 rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] backdrop-blur-[2px] font-sans text-[13px] font-bold uppercase tracking-[3px] text-white">
-              <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
-              Industries We Serve
-            </p>
-            <h1 className="mt-3 max-w-[768px] text-4xl font-semibold capitalize leading-[1.2] text-white sm:text-5xl lg:text-[60px] lg:tracking-[-3px]">
-              Industry Expertise. Insights That Drive Growth.
-            </h1>
-            <p className="mt-6 max-w-[757px] text-base leading-[1.9] text-white/85 sm:text-lg">
-              Data-driven market research solutions tailored to the unique challenges of your industry.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Button link={EXPLORE_LINK} />
-              <Button link={TALK_LINK} />
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-x-[108px] gap-y-8">
-            {STATS.map(({ Icon, value, label }) => (
-              <div key={label} className="flex items-center gap-5">
-                <span className="flex size-20 shrink-0 items-center justify-center rounded-full bg-white/10">
-                  <Icon className="size-[39px] text-white" aria-hidden="true" />
-                </span>
-                <div className="flex flex-col gap-[14px]">
-                  <p className="text-[36px] font-semibold capitalize leading-[1.2] tracking-[-1px] text-white">{value}</p>
-                  <p className="whitespace-nowrap text-base leading-[1.9] text-white/80">{label}</p>
-                </div>
-              </div>
-            ))}
+      <section className="relative w-full overflow-hidden bg-[#040112] text-white lg:h-[768px]">
+        <Image
+          src="/images/industries/hero.webp"
+          alt=""
+          priority
+          width={2645}
+          height={1487}
+          sizes="2645px"
+          className="pointer-events-none absolute left-[3.95px] top-[-70.25px] hidden max-w-none opacity-70 lg:block"
+        />
+        <Image src="/images/industries/hero.webp" alt="" fill sizes="100vw" className="object-cover object-[60%_center] opacity-70 lg:hidden" />
+        <div className="absolute inset-0 bg-[#010913]/40" aria-hidden="true" />
+        <div
+          className="absolute inset-x-0 top-0 h-[255px] opacity-[0.85]"
+          style={{ backgroundImage: 'linear-gradient(to bottom, #06070d 37%, rgba(6,7,13,0) 100%)' }}
+          aria-hidden="true"
+        />
+        <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-0 lg:pt-[276px] min-[1500px]:px-0">
+          <p className="inline-flex h-10 w-[273px] items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
+            <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
+            Industries We Serve
+          </p>
+          <h1 className="mt-[14.5px] max-w-[768px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
+            Industry Expertise.
+            <br />
+            Insights That Drive Growth.
+          </h1>
+          <p className="mt-[12.8px] max-w-[757px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">
+            Data-driven market research solutions tailored to the unique challenges of your industry.
+          </p>
+          <div className="mt-[44.3px] flex flex-wrap gap-5">
+            <Button link={EXPLORE_LINK} />
+            <Button link={TALK_LINK} className="border border-white" />
           </div>
         </div>
       </section>
 
-      {/* Breadcrumb */}
-      <div className="w-full border-b border-card-border bg-white shadow-card">
-        <div className="mx-auto flex w-full max-w-container items-center gap-2 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="font-sans text-sm font-semibold text-[#b52c2c]">
+      {/* Breadcrumb bar — 60px, shadow 0 2 8 rgba(0,0,0,.04) */}
+      <div className="relative z-10 w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
+        <div className="mx-auto flex h-[60px] w-full max-w-container items-center gap-[7px] px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
+          <Link href="/" className="font-sans text-[14px] font-semibold leading-[16.8px] text-[#b52c2c]">
             Home
           </Link>
-          <ChevronIcon className="size-3.5 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="font-sans text-sm text-[#868484]">Industries</span>
+          <ChevronIcon className="size-3 -rotate-90 text-[#868484]" aria-hidden="true" />
+          <span className="font-sans text-[14px] font-normal leading-[16.8px] text-[#868484]">Industries</span>
         </div>
       </div>
     </>

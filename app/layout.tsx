@@ -1,6 +1,6 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
-import { Montserrat, Inter, Quicksand, Anton } from 'next/font/google';
+import { Montserrat, Inter, Quicksand, Anton, Noto_Sans } from 'next/font/google';
 import './globals.css';
 import { getGlobal, StrapiError } from '@/controllers/strapi';
 import { normalizeGlobal } from '@/controllers/normalize';
@@ -37,6 +37,14 @@ const anton = Anton({
   weight: ['400'],
   display: 'swap',
   variable: '--font-anton',
+});
+
+// Figma's team-card "View Profile" label (node 1126:52172) is Noto Sans Bold.
+const notoSans = Noto_Sans({
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
+  variable: '--font-noto-sans',
 });
 
 const BRAND_NAME = 'Unimrkt Research';
@@ -129,7 +137,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang="en"
-      className={`${montserrat.variable} ${inter.variable} ${quicksand.variable} ${anton.variable}`}
+      className={`${montserrat.variable} ${inter.variable} ${quicksand.variable} ${anton.variable} ${notoSans.variable}`}
     >
       <body className="flex min-h-screen flex-col font-sans antialiased">
         {global ? (

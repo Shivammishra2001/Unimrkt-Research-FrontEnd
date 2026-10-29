@@ -165,6 +165,8 @@ export interface StrapiStatItem {
   id: number;
   value: string;
   label: string;
+  description?: string | null;
+  image?: StrapiMedia | null;
 }
 
 export interface StrapiStatsBandBlock extends StrapiBlockBase {
@@ -179,6 +181,10 @@ export interface StrapiServiceBandItem {
   href: string;
   isActive?: boolean;
   description?: string | null;
+  /** Hero side-menu only: copy shown on the left while this row is selected. */
+  tag?: string | null;
+  headline?: string | null;
+  ctaLabel?: string | null;
 }
 
 export interface StrapiServiceBandBlock extends StrapiBlockBase {
@@ -193,6 +199,7 @@ export interface StrapiServiceBandBlock extends StrapiBlockBase {
 export interface StrapiIndustryItem {
   id: number;
   title: string;
+  description?: string | null;
   image: StrapiMedia | null;
   accentColor: string | null;
 }

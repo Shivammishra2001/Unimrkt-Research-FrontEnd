@@ -11,12 +11,9 @@ import type { MediaGalleryModel } from '@/models/domain';
 
 function PlayButton() {
   return (
-    <span className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-      <span className="flex size-16 items-center justify-center rounded-full bg-white/90 text-ink shadow-lg">
-        <svg viewBox="0 0 24 24" className="ml-1 size-6" fill="currentColor" aria-hidden="true">
-          <path d="M8 5v14l11-7-11-7Z" />
-        </svg>
-      </span>
+    <span className="pointer-events-none absolute inset-[33.78%_42.41%] z-10">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/figma-home/play-btn.svg" alt="" aria-hidden="true" className="block size-full" />
     </span>
   );
 }
@@ -31,24 +28,20 @@ export function MediaGalleryView({ block }: { block: MediaGalleryModel; index: n
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <Section theme={block.theme} anchorId={block.anchorId}>
-      <Container>
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <Heading as="h2" size="h2">
-              {block.heading}
-            </Heading>
-            {block.subheading && <Prose className="mt-4 max-w-2xl">{block.subheading}</Prose>}
-          </div>
-          {block.actions.length > 0 && (
-            <div className="flex flex-wrap gap-3">
-              {block.actions.map((action) => (
-                <Button key={action.id} link={action} variant={action.variant} />
-              ))}
-            </div>
-          )}
+    // Figma 267:1256: this band's ground is warm off-white #f7f7f4, not the light theme's white.
+    <Section
+      theme={block.theme}
+      anchorId={block.anchorId}
+      className={`lg:!pb-[92px] lg:!pt-[67.5px] ${block.theme === 'light' ? '!bg-[#f7f7f4]' : ''}`}
+    >
+      <Container className="min-[1664px]:px-0">
+        <div className="flex flex-col items-center text-center">
+          <Heading as="h2" size="h2">
+            {block.heading}
+          </Heading>
+          {block.subheading && <Prose className="mt-[3px] max-w-none text-heading lg:whitespace-nowrap">{block.subheading}</Prose>}
         </div>
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-9 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {block.items.map((item) => {
             const isLarge = item.size === 'large';
             const content = (
@@ -56,17 +49,17 @@ export function MediaGalleryView({ block }: { block: MediaGalleryModel; index: n
                 {item.media && (
                   <StrapiImage
                     image={item.media}
-                    sizes={isLarge ? '(min-width: 640px) 66vw, 100vw' : '(min-width: 640px) 33vw, 100vw'}
+                    sizes={isLarge ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 25vw, 50vw'}
                     fill
-                    className="object-cover"
+                    className="object-cover opacity-70"
                   />
                 )}
                 {isLarge && <PlayButton />}
               </>
             );
             const cardClassName = isLarge
-              ? 'relative overflow-hidden rounded-video bg-ink-900 aspect-[790/370] sm:col-span-2'
-              : 'relative overflow-hidden rounded-video bg-ink-900 aspect-[385/370]';
+              ? 'relative overflow-hidden rounded-video-lg bg-ink-900 aspect-[790/370] sm:col-span-2'
+              : 'relative overflow-hidden rounded-[34.335px] bg-ink-900 aspect-[385/370]';
 
             return (
               <motion.div key={item.id} whileHover={shouldReduceMotion ? undefined : { scale: 1.015 }} className={cardClassName}>
@@ -81,6 +74,13 @@ export function MediaGalleryView({ block }: { block: MediaGalleryModel; index: n
             );
           })}
         </div>
+        {block.actions.length > 0 && (
+          <div className="mt-[46px] flex flex-wrap justify-center gap-3">
+            {block.actions.map((action) => (
+              <Button key={action.id} link={action} variant={action.variant} />
+            ))}
+          </div>
+        )}
       </Container>
     </Section>
   );

@@ -95,9 +95,24 @@ const homeBlocks: StrapiBlock[] = [
     id: blockId(),
     heading: null,
     items: [
-      { id: itemId(), value: '250000+', label: 'Surveys Completed Annually' },
-      { id: itemId(), value: '450+', label: 'Global Clients' },
-      { id: itemId(), value: '16+ Years', label: 'Of Research Excellence' },
+      {
+        id: itemId(),
+        value: '250000+',
+        label: 'CATI Surveys Completed Every Year',
+        description: 'Delivering reliable insights through 250,000+ CATI surveys conducted annually across global markets.',
+      },
+      {
+        id: itemId(),
+        value: '450+',
+        label: 'CATI Stations',
+        description: 'Advanced CATI infrastructure supporting reliable telephone surveys across global markets.',
+      },
+      {
+        id: itemId(),
+        value: '16+ Years',
+        label: 'Of Experience',
+        description: 'Delivering trusted research excellence for over 16 years.',
+      },
     ],
     theme: 'light',
     anchorId: null,
