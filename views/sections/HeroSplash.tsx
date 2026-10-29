@@ -250,7 +250,7 @@ export function HeroSplash({
       {/* z-10 wash (#010913 @ 40%) — above the media, below the copy. */}
       <div className="absolute inset-0 z-10 bg-[#010913]/40" aria-hidden="true" />
 
-      <div className="relative z-20 mx-auto flex w-full max-w-[1546px] items-start justify-between gap-10 px-6 pb-20 pt-32 sm:pt-36 lg:px-0 lg:pb-0 lg:pt-0">
+      <div className="relative z-20 mx-auto flex w-full max-w-[1546px] items-start justify-between gap-10 px-6 pb-20 pt-32 sm:pt-36 lg:px-10 lg:pb-0 lg:pt-0 min-[1640px]:px-0">
         {/* Left: one stacked grid cell → fixed height, crossfade between slides. */}
         <div className="grid max-w-[760px] lg:pt-[364px]" {...pauseProps}>
           {slides.map((slide, i) => {
@@ -270,8 +270,8 @@ export function HeroSplash({
                     {slide.tag}
                   </p>
                 )}
-                {/* Figma 1794:16932: 60px / semibold / -3px tracking / 1.2 leading. */}
-                <h1 className="mt-3 capitalize text-4xl sm:text-5xl lg:text-[60px] font-semibold lg:tracking-[-3px] !leading-[1.2] text-white">
+                {/* Figma 1794:16932: 60px / semibold / -3px (-0.05em) tracking / 1.2 leading — full size from 1667px, fluid below so laptops don't wrap to 3 lines. */}
+                <h1 className="mt-3 capitalize text-4xl sm:text-5xl lg:text-[clamp(40px,3.6vw,60px)] font-semibold lg:tracking-[-0.05em] !leading-[1.2] text-white">
                   {slide.title}
                 </h1>
                 {slide.description && (
