@@ -23,6 +23,8 @@ interface LoopingVideoProps {
    */
   fallback?: ReactNode;
   className?: string;
+  /** "metadata" by default: the footage is started by play() on mount, so only the header is fetched up front. */
+  preload?: 'none' | 'metadata' | 'auto';
 }
 
 /**
@@ -41,7 +43,7 @@ interface LoopingVideoProps {
  * visitors simply never get play() — the native `poster` (or `fallback`)
  * stays up. For everyone else it also stays up until the first frame plays.
  */
-export function LoopingVideo({ sources, poster, fallback, className }: LoopingVideoProps) {
+export function LoopingVideo({ sources, poster, fallback, className, preload = 'metadata' }: LoopingVideoProps) {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -71,7 +73,7 @@ export function LoopingVideo({ sources, poster, fallback, className }: LoopingVi
         muted
         playsInline
         controls={false}
-        preload="auto"
+        preload={preload}
         poster={poster}
         aria-hidden="true"
         tabIndex={-1}

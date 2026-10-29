@@ -46,7 +46,7 @@ const CATI_PEOPLE = [
 function HeroMedia({ block, priority }: { block: HeroModel; priority: boolean }) {
   if (block.videoUrl) {
     // eslint-disable-next-line jsx-a11y/media-has-caption -- decorative background/aside footage, no dialogue
-    return <video className="w-full rounded-2xl" src={block.videoUrl} autoPlay muted loop playsInline />;
+    return <video className="w-full rounded-2xl" src={block.videoUrl} autoPlay muted loop playsInline preload="metadata" />;
   }
   if (block.media) {
     return (
@@ -232,7 +232,7 @@ export function HeroView({ block, index }: { block: HeroModel; index: number }) 
             >
               {block.videoUrl ? (
                 // eslint-disable-next-line jsx-a11y/media-has-caption -- decorative footage
-                <video className="absolute inset-0 h-full w-full object-contain" src={block.videoUrl} autoPlay muted loop playsInline />
+                <video className="absolute inset-0 h-full w-full object-contain" src={block.videoUrl} autoPlay muted loop playsInline preload="metadata" />
               ) : (
                 // Figma 267:1248: three separate transparent cut-outs (the CMS
                 // `media` PNG has a white backdrop baked in and would mask the
