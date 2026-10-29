@@ -248,7 +248,7 @@ export function HeroSplash({
         <StrapiImage image={block.media} sizes="100vw" priority={index === 0} fill className="z-0 object-cover opacity-70" />
       ) : null}
       {/* z-10 wash (#010913 @ 40%) — above the media, below the copy. */}
-      <div className="absolute inset-0 z-10 bg-[#010913]/40" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 z-10 bg-[#010913]/40" aria-hidden="true" />
 
       <div className="relative z-20 mx-auto flex w-full max-w-[1546px] items-start justify-between gap-10 px-6 pb-20 pt-32 sm:pt-36 lg:px-10 lg:pb-0 lg:pt-0 min-[1640px]:px-0">
         {/* Left: one stacked grid cell → fixed height, crossfade between slides. */}

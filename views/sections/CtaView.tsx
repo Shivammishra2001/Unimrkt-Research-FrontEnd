@@ -34,10 +34,10 @@ export function CtaView({ block }: { block: CtaModel; index: number }) {
         {block.backgroundVideo && (
           <LoopingVideo
             sources={[{ src: block.backgroundVideo, type: 'video/mp4' }]}
-            className="absolute inset-0 h-full w-full object-cover lg:object-[50%_41%]"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover lg:object-[50%_41%]"
           />
         )}
-        <div className="absolute inset-0 bg-[#010913]/75" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-0 bg-[#010913]/75" aria-hidden="true" />
         <Container className="relative">
           <div className="mx-auto max-w-[875px] text-center">
             <h2 className="text-3xl font-semibold capitalize !leading-[1.14] tracking-[-0.04em] text-white sm:text-4xl lg:text-[50px]">
@@ -79,7 +79,7 @@ export function CtaView({ block }: { block: CtaModel; index: number }) {
       {block.backgroundVideo && (
         <LoopingVideo
           sources={[{ src: block.backgroundVideo, type: 'video/mp4' }]}
-          className="absolute inset-0 h-full w-full object-cover opacity-20"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
         />
       )}
       <Container className="relative">

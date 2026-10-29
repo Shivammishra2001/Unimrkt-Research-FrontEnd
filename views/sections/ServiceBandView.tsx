@@ -44,9 +44,9 @@ export function ServiceBandView({ block }: { block: ServiceBandModel; index: num
       )}
       <div className="pointer-events-none absolute inset-0 z-[1] bg-[#010913]/60" aria-hidden="true" />
       <div className="relative z-10 px-4 py-16 sm:px-6 sm:py-20 xl:h-[34.5789cqw] xl:p-0">
-        <div className="grid gap-6 lg:grid-cols-4 lg:items-end xl:block">
+        <div className="grid gap-6 md:grid-cols-2 md:items-end lg:grid-cols-4 xl:block">
           <div
-            className={`relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to p-8 lg:col-span-4 xl:h-[var(--h)] xl:p-0 ${ABS}`}
+            className={`relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to p-8 md:col-span-2 lg:col-span-4 xl:h-[var(--h)] xl:p-0 ${ABS}`}
             style={geometry({ l: PANEL.l, t: 0, w: PANEL.w, h: CANVAS_H })}
           >
             {/* Figma 267:3128: wallpaper blended over the panel, luminosity @ 30%. */}
@@ -85,7 +85,7 @@ export function ServiceBandView({ block }: { block: ServiceBandModel; index: num
               // The hover/active expansion is not drawn in Figma: the card grows upward (bottom
               // anchored) to EXPANDED_H, the title stays at the card's top, the description
               // fades/slides in and the arrow swaps to the red active button.
-              className="group pointer-events-auto relative z-10 flex min-h-[155px] flex-col justify-end gap-3 lg:min-h-[172px] xl:min-h-[155px] rounded-t-[5px] bg-[#160415]/50 p-6 backdrop-blur-glass xl:absolute xl:bottom-[0.0526cqw] xl:left-[var(--l)] xl:h-[var(--h)] xl:w-[var(--w)] xl:p-0 xl:transition-[height] xl:duration-300 xl:ease-in-out xl:hover:h-[var(--hx)] xl:focus-visible:h-[var(--hx)] motion-reduce:transition-none"
+              className="group pointer-events-auto relative z-10 flex min-h-[155px] flex-col justify-end gap-3 md:min-h-[172px] xl:min-h-[155px] rounded-t-[5px] bg-[#160415]/50 p-6 backdrop-blur-glass xl:absolute xl:bottom-[0.0526cqw] xl:left-[var(--l)] xl:h-[var(--h)] xl:w-[var(--w)] xl:p-0 xl:transition-[height] xl:duration-300 xl:ease-in-out xl:hover:h-[var(--hx)] xl:focus-visible:h-[var(--hx)] motion-reduce:transition-none"
               style={{
                 ...geometry({ l: CARD_LEFT[i] ?? CARD_LEFT[CARD_LEFT.length - 1], w: 331, h: 155 }),
                 '--hx': cq(EXPANDED_H),
@@ -100,7 +100,7 @@ export function ServiceBandView({ block }: { block: ServiceBandModel; index: num
               </h3>
               {item.description && (
                 <p
-                  className="relative text-sm font-medium leading-[1.6] text-white/80 transition-[opacity,transform,max-height] duration-300 ease-in-out motion-reduce:transition-none lg:max-h-0 lg:overflow-hidden lg:opacity-0 lg:group-hover:max-h-40 lg:group-hover:opacity-100 lg:group-focus-visible:max-h-40 lg:group-focus-visible:opacity-100 xl:max-h-none xl:overflow-visible xl:pointer-events-none xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:w-[var(--w)] xl:translate-y-2 xl:text-[length:var(--fs)] xl:opacity-0 xl:group-hover:translate-y-0 xl:group-hover:opacity-100 xl:group-focus-visible:translate-y-0 xl:group-focus-visible:opacity-100"
+                  className="relative text-sm font-medium leading-[1.6] text-white/80 transition-[opacity,transform,max-height] duration-300 ease-in-out motion-reduce:transition-none [@media(hover:hover)]:md:max-h-0 [@media(hover:hover)]:md:overflow-hidden [@media(hover:hover)]:md:opacity-0 [@media(hover:hover)]:md:group-hover:max-h-40 [@media(hover:hover)]:md:group-hover:opacity-100 [@media(hover:hover)]:md:group-focus-visible:max-h-40 [@media(hover:hover)]:md:group-focus-visible:opacity-100 [@media(hover:hover)]:xl:max-h-none [@media(hover:hover)]:xl:overflow-visible lg:max-h-0 lg:overflow-hidden lg:opacity-0 lg:group-hover:max-h-40 lg:group-hover:opacity-100 lg:group-focus-visible:max-h-40 lg:group-focus-visible:opacity-100 xl:max-h-none xl:overflow-visible xl:pointer-events-none xl:absolute xl:left-[var(--l)] xl:top-[var(--t)] xl:w-[var(--w)] xl:translate-y-2 xl:text-[length:var(--fs)] xl:opacity-0 xl:group-hover:translate-y-0 xl:group-hover:opacity-100 xl:group-focus-visible:translate-y-0 xl:group-focus-visible:opacity-100"
                   style={geometry({ l: 40, t: 70, w: 251, fs: 14 })}
                 >
                   {item.description}

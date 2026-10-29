@@ -35,10 +35,10 @@ export function IndustryGridView({ block }: { block: IndustryGridModel; index: n
           {block.backgroundVideo && (
             <LoopingVideo
               sources={[{ src: block.backgroundVideo, type: 'video/mp4' }]}
-              className="absolute inset-0 h-full w-full object-cover opacity-40"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
             />
           )}
-          <div className="absolute inset-0 bg-[#010913]/20" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 bg-[#010913]/20" aria-hidden="true" />
           {/* Figma 267:1445: a rotated gradient rect over the panel's left 787px —
               transparent at x=865, #06070d from 63% in, @65% opacity. */}
           <div
