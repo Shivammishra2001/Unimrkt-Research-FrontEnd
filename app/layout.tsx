@@ -139,7 +139,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       lang="en"
       className={`${montserrat.variable} ${inter.variable} ${quicksand.variable} ${anton.variable} ${notoSans.variable}`}
     >
-      <body className="flex min-h-screen flex-col font-sans antialiased">
+      <body className="flex min-h-screen max-w-full flex-col overflow-x-clip font-sans antialiased">
         {global ? (
           <Navbar
             navigation={withDynamicServicesDropdown(global.navigation, categories)}

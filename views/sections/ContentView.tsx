@@ -4,7 +4,6 @@ import { Container } from '@/views/ui/Container';
 import { Heading } from '@/views/ui/Heading';
 import { Prose } from '@/views/ui/Prose';
 import { StrapiImage } from '@/views/ui/StrapiImage';
-import { geometry } from '@/views/ui/stage';
 import type { ContentModel } from '@/models/domain';
 import type { OfficeLocationModel } from '@/models/contactPage';
 
@@ -39,23 +38,23 @@ function OfficeCard({ office }: { office: OfficeLocationModel }) {
   const title = /office$/i.test(office.name.trim()) ? office.name : `${office.name} Office`;
   const phoneLabel = office.phoneLabel?.replace(/:\s*$/, '') || 'Queries';
   return (
-    <article className="rounded-blog border border-card-border bg-white p-[10px] shadow-blog lg:aspect-[462/583] lg:w-[24.3158cqw] lg:shrink-0 lg:rounded-[1.2632cqw] lg:p-[0.5263cqw]">
-      <div className="relative aspect-[442/274] overflow-hidden rounded-[24px] bg-slate-100 lg:rounded-[1.2632cqw]">
+    <article className="w-full rounded-blog border border-card-border bg-white p-[10px] shadow-blog md:[&:last-child:nth-child(odd)]:col-span-2 md:[&:last-child:nth-child(odd)]:mx-auto md:[&:last-child:nth-child(odd)]:max-w-[calc(50%-12px)] lg:min-h-[583px] lg:[&:last-child:nth-child(odd)]:col-span-1 lg:[&:last-child:nth-child(odd)]:max-w-none">
+      <div className="relative aspect-[442/274] overflow-hidden rounded-[24px] bg-slate-100">
         {figmaPhoto ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={figmaPhoto} alt="" className="absolute inset-0 h-full w-full object-cover" />
         ) : office.image ? (
-          <StrapiImage image={office.image} sizes="(min-width: 1024px) 24vw, 100vw" fill className="object-cover" />
+          <StrapiImage image={office.image} sizes="(min-width: 1024px) 33vw, 100vw" fill className="object-cover" />
         ) : null}
       </div>
-      <div className="px-5 pb-5 pt-[18px] lg:px-[1.1579cqw] lg:pb-0 lg:pt-[1.0526cqw] lg:text-[length:var(--fs)]" style={geometry({ fs: 16 })}>
-        <h3 className="font-sans text-[20px] font-semibold leading-[1.34] text-ink2">{title}</h3>
-        <div className="mt-[27.5px] flex flex-col gap-5">
+      <div className="px-5 pb-6 pt-[18px] lg:px-[22px] lg:pt-5">
+        <h3 className="font-sans text-lg font-semibold leading-[1.34] text-ink2 xl:text-[20px]">{title}</h3>
+        <div className="mt-5 flex flex-col gap-5 xl:mt-[27.5px]">
           <OfficeField icon="/figma-home/offices/icon-location.svg" label="Location">
-            <p className="text-[13px] [&]:!my-0 [&]:h-[34px]">{office.address}</p>
+            <p className="text-[13px] [&]:!my-0">{office.address}</p>
           </OfficeField>
           <OfficeField icon="/figma-home/offices/icon-sms.svg" label="Email">
-            <p>{office.email}</p>
+            <p className="break-words">{office.email}</p>
           </OfficeField>
           {office.phone && (
             <OfficeField icon="/figma-home/offices/icon-call.svg" label={phoneLabel}>
@@ -96,7 +95,7 @@ export function ContentView({
       <Section
         theme={block.theme}
         anchorId={block.anchorId}
-        className="relative overflow-hidden lg:!py-0 lg:[container-type:inline-size]"
+        className="relative overflow-hidden lg:!pb-[90px] lg:!pt-[100px] lg:[container-type:inline-size]"
       >
         {/* Figma 1794:16813 (frame y 5417, 1899x1070): the wave texture (waves-texture.png — the
             exact Figma export) is two 3222x1410 copies at 50% opacity clipped to the frame. Image
@@ -122,11 +121,8 @@ export function ContentView({
           aria-hidden="true"
           className="pointer-events-none absolute left-[calc(50%+0.5558cqw)] top-[54.9474cqw] z-0 hidden h-[74.2503cqw] w-[169.5829cqw] max-w-none -translate-x-1/2 object-cover opacity-50 lg:block"
         />
-        <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:h-[56.3158cqw] lg:max-w-none lg:px-0">
-          <div
-            className="text-center lg:absolute lg:left-0 lg:right-0 lg:top-[var(--t)]"
-            style={geometry({ t: 100.5 })}
-          >
+        <div className="relative z-10 mx-auto w-full max-w-[1500px] px-4 sm:px-6 lg:px-8 xl:px-12 min-[1900px]:px-[20px]">
+          <div className="text-center">
             {block.heading && (
               <Heading as="h2" size="h2" className="lg:!tracking-[-1px]">
                 {words.length > 0 && <>{words.join(' ')}<br /></>}
@@ -134,21 +130,15 @@ export function ContentView({
                 <span className="text-brand-600">{last}</span>
               </Heading>
             )}
-            <Prose className="mt-2 text-heading lg:mt-[7.4px] lg:whitespace-nowrap">{block.body}</Prose>
+            <Prose className="mx-auto mt-2 max-w-3xl text-heading lg:mt-[7.4px] lg:max-w-none">{block.body}</Prose>
           </div>
-          <div
-            className="mt-10 flex flex-col gap-6 lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:mt-0 lg:flex-row lg:gap-[1.9474cqw]"
-            style={geometry({ l: 220, t: 306 })}
-          >
+          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:mt-[25px] lg:grid-cols-3 xl:gap-[37px]">
             {offices.map((office) => (
               <OfficeCard key={office.id} office={office} />
             ))}
           </div>
           {block.contactPrompt && (
-            <p
-              className="mt-10 flex flex-wrap items-center justify-center gap-[14px] text-center text-base leading-[1.9] lg:absolute lg:left-0 lg:right-0 lg:top-[var(--t)] lg:mt-0"
-              style={geometry({ t: 937 })}
-            >
+            <p className="mt-10 flex flex-wrap items-center justify-center gap-x-[14px] gap-y-3 text-center text-base leading-[1.9] lg:mt-[48px]">
               <span className="opacity-80">{block.contactPrompt}</span>
               <a
                 href={`mailto:${block.contactEmail}`}
