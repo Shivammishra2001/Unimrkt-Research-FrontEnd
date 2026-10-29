@@ -25,6 +25,13 @@ const remoteHosts = Array.from(new Set([...KNOWN_STRAPI_HOSTS, deriveAssetHost()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Background footage is static and named by content: let browsers/CDNs reuse it for a day
+  // instead of revalidating (Next's default for /public is max-age=0).
+  async headers() {
+    return [
+      { source: '/videos/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }] },
+    ];
+  },
   images: {
     remotePatterns: [
       // Strapi's local upload provider serves media at /uploads/** on port 1337.

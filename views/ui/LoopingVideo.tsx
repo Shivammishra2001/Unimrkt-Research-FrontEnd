@@ -58,9 +58,24 @@ export function LoopingVideo({ sources, poster, fallback, className, preload = '
     }
     video.muted = true;
     video.defaultMuted = true;
-    const attempt = video.play();
-    // A blocked autoplay just leaves the poster frame showing.
-    if (attempt) attempt.catch(() => undefined);
+    const start = () => {
+      const attempt = video.play();
+      // A blocked autoplay just leaves the poster frame showing.
+      if (attempt) attempt.catch(() => undefined);
+    };
+    // Only decode what is on (or about to be on) screen: several full-width
+    // loops playing at once is what makes the home page stutter. Each video
+    // plays while within ~300px of the viewport and pauses otherwise.
+    if (typeof IntersectionObserver === 'undefined') {
+      start();
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? start() : video.pause()),
+      { rootMargin: '300px 0px' },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
   }, [reduceMotion, sources]);
 
   return (
