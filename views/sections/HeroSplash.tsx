@@ -5,6 +5,7 @@ import { useReducedMotion } from 'framer-motion';
 import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import { LoopingVideo, type VideoSource } from '@/views/ui/LoopingVideo';
+import { toBrowserMediaUrl } from '@/controllers/image';
 import type { HeroModel, LinkModel } from '@/models/domain';
 
 /** One selectable row of the hero's right-hand list plus the left-hand copy it drives. */
@@ -232,7 +233,7 @@ export function HeroSplash({
   }
 
   const useVideo = videoSources.length > 0;
-  const poster = block.media?.src;
+  const poster = toBrowserMediaUrl(block.media?.src);
 
   return (
     <section ref={sectionRef} className="relative w-full min-h-screen lg:min-h-[1005px] overflow-hidden bg-[#040112] text-white">

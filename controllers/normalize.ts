@@ -3,7 +3,7 @@
  * fabricate that same wire format). v4-vs-v5 differences are meant to be
  * branched here and nowhere else. Per FRONTEND_SPEC.md §4.2.
  */
-import { toImageModel } from './image';
+import { toBrowserMediaUrl, toImageModel } from './image';
 import type {
   StrapiBlock,
   StrapiFeatureItem,
@@ -237,7 +237,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         heading: block.heading,
         subheading: block.subheading ?? undefined,
         media: isVideo ? undefined : toImageModel(block.media, block.heading),
-        videoUrl: isVideo && block.media ? toImageModel(block.media, block.heading)?.src : undefined,
+        videoUrl: isVideo && block.media ? toBrowserMediaUrl(toImageModel(block.media, block.heading)?.src) : undefined,
         mediaAlignment: block.mediaAlignment,
         actions: (block.actions ?? []).map(normalizeLink),
         sideMenu: (block.sideMenu ?? []).map((item) => ({
@@ -304,7 +304,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         actions: (block.actions ?? []).map(normalizeLink),
         // Image or mp4 upload; a video's src goes to `backgroundVideo`.
         ...(block.background?.mime?.startsWith('video/')
-          ? { backgroundVideo: toImageModel(block.background, block.heading)?.src }
+          ? { backgroundVideo: toBrowserMediaUrl(toImageModel(block.background, block.heading)?.src) }
           : { background: toImageModel(block.background, block.heading) }),
         backgroundColor: block.backgroundColor ?? undefined,
       };
@@ -334,7 +334,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         // The background slot accepts an image or an mp4 upload; a video's
         // src goes to `backgroundVideo` so the view renders <video>.
         ...(block.background?.mime?.startsWith('video/')
-          ? { backgroundVideo: toImageModel(block.background, block.heading)?.src }
+          ? { backgroundVideo: toBrowserMediaUrl(toImageModel(block.background, block.heading)?.src) }
           : { background: toImageModel(block.background, block.heading) }),
         cta: block.cta ? normalizeLink(block.cta) : undefined,
         items: block.items.map((item) => ({
@@ -355,7 +355,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
         subheading: block.subheading ?? undefined,
         // Image or mp4 upload; a video's src goes to `backgroundVideo`.
         ...(block.background?.mime?.startsWith('video/')
-          ? { backgroundVideo: toImageModel(block.background, block.heading)?.src }
+          ? { backgroundVideo: toBrowserMediaUrl(toImageModel(block.background, block.heading)?.src) }
           : { background: toImageModel(block.background, block.heading) }),
         cta: block.cta ? normalizeLink(block.cta) : undefined,
         items: block.items.map(normalizeIndustryItem),

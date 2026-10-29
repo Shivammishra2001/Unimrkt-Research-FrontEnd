@@ -28,6 +28,19 @@ export function toAbsoluteUrl(url: string): string {
   return `${ASSET_BASE_URL}${url}`;
 }
 
+/**
+ * Browser-facing URL for media the BROWSER fetches directly (<video src>,
+ * <video poster>) — unlike <Image>, which the Next server proxies through
+ * /_next/image. In production a loopback asset base (e.g.
+ * http://127.0.0.1:1337, which the server uses to reach Strapi) means nothing
+ * to a visitor, so the path is returned relative and the reverse proxy's
+ * /uploads/ route serves it. Everywhere else the URL is returned unchanged.
+ */
+export function toBrowserMediaUrl(url: string | undefined): string | undefined {
+  if (!url || process.env.NODE_ENV !== 'production') return url;
+  return url.replace(/^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?(?=\/uploads\/)/, '');
+}
+
 /** Exported alias for the one non-image case: a video-typed blocks.hero
  * media upload, which never becomes an ImageModel. */
 export const toAbsoluteMediaUrl = toAbsoluteUrl;
