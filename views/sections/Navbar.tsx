@@ -166,9 +166,9 @@ export function Navbar({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ${hasHeroUnderHeader && !isScrolled ? 'py-2.5 sm:py-3 lg:py-7' : 'py-2.5 sm:py-3'} ${surfaceClassName}`}
+        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ${hasHeroUnderHeader && !isScrolled ? 'py-2.5 sm:py-3 xl:py-7' : 'py-2.5 sm:py-3'} ${surfaceClassName}`}
       >
-        <div className="relative mx-auto flex w-full max-w-[1740px] items-center justify-between px-4 sm:px-6 lg:px-0">
+        <div className="relative mx-auto flex w-full max-w-[1740px] items-center justify-between px-4 sm:px-6 xl:px-8 min-[1800px]:px-0">
           <Link href="/" className="shrink-0">
             {/* Figma 1794:16994: the exact brand PNG (white field, red arc) at 138x99,
                 placed as-is — no wrapper, padding or radius around it. */}
@@ -181,7 +181,7 @@ export function Navbar({
               className="block h-[99px] w-[138px] max-w-none object-cover"
             />
           </Link>
-          <nav className="hidden items-center gap-[72px] lg:absolute lg:left-1/2 lg:top-1/2 lg:flex lg:-translate-x-1/2 lg:-translate-y-1/2">
+          <nav className="hidden items-center gap-6 xl:flex min-[1536px]:gap-10 min-[1800px]:absolute min-[1800px]:left-1/2 min-[1800px]:top-1/2 min-[1800px]:-translate-x-1/2 min-[1800px]:-translate-y-1/2 min-[1800px]:gap-[72px]">
             {navigation.items.map((item) => (
               <NavLink key={item.id} item={item} />
             ))}
@@ -192,7 +192,7 @@ export function Navbar({
               variant={navigation.cta.variant}
               // Home (Figma 1794:16957): flat #cc1f1f, 234x60, 4px radius. Gallery (827:8010,
               // the top of the two stacked frames): #6c2a4a -> #be2c28 gradient, same box.
-              className={`hidden sm:inline-flex ${isGradientCtaPage ? '' : '!bg-none bg-[#cc1f1f]'}`}
+              className={`hidden max-xl:ml-auto sm:inline-flex ${isGradientCtaPage ? '' : '!bg-none bg-[#cc1f1f]'}`}
             />
           )}
           <button
@@ -200,7 +200,7 @@ export function Navbar({
             onClick={() => setIsMobileOpen((v) => !v)}
             aria-expanded={isMobileOpen}
             aria-label="Toggle navigation"
-            className="ml-3 flex h-11 w-11 items-center justify-center text-white lg:hidden"
+            className="ml-3 flex h-11 w-11 items-center justify-center text-white xl:hidden"
           >
             {isMobileOpen ? (
               <CloseIcon className="size-6" aria-hidden="true" />

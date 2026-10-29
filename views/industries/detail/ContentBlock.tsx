@@ -26,7 +26,7 @@ export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageS
     <div className="relative mx-auto aspect-[643/501] w-full max-w-[560px]">
       {frame === 'circle' ? (
         <>
-          <div className="absolute inset-0 rounded-full bg-white/10" style={{ margin: '-5%' }} aria-hidden="true" />
+          <div className="absolute inset-0 -m-[5%] rounded-full bg-white/10 max-lg:m-0" aria-hidden="true" />
           <div className="absolute inset-0 overflow-hidden rounded-full">
             <StrapiImage image={image} sizes="(min-width: 1024px) 45vw, 90vw" fill className="object-cover" />
           </div>

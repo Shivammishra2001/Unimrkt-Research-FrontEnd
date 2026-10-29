@@ -37,8 +37,8 @@ export function IntroSection() {
             photo clipped to the disc (image 140) plus its unclipped upper
             half (image 141, 566x551) so the head rises above the ring.
             Both photo boxes are mirrored horizontally, as drawn. */}
-        <div className="mx-auto h-[645px] w-[602px] shrink-0 max-sm:h-[387px] max-sm:w-[361px] min-[1500px]:ml-[49px] min-[1500px]:mt-[-36px]">
-          <div className="relative h-[645px] w-[602px] origin-top-left max-sm:scale-[0.6]" aria-hidden="true">
+        <div className="mx-auto h-[645px] w-[602px] shrink-0 max-sm:h-[387px] max-sm:w-[361px] max-[360px]:h-[297px] max-[360px]:w-[277px] min-[1500px]:ml-[49px] min-[1500px]:mt-[-36px]">
+          <div className="relative h-[645px] w-[602px] origin-top-left max-sm:scale-[0.6] max-[360px]:scale-[0.46]" aria-hidden="true">
             <Image src={`${ICON_DIR}/intro-ring-outer.svg`} alt="" width={597.574} height={597.574} className="absolute left-[0.43px] top-[47.58px] size-[597.574px] max-w-none" />
             <Image src={`${ICON_DIR}/intro-ring-inner.svg`} alt="" width={539.627} height={539.627} className="absolute left-[29.4px] top-[76.55px] size-[539.627px] max-w-none" />
             <div

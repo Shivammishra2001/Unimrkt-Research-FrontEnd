@@ -60,7 +60,7 @@ export function ServiceDetailHero({
           {parent && (
             <>
               <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-              <Link href={`/services/${parent.slug}`} className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
+              <Link href={`/services/${parent.slug}`} className="min-w-0 truncate font-sans text-sm font-semibold text-[#b52c2c]">
                 {parent.title}
               </Link>
             </>
