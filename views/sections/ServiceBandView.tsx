@@ -93,10 +93,11 @@ export function ServiceBandView({ block }: { block: ServiceBandModel; index: num
                 pointer.current = { type: e.pointerType, wasActive: active === i };
                 setActive(i);
               }}
-              onMouseEnter={() => {
-                // Touch taps replay mouse events; only a real pointer hovers.
-                if (pointer.current.type !== 'touch') setActive(i);
-              }}
+              // Hover always opens the card — never gated on pointer type, so DevTools device mode
+              // and hybrid laptops behave like a plain mouse. (A touch tap's replayed mouseenter is
+              // harmless: onPointerDown has already recorded whether the card was open.)
+              onMouseEnter={() => setActive(i)}
+              onMouseMove={() => active !== i && setActive(i)}
               onPointerLeave={(e) => {
                 if (e.pointerType === 'mouse') setActive(null);
               }}
@@ -111,7 +112,7 @@ export function ServiceBandView({ block }: { block: ServiceBandModel; index: num
               // The hover/active expansion is not drawn in Figma: the card grows upward (bottom
               // anchored) to EXPANDED_H, the title stays at the card's top, the description
               // fades/slides in and the arrow swaps to the red active button.
-              className="group pointer-events-auto relative z-10 flex cursor-pointer min-h-[155px] flex-col justify-end gap-3 md:min-h-[172px] xl:min-h-[155px] rounded-t-[5px] bg-[#160415]/50 p-6 backdrop-blur-glass xl:absolute xl:bottom-[0.0526cqw] xl:left-[var(--l)] xl:h-[var(--h)] xl:w-[var(--w)] xl:p-0 xl:transition-[height] xl:duration-300 xl:ease-in-out xl:hover:h-[var(--hx)] xl:data-[active=true]:h-[var(--hx)] xl:focus-visible:h-[var(--hx)] motion-reduce:transition-none"
+              className="group pointer-events-auto relative z-10 flex cursor-pointer min-h-[155px] flex-col justify-end gap-3 md:min-h-[172px] xl:min-h-0 rounded-t-[5px] bg-[#160415]/50 p-6 backdrop-blur-glass xl:absolute xl:bottom-[0.0526cqw] xl:left-[var(--l)] xl:h-[var(--h)] xl:w-[var(--w)] xl:p-0 xl:transition-[height] xl:duration-300 xl:ease-in-out xl:hover:h-[var(--hx)] xl:data-[active=true]:h-[var(--hx)] xl:focus-visible:h-[var(--hx)] motion-reduce:transition-none"
               style={{
                 ...geometry({ l: CARD_LEFT[i] ?? CARD_LEFT[CARD_LEFT.length - 1], w: 331, h: 155 }),
                 '--hx': cq(EXPANDED_H),

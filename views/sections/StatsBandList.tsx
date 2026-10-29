@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import type { FocusEvent, KeyboardEvent, PointerEvent } from 'react';
+import { useState } from 'react';
+import type { FocusEvent, KeyboardEvent } from 'react';
 import { Reveal } from '@/views/ui/Reveal';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import type { StatItemModel } from '@/models/domain';
@@ -21,18 +21,12 @@ const EASE = 'duration-[350ms] ease-in-out motion-reduce:transition-none';
  * `grid-template-rows: 0fr -> 1fr` transition instead of snapping. */
 export function StatsBandList({ items }: { items: StatItemModel[] }) {
   const [active, setActive] = useState<number | null>(null);
-  // Touch taps also emit mouse-compat events; only a real pointer (mouse, pen,
-  // trackpad) drives hover. A hybrid touch laptop still counts as hover-capable.
-  const pointerType = useRef<string>('mouse');
-  const canHover = () => typeof window === 'undefined' || window.matchMedia('(any-hover: hover)').matches;
 
   const toggle = (i: number) => setActive((cur) => (cur === i ? null : i));
 
   return (
     <div
-      onPointerLeave={(e: PointerEvent) => {
-        if (e.pointerType !== 'touch') setActive(null);
-      }}
+      onMouseLeave={() => setActive(null)}
       onBlur={(e: FocusEvent<HTMLDivElement>) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setActive(null);
       }}
@@ -45,17 +39,11 @@ export function StatsBandList({ items }: { items: StatItemModel[] }) {
               role="button"
               tabIndex={0}
               aria-expanded={isActive}
-              onPointerDown={(e) => {
-                pointerType.current = e.pointerType;
+              onPointerDown={() => {
                 setActive(i);
               }}
-              onPointerEnter={(e) => {
-                if (e.pointerType !== 'touch') setActive(i);
-              }}
-              onMouseEnter={() => {
-                // Fallback for browsers that report a trackpad as something else.
-                if (canHover() && pointerType.current !== 'touch') setActive(i);
-              }}
+              onPointerEnter={() => setActive(i)}
+              onMouseEnter={() => setActive(i)}
               onClick={() => {
                 // Hover, tap and click all just open the row (it closes when the pointer leaves or another row opens).
                 setActive(i);
