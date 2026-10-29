@@ -1,3 +1,4 @@
+import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
@@ -7,7 +8,6 @@ import { Heading } from '@/views/ui/Heading';
 import { Prose } from '@/views/ui/Prose';
 import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import { ServiceCategoryCard } from './ServiceCategoryCard';
 import { ServiceValuePropCard } from './ServiceValuePropCard';
 import { ResearchProcessSection } from './ResearchProcessSection';
@@ -71,16 +71,7 @@ export function ServiceListingView({
         </div>
       </section>
 
-      {/* Breadcrumb */}
-      <div className="w-full border-b border-card-border bg-white shadow-card">
-        <div className="mx-auto flex w-full max-w-container items-center gap-2 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="font-sans text-sm font-semibold text-brand-600">
-            Home
-          </Link>
-          <ChevronIcon className="size-3.5 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="font-sans text-sm text-slate-500">Services</span>
-        </div>
-      </div>
+      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'Services'}]} />
 
       {/* 3. About Our Services intro + main services grid — dynamic, all
           real parent categories. */}

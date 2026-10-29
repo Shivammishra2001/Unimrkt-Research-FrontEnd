@@ -1,6 +1,5 @@
-import Link from 'next/link';
+import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import { StrapiImage } from '@/views/ui/StrapiImage';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import type { ResolvedOurTeam } from './fallback';
 
 /** /our-team hero + breadcrumb — Figma node 1126:54624 (y0-828).
@@ -48,20 +47,7 @@ export function HeroSection({ hero }: { hero: ResolvedOurTeam['hero'] }) {
         </div>
       </section>
 
-      {/* Breadcrumb bar — 60px, shadow 0 2 8 rgba(0,0,0,.04) */}
-      <div className="relative z-10 w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto flex h-[60px] w-full max-w-container items-center gap-[7px] px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
-          <Link href="/" className="shrink-0 font-sans text-[14px] font-semibold leading-[16.8px] text-[#b52c2c]">
-            Home
-          </Link>
-          <ChevronIcon className="size-3 shrink-0 -rotate-90 text-[#868484]" aria-hidden="true" />
-          <Link href="/our-company" className="shrink-0 font-sans text-[14px] font-semibold leading-[16.8px] text-[#b52c2c]">
-            About Us
-          </Link>
-          <ChevronIcon className="size-3 shrink-0 -rotate-90 text-[#868484]" aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate font-sans text-[14px] font-normal leading-[16.8px] text-[#868484]">Our Team</span>
-        </div>
-      </div>
+      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'About Us', href: '/our-company'},{ label: 'Our Team'}]} />
     </>
   );
 }

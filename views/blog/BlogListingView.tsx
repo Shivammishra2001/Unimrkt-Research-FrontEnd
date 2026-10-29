@@ -1,9 +1,8 @@
+import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Container } from '@/views/ui/Container';
 import { Prose } from '@/views/ui/Prose';
 import { Button } from '@/views/ui/Button';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import { BlogGridSection } from './BlogGridSection';
 import { FeaturedBlogSection } from './FeaturedBlogSection';
 import { BlogFaqAccordion, SITEWIDE_BLOG_FAQ_ITEMS } from './BlogFaqAccordion';
@@ -59,16 +58,7 @@ export function BlogListingView({ posts, categories }: { posts: BlogSummary[]; c
         </div>
       </section>
 
-      {/* Breadcrumb */}
-      <div className="w-full border-b border-card-border bg-white shadow-card">
-        <div className="mx-auto flex w-full max-w-container items-center gap-2 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="font-sans text-sm font-semibold text-[#b52c2c]">
-            Home
-          </Link>
-          <ChevronIcon className="size-3.5 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="font-sans text-sm text-[#868484]">Blog</span>
-        </div>
-      </div>
+      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'Blog'}]} />
 
       {/* Category filter + 3x3 grid + pagination */}
       <section className="bg-white py-16 sm:py-20 lg:py-24">

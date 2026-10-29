@@ -1,7 +1,6 @@
-import Link from 'next/link';
+import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import type { ResolvedContact } from './fallback';
 
 /** /contact hero + breadcrumb — Figma node 637:10433 (y0-828). Same dark
@@ -38,16 +37,7 @@ export function HeroSection({ hero }: { hero: ResolvedContact['hero'] }) {
         </div>
       </section>
 
-      {/* Breadcrumb — Home > Contact */}
-      <div className="w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto flex w-full max-w-container items-center gap-2 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
-            Home
-          </Link>
-          <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate font-sans text-sm text-[#868484]">Contact</span>
-        </div>
-      </div>
+      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'Contact'}]} />
     </>
   );
 }

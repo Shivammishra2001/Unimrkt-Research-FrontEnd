@@ -1,7 +1,6 @@
-import Link from 'next/link';
+import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import { Container } from '@/views/ui/Container';
 import { StrapiImage } from '@/views/ui/StrapiImage';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import { FacebookIcon, XIcon, LinkedInIcon } from '@/views/ui/icons/SocialIcons';
 import { MailIcon } from '@/views/ui/icons/MailIcon';
 import { RichContent } from './RichContent';
@@ -36,20 +35,7 @@ export function BlogDetailView({ post, relatedPosts }: { post: BlogDetail; relat
 
   return (
     <article>
-      {/* Breadcrumb */}
-      <div className="w-full border-b border-card-border bg-white shadow-card">
-        <div className="mx-auto flex w-full max-w-container items-center gap-2 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
-            Home
-          </Link>
-          <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <Link href="/blogs" className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
-            Blog
-          </Link>
-          <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate font-sans text-sm text-[#868484]">{post.title}</span>
-        </div>
-      </div>
+      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'Blog', href: '/blogs'},{ label: post.title}]} />
 
       {/* Title + meta + cover image */}
       <section className="bg-white pb-8 pt-16 sm:pt-20">

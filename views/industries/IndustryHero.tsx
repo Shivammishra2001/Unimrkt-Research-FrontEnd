@@ -1,7 +1,6 @@
+import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Button } from '@/views/ui/Button';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 
 const EXPLORE_LINK = { id: 'industries-hero-explore', label: 'Explore Industries', href: '#industries-grid', isExternal: false, variant: 'primary' as const };
 const TALK_LINK = { id: 'industries-hero-talk', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'ghost' as const };
@@ -53,16 +52,7 @@ export function IndustryHero() {
         </div>
       </section>
 
-      {/* Breadcrumb bar — 60px, shadow 0 2 8 rgba(0,0,0,.04) */}
-      <div className="relative z-10 w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto flex h-[60px] w-full max-w-container items-center gap-[7px] px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
-          <Link href="/" className="font-sans text-[14px] font-semibold leading-[16.8px] text-[#b52c2c]">
-            Home
-          </Link>
-          <ChevronIcon className="size-3 -rotate-90 text-[#868484]" aria-hidden="true" />
-          <span className="font-sans text-[14px] font-normal leading-[16.8px] text-[#868484]">Industries</span>
-        </div>
-      </div>
+      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'Industries'}]} />
     </>
   );
 }

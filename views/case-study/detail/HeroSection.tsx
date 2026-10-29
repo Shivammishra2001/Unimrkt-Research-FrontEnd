@@ -1,6 +1,5 @@
-import Link from 'next/link';
+import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import { StrapiImage } from '@/views/ui/StrapiImage';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import type { ResolvedCaseStudyDetail } from './fallback';
 
 /** Hero — Figma node 1107:49842 (y0-1033). Distinct from every other
@@ -28,20 +27,7 @@ export function HeroSection({ detail }: { detail: ResolvedCaseStudyDetail }) {
         </div>
       </section>
 
-      {/* Breadcrumb — Home > Case Study > {title} */}
-      <div className="w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto flex w-full max-w-container items-center gap-2 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
-            Home
-          </Link>
-          <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <Link href="/case-study" className="shrink-0 font-sans text-sm font-semibold text-[#b52c2c]">
-            Case Study
-          </Link>
-          <ChevronIcon className="size-3.5 shrink-0 rotate-90 text-slate-400" aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate font-sans text-sm text-[#868484]">{detail.title}</span>
-        </div>
-      </div>
+      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'Case Study', href: '/case-study'},{ label: detail.title}]} />
     </>
   );
 }
