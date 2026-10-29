@@ -47,6 +47,7 @@ export function StatsBandList({ items }: { items: StatItemModel[] }) {
               aria-expanded={isActive}
               onPointerDown={(e) => {
                 pointerType.current = e.pointerType;
+                setActive(i);
               }}
               onPointerEnter={(e) => {
                 if (e.pointerType !== 'touch') setActive(i);
@@ -56,14 +57,11 @@ export function StatsBandList({ items }: { items: StatItemModel[] }) {
                 if (canHover() && pointerType.current !== 'touch') setActive(i);
               }}
               onClick={() => {
-                // Touch toggles; a mouse click just opens (hover already did) so it can never close the row.
-                if (pointerType.current === 'touch') toggle(i);
-                else setActive(i);
+                // Hover, tap and click all just open the row (it closes when the pointer leaves or another row opens).
+                setActive(i);
               }}
-              onFocus={(e) => {
-                // Pointer focus (tap/click) is handled by onClick/hover; only
-                // keyboard focus expands here, or a tap would open then close.
-                if (e.currentTarget.matches(':focus-visible')) setActive(i);
+              onFocus={() => {
+                setActive(i);
               }}
               onKeyDown={(e: KeyboardEvent) => {
                 if (e.key === 'Enter' || e.key === ' ') {
