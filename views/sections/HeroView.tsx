@@ -91,7 +91,7 @@ export function HeroView({ block, index }: { block: HeroModel; index: number }) 
     const bannerVideo: VideoSource[] = staticBanner.length > 0 ? staticBanner : block.videoUrl ? [{ src: block.videoUrl }] : [];
     const headingLines = block.heading.split(/(?<=,)\s+/);
     return (
-      <Section theme={block.theme} anchorId={block.anchorId} className="relative overflow-hidden lg:pb-[70px] lg:pt-[73px]">
+      <Section theme={block.theme} anchorId={block.anchorId} className="relative scroll-mt-[130px] overflow-hidden pt-24 sm:pt-28 lg:pb-[70px] lg:pt-[96px] min-[1800px]:pt-[73px]">
         {/* Figma 267:1304: wave texture, 50% opacity, 3222x1410 centered 81px above the section middle. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -100,7 +100,7 @@ export function HeroView({ block, index }: { block: HeroModel; index: number }) 
           aria-hidden="true"
           className="pointer-events-none absolute left-[calc(50%+11.56px)] top-[calc(50%-81px)] h-[1410px] w-[3222px] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover opacity-50"
         />
-        <div className="relative mx-auto w-full max-w-[1227px] px-4 sm:px-6 lg:px-0">
+        <div className="relative mx-auto flex w-full max-w-[1227px] flex-col px-4 sm:px-6 lg:px-8 min-[1300px]:px-0">
           <div className="text-center">
             {block.eyebrow && (
               <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-brand-600">
@@ -120,7 +120,7 @@ export function HeroView({ block, index }: { block: HeroModel; index: number }) 
               ))}
             </Heading>
           </div>
-          <div className="lg:relative lg:left-[24.5px]">
+          <div className="w-full">
           {(bannerVideo.length > 0 || block.media) && (
             <div className="relative mt-[30px] aspect-[1227/571] overflow-hidden rounded-[4px] bg-gradient-to-r from-[#63284f] to-[#c75e4a]">
               {bannerVideo.length > 0 ? (
