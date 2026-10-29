@@ -2,7 +2,6 @@ import type { ComponentType, SVGProps } from 'react';
 import Link from 'next/link';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import { FacebookIcon, InstagramIcon, LinkedInIcon, XIcon } from '@/views/ui/icons/SocialIcons';
-import { geometry } from '@/views/ui/stage';
 import type { FooterModel } from '@/models/domain';
 
 // The domain model carries no explicit "platform" enum for a social link —
@@ -23,24 +22,25 @@ const CERTIFICATION_BADGES = [
   { src: '/figma-home/footer/badge-2.png', alt: 'MRSI member' },
 ];
 
-/** Rendered size of each social glyph (Figma 267:1544), px at the 1900 canvas -> em at lg. */
+/** Rendered size of each social glyph (Figma 267:1544). */
 const SOCIAL_ICON_SIZE: Record<string, string> = {
-  facebook: 'size-[22px] lg:size-[1.5714em]',
-  x: 'size-[17.6px] lg:size-[1.2571em]',
-  twitter: 'size-[17.6px] lg:size-[1.2571em]',
-  linkedin: 'size-[16.4px] lg:size-[1.1714em]',
-  instagram: 'size-[16.5px] lg:size-[1.1786em]',
+  facebook: 'size-[22px]',
+  x: 'size-[17.6px]',
+  twitter: 'size-[17.6px]',
+  linkedin: 'size-[16.4px]',
+  instagram: 'size-[16.5px]',
 };
 
-/** Left edge of each link column on the 1900px canvas (Figma 267:1531/1535/1539). */
-const COLUMN_LEFT = [607, 904, 1262] as const;
-
-/** Gradient footer — Figma 267:1522, a 1900x529 canvas scaled with container
- * units from lg up (views/ui/stage.ts), stacked below. Columns, socials and
- * copyright are driven entirely by GlobalModel.footer. */
+/** Gradient footer — Figma 267:1522 (1900px: logo/tagline/badges at x=150, three
+ * link columns, socials at x=1510, 83px copyright bar). Built as a responsive
+ * grid rather than a scaled canvas so type stays at its real size (14px links,
+ * 18px headings, 13px copyright) at every width: 1 column on phones, 2 from
+ * 640px, brand + 3 columns from 1024px, with the socials joining the row from
+ * 1280px. Columns, socials and copyright are driven entirely by
+ * GlobalModel.footer. */
 export function Footer({ footer }: { footer: FooterModel }) {
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to font-accent text-white lg:[container-type:inline-size]">
+    <footer className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to font-accent text-white">
       {/* Figma 267:1524: the same wallpaper-over-gradient highlight as the service band. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -49,36 +49,31 @@ export function Footer({ footer }: { footer: FooterModel }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-luminosity"
       />
-      <div className="relative px-4 pt-14 sm:px-6 lg:h-[27.8421cqw] lg:p-0">
-        <div className="grid gap-10 sm:grid-cols-2 lg:block">
-          <div className="lg:absolute lg:left-[var(--l)] lg:top-[var(--t)]" style={geometry({ l: 150, t: 64 })}>
+      <div className="relative mx-auto w-full max-w-[1600px] px-4 pb-10 pt-14 sm:px-6 lg:px-8 lg:pb-[43px] lg:pt-16 min-[1700px]:px-0">
+        <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-[minmax(240px,1.3fr)_repeat(3,minmax(0,1fr))] xl:grid-cols-[minmax(240px,333px)_repeat(3,minmax(0,1fr))_auto] xl:gap-x-10">
+          <div className="sm:col-span-2 lg:col-span-1">
             <StrapiImage image={footer.logo} sizes="167px" className="h-[120px] w-auto rounded-[50%] object-contain" />
+            {footer.tagline && <p className="mt-5 max-w-xs text-[14px] leading-[1.53] lg:max-w-[333px]">{footer.tagline}</p>}
+            <div className="mt-8 flex flex-wrap gap-[10px] lg:mt-[52px]">
+              {CERTIFICATION_BADGES.map((badge) => (
+                <span key={badge.src} className="flex size-20 items-center justify-center rounded-full bg-white">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={badge.src} alt={badge.alt} className="size-[95%] rounded-full object-contain" />
+                </span>
+              ))}
+            </div>
           </div>
-          {footer.tagline && (
-            <p
-              className="max-w-xs text-[14px] leading-[1.53] lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:w-[var(--w)] lg:max-w-none lg:text-[length:var(--fs)]"
-              style={geometry({ l: 150, t: 205, w: 333, fs: 14 })}
-            >
-              {footer.tagline}
-            </p>
-          )}
-          {footer.columns.map((column, i) => (
-            <div
-              key={column.id}
-              className="lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:text-[length:var(--fs)]"
-              style={geometry({ l: COLUMN_LEFT[i] ?? COLUMN_LEFT[COLUMN_LEFT.length - 1], t: 76, fs: 14 })}
-            >
-              <h3 className="font-accent text-[18px] font-semibold leading-[1.26] text-white lg:text-[1.2857em]">
-                {column.heading}
-              </h3>
-              <ul className="mt-3 lg:mt-[0.9143em]">
+          {footer.columns.map((column) => (
+            <div key={column.id} className="min-w-0 lg:pt-3">
+              <h3 className="font-accent text-[18px] font-semibold leading-[1.26] text-white">{column.heading}</h3>
+              <ul className="mt-3">
                 {column.links.map((link) => (
                   <li key={link.id}>
                     <Link
                       href={link.href}
                       target={link.isExternal ? '_blank' : undefined}
                       rel={link.isExternal ? 'noopener noreferrer' : undefined}
-                      className="block text-[14px] leading-[2.2] text-white transition-colors hover:text-white/80 lg:text-[1em]"
+                      className="block text-[14px] leading-[2.2] text-white transition-colors hover:text-white/80"
                     >
                       {link.label}
                     </Link>
@@ -88,14 +83,9 @@ export function Footer({ footer }: { footer: FooterModel }) {
             </div>
           ))}
           {footer.socialLinks.length > 0 && (
-            <div
-              className="lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:text-[length:var(--fs)]"
-              style={geometry({ l: 1510, t: 76, fs: 14 })}
-            >
-              <h3 className="font-accent text-[18px] font-semibold leading-[1.26] text-white lg:text-[1.2857em]">
-                Connect with us
-              </h3>
-              <div className="mt-4 flex gap-[7.765px] lg:mt-[1.6em] lg:gap-[0.5546em]">
+            <div className="sm:col-span-2 lg:col-span-4 lg:pt-3 xl:col-span-1">
+              <h3 className="font-accent text-[18px] font-semibold leading-[1.26] text-white">Connect with us</h3>
+              <div className="mt-4 flex gap-[7.765px]">
                 {footer.socialLinks.map((social) => {
                   const Icon = SOCIAL_ICON_BY_LABEL[social.label.toLowerCase()];
                   return (
@@ -105,7 +95,7 @@ export function Footer({ footer }: { footer: FooterModel }) {
                       target={social.isExternal ? '_blank' : undefined}
                       rel={social.isExternal ? 'noopener noreferrer' : undefined}
                       aria-label={social.label}
-                      className="flex size-11 items-center justify-center rounded-full bg-footer-social text-white transition-transform hover:scale-105 lg:size-[3.1429em]"
+                      className="flex size-11 items-center justify-center rounded-full bg-footer-social text-white transition-transform hover:scale-105"
                     >
                       {Icon ? (
                         <Icon className={SOCIAL_ICON_SIZE[social.label.toLowerCase()] ?? 'size-4'} aria-hidden="true" />
@@ -118,27 +108,11 @@ export function Footer({ footer }: { footer: FooterModel }) {
               </div>
             </div>
           )}
-          <div
-            className="flex gap-[10px] lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:gap-[0.5263cqw]"
-            style={geometry({ l: 150, t: 298 })}
-          >
-            {CERTIFICATION_BADGES.map((badge) => (
-              <span
-                key={badge.src}
-                className="flex size-20 items-center justify-center rounded-full bg-white lg:size-[4.2105cqw]"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={badge.src} alt={badge.alt} className="size-[95%] rounded-full object-contain" />
-              </span>
-            ))}
-          </div>
         </div>
       </div>
       {footer.copyright && (
-        <div className="relative mt-10 bg-[#51223d]/20 py-5 lg:absolute lg:inset-x-0 lg:bottom-0 lg:mt-0 lg:flex lg:h-[4.3684cqw] lg:items-center lg:justify-center lg:py-0">
-          <p className="text-center text-[13px] font-medium leading-[2] text-white lg:text-[0.6842cqw]">
-            {footer.copyright}
-          </p>
+        <div className="relative bg-[#51223d]/20 px-4 py-5 lg:py-[30px]">
+          <p className="text-center text-[13px] font-medium leading-[2] text-white">{footer.copyright}</p>
         </div>
       )}
     </footer>
