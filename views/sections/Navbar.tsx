@@ -123,7 +123,7 @@ export function Navbar({
   const isHomePage = pathname === '/';
   // Pages whose hero runs under the fixed header (Figma 827:7965 /gallery, 1126:54628 /our-team, 1384:26787 /industries)
   // and whose header CTA is the top-most gradient frame (827:8010, 1126:54673).
-  const isGradientCtaPage = pathname === '/gallery' || pathname === '/our-team' || pathname === '/industries';
+  const isGradientCtaPage = isHomePage || pathname === '/gallery' || pathname === '/our-team' || pathname === '/industries';
   const hasHeroUnderHeader = isHomePage || isGradientCtaPage;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
