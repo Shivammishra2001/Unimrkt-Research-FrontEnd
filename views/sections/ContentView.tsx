@@ -41,7 +41,7 @@ function OfficeCard({ office }: { office: OfficeLocationModel }) {
   const title = /office$/i.test(office.name.trim()) ? office.name : `${office.name} Office`;
   const phoneLabel = office.phoneLabel?.replace(/:\s*$/, '') || 'Queries';
   return (
-    <article className="group w-full rounded-blog border border-card-border bg-white p-[10px] shadow-blog md:[&:last-child:nth-child(odd)]:col-span-2 md:[&:last-child:nth-child(odd)]:mx-auto md:[&:last-child:nth-child(odd)]:max-w-[calc(50%-12px)] lg:min-h-[583px] lg:[&:last-child:nth-child(odd)]:col-span-1 lg:[&:last-child:nth-child(odd)]:max-w-none">
+    <article className="group w-full transform-gpu cursor-pointer rounded-blog transition-[transform,box-shadow] duration-300 ease-out will-change-transform [backface-visibility:hidden] motion-reduce:transition-none [@media(hover:hover)]:hover:-translate-y-2 [@media(hover:hover)]:hover:scale-[1.02] [@media(hover:hover)]:hover:shadow-[6px_14px_60px_0px_rgba(0,0,0,0.16)] border border-card-border bg-white p-[10px] shadow-blog md:[&:last-child:nth-child(odd)]:col-span-2 md:[&:last-child:nth-child(odd)]:mx-auto md:[&:last-child:nth-child(odd)]:max-w-[calc(50%-12px)] lg:min-h-[583px] lg:[&:last-child:nth-child(odd)]:col-span-1 lg:[&:last-child:nth-child(odd)]:max-w-none">
       <div className="relative aspect-[442/274] overflow-hidden rounded-[24px] bg-slate-100">
         {figma ? (
           // eslint-disable-next-line @next/next/no-img-element
