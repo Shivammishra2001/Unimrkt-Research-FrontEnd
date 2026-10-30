@@ -10,10 +10,13 @@ import type { OfficeLocationModel } from '@/models/contactPage';
 /** Figma 1794:16824 photos. The homepage design uses these exact shots (the CMS's
  * contact-page photos differ), so they win; the CMS image is the fallback for any
  * office not listed here. */
-const OFFICE_PHOTO_FALLBACKS: { match: RegExp; src: string }[] = [
-  { match: /india/i, src: '/figma-home/offices/india.jpg' },
-  { match: /united states|usa|america/i, src: '/figma-home/offices/usa.jpg' },
-  { match: /united kingdom|uk|britain/i, src: '/figma-home/offices/uk.jpg' },
+const OFFICE_PHOTO_FALLBACKS: { match: RegExp; src: string; frame: string }[] = [
+  // Each shot is placed inside the 442x274 photo window exactly as Figma crops it (the mask
+  // window shows only part of an oversized image — that is the "zoomed in" look). Values are
+  // the Figma image box / window in %: width, height, left, top (UK is mirrored).
+  { match: /india/i, src: '/figma-home/offices/india.jpg', frame: 'left-[-4.072%] top-[-3.65%] h-[107.66%] w-[105.43%]' },
+  { match: /united states|usa|america/i, src: '/figma-home/offices/usa.jpg', frame: 'left-[-49.095%] top-[-4.015%] h-[108.39%] w-[155.88%]' },
+  { match: /united kingdom|uk|britain/i, src: '/figma-home/offices/uk.jpg', frame: 'left-0 top-[-1.64%] h-[103.28%] w-[113.57%] -scale-x-100' },
 ];
 
 const FIELD_LABEL = 'font-nav text-[12px] font-bold uppercase leading-normal tracking-[1.2px] text-[#1e1e1e]';
@@ -34,17 +37,19 @@ function OfficeField({ icon, label, children }: { icon: string; label: string; c
 
 /** One office card — Figma 1794:16574: 462x583, radius 24, #eee border, soft shadow. */
 function OfficeCard({ office }: { office: OfficeLocationModel }) {
-  const figmaPhoto = OFFICE_PHOTO_FALLBACKS.find((f) => f.match.test(office.name))?.src;
+  const figma = OFFICE_PHOTO_FALLBACKS.find((f) => f.match.test(office.name));
   const title = /office$/i.test(office.name.trim()) ? office.name : `${office.name} Office`;
   const phoneLabel = office.phoneLabel?.replace(/:\s*$/, '') || 'Queries';
   return (
-    <article className="w-full rounded-blog border border-card-border bg-white p-[10px] shadow-blog md:[&:last-child:nth-child(odd)]:col-span-2 md:[&:last-child:nth-child(odd)]:mx-auto md:[&:last-child:nth-child(odd)]:max-w-[calc(50%-12px)] lg:min-h-[583px] lg:[&:last-child:nth-child(odd)]:col-span-1 lg:[&:last-child:nth-child(odd)]:max-w-none">
+    <article className="group w-full rounded-blog border border-card-border bg-white p-[10px] shadow-blog md:[&:last-child:nth-child(odd)]:col-span-2 md:[&:last-child:nth-child(odd)]:mx-auto md:[&:last-child:nth-child(odd)]:max-w-[calc(50%-12px)] lg:min-h-[583px] lg:[&:last-child:nth-child(odd)]:col-span-1 lg:[&:last-child:nth-child(odd)]:max-w-none">
       <div className="relative aspect-[442/274] overflow-hidden rounded-[24px] bg-slate-100">
-        {figmaPhoto ? (
+        {figma ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={figmaPhoto} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 transform-gpu transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-105">
+            <img src={figma.src} alt="" className={`absolute max-w-none ${figma.frame}`} />
+          </div>
         ) : office.image ? (
-          <StrapiImage image={office.image} sizes="(min-width: 1024px) 33vw, 100vw" fill className="object-cover" />
+          <StrapiImage image={office.image} sizes="(min-width: 1024px) 33vw, 100vw" fill className="object-cover transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-105" />
         ) : null}
       </div>
       <div className="px-5 pb-6 pt-[18px] lg:px-[22px] lg:pt-5">
