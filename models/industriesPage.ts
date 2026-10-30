@@ -39,63 +39,110 @@ export interface StrapiIndustriesFaqItem {
   answer: string;
 }
 
+/** One dynamic-zone block per page section (components `industries-page.*`),
+ * each carrying its own text and images. */
+export interface StrapiIndustriesHero {
+  eyebrow: string | null;
+  heading: string | null;
+  subheading: string | null;
+  image: StrapiMedia | null;
+  primaryCta: StrapiLink | null;
+  secondaryCta: StrapiLink | null;
+}
+export interface StrapiIndustriesIntro {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  image: StrapiMedia | null;
+}
+export interface StrapiIndustriesGrid {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  backgroundImage: StrapiMedia | null;
+  cardFallbackImage: StrapiMedia | null;
+}
+export interface StrapiIndustriesBeyond {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  cards: StrapiIndustriesCard[] | null;
+}
+export interface StrapiIndustriesBand {
+  heading: string | null;
+  body: string | null;
+  backgroundImage: StrapiMedia | null;
+  personImage: StrapiMedia | null;
+  cta: StrapiLink | null;
+}
+export interface StrapiIndustriesInsights {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  backgroundImage: StrapiMedia | null;
+  cutoutImage: StrapiMedia | null;
+  items: StrapiIndustriesCard[] | null;
+}
+export interface StrapiIndustriesCases {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  cards: StrapiIndustriesCard[] | null;
+}
+export interface StrapiIndustriesReach {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  stats: StrapiIndustriesStat[] | null;
+}
+export interface StrapiIndustriesProcess {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  steps: StrapiIndustriesCard[] | null;
+}
+export interface StrapiIndustriesTestimonials {
+  eyebrow: string | null;
+  heading: string | null;
+  items: StrapiIndustriesTestimonial[] | null;
+}
+export interface StrapiIndustriesFaq {
+  cta: StrapiLink | null;
+  heading: string | null;
+  items: StrapiIndustriesFaqItem[] | null;
+}
+export interface StrapiIndustriesAbout {
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+}
+export interface StrapiIndustriesFinalCta {
+  heading: string | null;
+  body: string | null;
+  image: StrapiMedia | null;
+  action: StrapiLink | null;
+}
+
+/** Section key -> block shape, keyed by the part after `industries-page.`. */
+export interface StrapiIndustriesSections {
+  hero: StrapiIndustriesHero;
+  intro: StrapiIndustriesIntro;
+  grid: StrapiIndustriesGrid;
+  beyond: StrapiIndustriesBeyond;
+  band: StrapiIndustriesBand;
+  insights: StrapiIndustriesInsights;
+  cases: StrapiIndustriesCases;
+  reach: StrapiIndustriesReach;
+  process: StrapiIndustriesProcess;
+  testimonials: StrapiIndustriesTestimonials;
+  faq: StrapiIndustriesFaq;
+  about: StrapiIndustriesAbout;
+  'final-cta': StrapiIndustriesFinalCta;
+}
+
 export interface StrapiIndustriesPage {
-  heroEyebrow: string | null;
-  heroHeading: string | null;
-  heroSubheading: string | null;
-  heroImage: StrapiMedia | null;
-  heroPrimaryCta: StrapiLink | null;
-  heroSecondaryCta: StrapiLink | null;
-  introEyebrow: string | null;
-  introHeading: string | null;
-  introBody: string | null;
-  introImage: StrapiMedia | null;
-  gridEyebrow: string | null;
-  gridHeading: string | null;
-  gridBody: string | null;
-  gridBackgroundImage: StrapiMedia | null;
-  gridCardFallbackImage: StrapiMedia | null;
-  beyondEyebrow: string | null;
-  beyondHeading: string | null;
-  beyondBody: string | null;
-  beyondCards: StrapiIndustriesCard[] | null;
-  bandHeading: string | null;
-  bandBody: string | null;
-  bandBackgroundImage: StrapiMedia | null;
-  bandPersonImage: StrapiMedia | null;
-  bandCta: StrapiLink | null;
-  insightsEyebrow: string | null;
-  insightsHeading: string | null;
-  insightsBody: string | null;
-  insightsBackgroundImage: StrapiMedia | null;
-  insightsCutoutImage: StrapiMedia | null;
-  insightsItems: StrapiIndustriesCard[] | null;
-  casesEyebrow: string | null;
-  casesHeading: string | null;
-  casesBody: string | null;
-  caseCards: StrapiIndustriesCard[] | null;
-  reachEyebrow: string | null;
-  reachHeading: string | null;
-  reachBody: string | null;
-  reachStats: StrapiIndustriesStat[] | null;
-  processEyebrow: string | null;
-  processHeading: string | null;
-  processBody: string | null;
-  processSteps: StrapiIndustriesCard[] | null;
-  testimonialsEyebrow: string | null;
-  testimonialsHeading: string | null;
-  testimonials: StrapiIndustriesTestimonial[] | null;
-  faqCta: StrapiLink | null;
-  faqHeading: string | null;
-  faqItems: StrapiIndustriesFaqItem[] | null;
-  aboutEyebrow: string | null;
-  aboutHeading: string | null;
-  aboutBody: string | null;
-  finalCtaHeading: string | null;
-  finalCtaBody: string | null;
-  finalCtaImage: StrapiMedia | null;
-  finalCtaAction: StrapiLink | null;
   seo: StrapiSeo | null;
+  blocks: Array<{ __component: string }>;
 }
 
 export interface StrapiIndustriesPageResponse {

@@ -16,7 +16,7 @@ import qs from 'qs';
 import { draftMode } from 'next/headers';
 import { StrapiError, isBackendUnreachable } from './errors';
 import { getMockResponse } from '@/mocks';
-import type { StrapiGlobalResponse, StrapiPageResponse, StrapiPageSlugsResponse } from '@/models/strapi';
+import type { StrapiGlobalResponse, StrapiPageResponse, StrapiPageSlugsResponse, StrapiSeo } from '@/models/strapi';
 import type {
   StrapiServiceDetailResponse,
   StrapiServiceListResponse,
@@ -363,8 +363,17 @@ export function getTeamMembers(): Promise<StrapiTeamMemberListResponse> {
   });
 }
 
-export function getIndustriesPageSettings(): Promise<StrapiIndustriesPageResponse> {
-  return getPageContentBlock<StrapiIndustriesPageResponse>('industries', 'page-content.industries');
+/** The /industries page entry: its sections are `industries-page.*` blocks in
+ * page order, each with its own images (the backend forces the deep populate). */
+export async function getIndustriesPageSettings(): Promise<StrapiIndustriesPageResponse> {
+  const res = (await getPageBySlug('industries')) as unknown as {
+    data: { seo?: StrapiSeo | null; blocks?: Array<{ __component: string }> };
+  };
+  const blocks = res.data.blocks ?? [];
+  if (!blocks.some((b) => b.__component.startsWith('industries-page.'))) {
+    throw new StrapiError('Not found', 404, 'pages/slug/industries');
+  }
+  return { data: { seo: res.data.seo ?? null, blocks } };
 }
 
 export function getOurTeamPageSettings(): Promise<StrapiOurTeamPageResponse> {
