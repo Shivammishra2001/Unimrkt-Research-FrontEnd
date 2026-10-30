@@ -236,7 +236,7 @@ export function HeroSplash({
   const poster = toBrowserMediaUrl(block.media?.src);
 
   return (
-    <section ref={sectionRef} className="relative w-full min-h-screen lg:min-h-[1005px] overflow-hidden bg-[#040112] text-white">
+    <section ref={sectionRef} className="relative w-full min-h-screen lg:min-h-[clamp(740px,100svh,1005px)] overflow-hidden bg-[#040112] text-white">
       {/* z-0 background: video (muted loop) with the photo as its poster, or just the photo. */}
       {useVideo ? (
         <LoopingVideo
@@ -252,7 +252,7 @@ export function HeroSplash({
 
       <div className="relative z-20 mx-auto flex w-full max-w-[1546px] items-start justify-between gap-10 px-6 pb-20 pt-32 sm:pt-36 lg:px-10 lg:pb-0 lg:pt-0 min-[1640px]:px-0">
         {/* Left: one stacked grid cell → fixed height, crossfade between slides. */}
-        <div className="grid max-w-[760px] lg:pt-[364px]" {...pauseProps}>
+        <div className="grid max-w-[760px] lg:pt-[clamp(190px,36.2svh,364px)]" {...pauseProps}>
           {slides.map((slide, i) => {
             const isActive = i === active;
             return (
@@ -270,8 +270,8 @@ export function HeroSplash({
                     {slide.tag}
                   </p>
                 )}
-                {/* Figma 1794:16932: 60px / semibold / -3px (-0.05em) tracking / 1.2 leading — full size from 1667px, fluid below so laptops don't wrap to 3 lines. */}
-                <h1 className="mt-3 capitalize text-4xl sm:text-5xl lg:text-[clamp(40px,3.6vw,60px)] font-semibold lg:tracking-[-0.05em] !leading-[1.2] text-white">
+                {/* Figma 1794:16932: 60px / semibold / -3px (-0.05em) tracking / 1.2 leading — full size from 1667px; never below 46px on laptops. Vertical offsets are proportional to the viewport height (Figma: 364 / 255 of 1005) so the arc and copy stay in view on short laptop screens without scaling. */}
+                <h1 className="mt-3 capitalize text-4xl sm:text-5xl lg:text-[clamp(46px,3.6vw,60px)] font-semibold lg:tracking-[-0.05em] !leading-[1.2] text-white">
                   {slide.title}
                 </h1>
                 {slide.description && (
@@ -296,7 +296,7 @@ export function HeroSplash({
             aria-orientation="vertical"
             onKeyDown={onListKeyDown}
             {...pauseProps}
-            className="relative hidden w-[520px] shrink-0 xl:mt-[255px] xl:block"
+            className="relative hidden w-[520px] shrink-0 xl:mt-[clamp(110px,25.4svh,255px)] xl:block"
             style={{ height: LIST_HEIGHT }}
           >
             {slides.map((slide, i) => {

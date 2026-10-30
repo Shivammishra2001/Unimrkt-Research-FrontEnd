@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/views/ui/Button';
-import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
+import { NavChevronIcon } from '@/views/ui/icons/NavChevronIcon';
 import { HamburgerIcon } from '@/views/ui/icons/HamburgerIcon';
 import { CloseIcon } from '@/views/ui/icons/CloseIcon';
 import { MobileNav } from './MobileNav';
@@ -52,7 +52,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
             aria-expanded) rather than faking an interactive control with
             no menu behind it. */}
         {item.showIndicator && (
-          <ChevronIcon className="size-3.5 rotate-90 text-white" aria-hidden="true" />
+          <NavChevronIcon className="size-3.5 rotate-90 text-white" aria-hidden="true" />
         )}
       </Link>
     );
@@ -70,7 +70,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         {item.label}
         {/* Native asset points right; rotate-90 (down) at rest matches
             Figma, -rotate-90 (up) while open signals "collapse". */}
-        <ChevronIcon
+        <NavChevronIcon
           className={`size-3.5 text-white transition-transform ${open ? '-rotate-90' : 'rotate-90'}`}
           aria-hidden="true"
         />
