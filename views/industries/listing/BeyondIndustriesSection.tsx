@@ -52,7 +52,7 @@ export function BeyondIndustriesSection({ content }: { content: IndustriesPageCo
               className="group cursor-pointer rounded-[24px] border border-[#e1e1df] bg-white pb-10 pl-[43px] pr-[39px] pt-[65px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.03)] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:border-[#a82c31] hover:bg-[#a82c31] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none lg:min-h-[464px]"
             >
               <Image
-                src={`${ICON_DIR}/${ICONS[i % ICONS.length]}`}
+                src={card.icon?.src ?? `${ICON_DIR}/${ICONS[i % ICONS.length]}`}
                 alt=""
                 width={70}
                 height={70}
@@ -79,12 +79,12 @@ export function QuestionBand({ content }: { content: IndustriesPageContent['band
     <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1600px] px-4 sm:px-6 lg:-mt-[264px] lg:px-8 min-[1700px]:px-0">
       <div className="relative min-h-[455px] rounded-[30px] bg-gradient-to-r from-gradient-from to-gradient-to lg:rounded-[50px]">
         <div className="absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
-          <Image src="/images/industries/texture.jpg" alt="" fill sizes="1600px" className="object-cover opacity-[0.09] mix-blend-luminosity" />
+          <Image src={content.backgroundImage?.src ?? '/images/industries/texture.jpg'} alt="" fill sizes="1600px" className="object-cover opacity-[0.09] mix-blend-luminosity" />
         </div>
         <div className="absolute right-0 top-[-85px] hidden h-[541px] w-[690px] overflow-hidden lg:block lg:right-[93px]" aria-hidden="true">
           <Image
-            src="/images/industries/couple-cutout.webp"
-            alt=""
+            src={content.personImage?.src ?? '/images/industries/couple-cutout.webp'}
+            alt={content.personImage?.alt ?? ''}
             width={931}
             height={621}
             sizes="931px"

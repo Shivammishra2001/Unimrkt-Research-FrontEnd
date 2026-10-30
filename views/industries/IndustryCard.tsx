@@ -9,7 +9,7 @@ import type { IndustrySummary } from '@/models/industry';
  * Montserrat 600 20/26.8px #04264e at x=39; summary 14/22.8px @ 70%
  * black, clamped to 2 lines. Links to /industries/${slug}. The node
  * draws no hover state: the image zooms 5% over 300ms. */
-export function IndustryCard({ industry, priority }: { industry: IndustrySummary; priority?: boolean }) {
+export function IndustryCard({ industry, priority, fallbackSrc }: { industry: IndustrySummary; priority?: boolean; fallbackSrc?: string }) {
   return (
     <Link
       href={`/industries/${industry.slug}`}
@@ -27,7 +27,7 @@ export function IndustryCard({ industry, priority }: { industry: IndustrySummary
         ) : (
           // No photo uploaded in Strapi for this industry yet — brand placeholder instead of a blank box.
           <Image
-            src="/images/industries/card-fallback.jpg"
+            src={fallbackSrc ?? '/images/industries/card-fallback.jpg'}
             alt=""
             fill
             sizes="(min-width: 1700px) 469px, (min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"

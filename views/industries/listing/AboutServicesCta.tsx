@@ -36,7 +36,7 @@ export function AboutServicesCta({ about, finalCta }: { about: IndustriesPageCon
         <div className="mx-auto w-full max-w-[1740px]">
           <div className="relative flex min-h-[455px] flex-col items-center overflow-hidden rounded-[40px] bg-[#101723] px-6 pb-16 pt-16 text-center lg:pb-[106px] lg:pt-[108px]">
             <Image
-              src="/images/industries/cta-people.jpg"
+              src={finalCta.image?.src ?? '/images/industries/cta-people.jpg'}
               alt=""
               width={1838}
               height={1034}

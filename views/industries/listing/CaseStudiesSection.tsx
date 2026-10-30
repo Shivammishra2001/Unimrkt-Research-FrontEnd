@@ -37,7 +37,7 @@ export function CaseStudiesSection({ content }: { content: IndustriesPageContent
               className="group cursor-pointer rounded-[24px] border border-[#e0e0df] bg-white pb-10 pl-[47px] pr-[48px] pt-[40px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none lg:min-h-[443px]"
             >
               <span className="block w-[70px] origin-left transition-transform duration-300 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:transform-none">
-                <Image src={`${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={70} height={70} className="size-[70px]" />
+                <Image src={item.icon?.src ?? `${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={70} height={70} className="size-[70px]" />
               </span>
               <h3 className="mt-[29.8px] font-sans text-[22px] font-semibold leading-[29.48px] text-[#04264e]">{item.title}</h3>
               <p className="mt-[9.9px] font-sans text-[14px] font-normal leading-[26.18px] text-black opacity-70">{item.body}</p>

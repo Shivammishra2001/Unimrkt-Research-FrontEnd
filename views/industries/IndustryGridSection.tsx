@@ -26,7 +26,7 @@ export function IndustryGridSection({ industries, content }: { industries: Indus
     <section id="industries-grid" className="relative overflow-hidden bg-white pb-16 pt-16 lg:pb-[77.5px] lg:pt-[80px]">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[1388px] bg-[length:1900px_1411px] bg-[position:center_top] bg-repeat"
-        style={{ backgroundImage: "url('/images/industries/wave-pattern.png')" }}
+        style={{ backgroundImage: `url('${content.backgroundImage?.src ?? '/images/industries/wave-pattern.png'}')` }}
         aria-hidden="true"
       />
       <div
@@ -47,7 +47,7 @@ export function IndustryGridSection({ industries, content }: { industries: Indus
           <div className="mt-[41px] grid grid-cols-1 gap-x-[36px] gap-y-[35px] sm:grid-cols-2 lg:grid-cols-3">
             {pageItems.map((industry, i) => (
               <div key={industry.slug} className="lg:min-h-[430px]">
-                <IndustryCard industry={industry} priority={currentPage === 1 && i < 3} />
+                <IndustryCard industry={industry} priority={currentPage === 1 && i < 3} fallbackSrc={content.cardFallbackImage?.src} />
               </div>
             ))}
           </div>

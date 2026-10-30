@@ -37,11 +37,11 @@ export function QuestionsInsightsSection({ content }: { content: IndustriesPageC
         <div className="relative hidden h-[737px] w-[666px] min-w-[380px] shrink lg:block">
           {/* Figma 1384:26950 renders as a light, transparent-cornered glass panel with a dot grid
               (the #1a3546 base only shows through the hard-light layer), so its render is used as-is. */}
-          <Image src="/images/industries/woman-panel-bg.png" alt="" width={668} height={739} sizes="668px" className="absolute inset-0 size-full" />
+          <Image src={content.backgroundImage?.src ?? '/images/industries/woman-panel-bg.png'} alt="" width={668} height={739} sizes="668px" className="absolute inset-0 size-full" />
           <div className="absolute left-[4.5%] top-[-9.77%] aspect-[590/809] w-[88.6%] overflow-hidden">
             <Image
-              src="/images/industries/woman-cutout.webp"
-              alt="Researcher thinking through a business question"
+              src={content.cutoutImage?.src ?? '/images/industries/woman-cutout.webp'}
+              alt={content.cutoutImage?.alt || 'Researcher thinking through a business question'}
               width={1320}
               height={880}
               sizes="1320px"
@@ -57,7 +57,7 @@ export function QuestionsInsightsSection({ content }: { content: IndustriesPageC
               <>
                 <span className="relative mt-0 size-[64px] shrink-0 lg:mt-[6px]" aria-hidden="true">
                   <Image src={`${ICON_DIR}/q-ring.svg`} alt="" width={64} height={64} className="absolute inset-0 size-full" />
-                  <Image src={`${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={34} height={34} className="absolute left-[15px] top-[15px] size-[34px]" />
+                  <Image src={item.icon?.src ?? `${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={34} height={34} className="absolute left-[15px] top-[15px] size-[34px]" />
                 </span>
                 <span className="min-w-0 flex-1 text-left">
                   <span className={`block font-sans text-[18px] font-semibold leading-[27px] text-[#04264e] ${isOpen ? '' : 'lg:mt-[18.5px]'}`}>{item.title}</span>

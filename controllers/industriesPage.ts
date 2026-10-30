@@ -5,9 +5,10 @@
 import { cache } from 'react';
 import { getIndustriesPageSettings, StrapiError } from './strapi';
 import { normalizeSeo } from './normalize';
+import { toImageModel } from './image';
 import defaults from '@/views/industries/defaultContent.json';
 import type { LinkModel } from '@/models/domain';
-import type { StrapiLink } from '@/models/strapi';
+import type { StrapiLink, StrapiMedia } from '@/models/strapi';
 import type { IndustriesCard, IndustriesPageContent, StrapiIndustriesPage } from '@/models/industriesPage';
 
 type DefaultLink = { label: string; href: string; isExternal: boolean; variant: string };
@@ -29,8 +30,13 @@ function list<R, D, O>(raw: R[] | null | undefined, fallback: D[], map: (item: R
   return raw && raw.length > 0 ? raw.map(map) : fallback.map(mapDefault);
 }
 
-const card = (c: { title: string; body: string | null }): IndustriesCard => ({ title: c.title, body: c.body ?? '' });
+const card = (c: { title: string; body: string | null; icon?: StrapiMedia | null }): IndustriesCard => ({
+  title: c.title,
+  body: c.body ?? '',
+  icon: toImageModel(c.icon, c.title),
+});
 const same = <T,>(c: T): T => c;
+const img = (m: StrapiMedia | null | undefined, alt = '') => toImageModel(m, alt);
 
 function head(
   eyebrow: string | null | undefined,
@@ -50,6 +56,7 @@ export function normalizeIndustriesPage(raw: StrapiIndustriesPage | null): Indus
       eyebrow: text(r.heroEyebrow, d.heroEyebrow),
       heading: text(r.heroHeading, d.heroHeading),
       subheading: text(r.heroSubheading, d.heroSubheading),
+      image: img(r.heroImage, text(r.heroHeading, d.heroHeading)),
       primaryCta: link('industries-hero-explore', r.heroPrimaryCta, d.heroPrimaryCta),
       secondaryCta: link('industries-hero-talk', r.heroSecondaryCta, d.heroSecondaryCta),
     },
@@ -57,8 +64,13 @@ export function normalizeIndustriesPage(raw: StrapiIndustriesPage | null): Indus
       eyebrow: text(r.introEyebrow, d.introEyebrow),
       heading: text(r.introHeading, d.introHeading),
       paragraphs: paragraphs(r.introBody, d.introBody),
+      image: img(r.introImage, text(r.introHeading, d.introHeading)),
     },
-    grid: head(r.gridEyebrow, r.gridHeading, r.gridBody, { eyebrow: d.gridEyebrow, heading: d.gridHeading, body: d.gridBody }),
+    grid: {
+      ...head(r.gridEyebrow, r.gridHeading, r.gridBody, { eyebrow: d.gridEyebrow, heading: d.gridHeading, body: d.gridBody }),
+      backgroundImage: img(r.gridBackgroundImage),
+      cardFallbackImage: img(r.gridCardFallbackImage),
+    },
     beyond: {
       ...head(r.beyondEyebrow, r.beyondHeading, r.beyondBody, { eyebrow: d.beyondEyebrow, heading: d.beyondHeading, body: d.beyondBody }),
       cards: list(r.beyondCards, d.beyondCards, card, same),
@@ -67,10 +79,14 @@ export function normalizeIndustriesPage(raw: StrapiIndustriesPage | null): Indus
       heading: text(r.bandHeading, d.bandHeading),
       body: text(r.bandBody, d.bandBody),
       cta: link('industries-band-cta', r.bandCta, d.bandCta),
+      backgroundImage: img(r.bandBackgroundImage),
+      personImage: img(r.bandPersonImage, text(r.bandHeading, d.bandHeading)),
     },
     insights: {
       ...head(r.insightsEyebrow, r.insightsHeading, r.insightsBody, { eyebrow: d.insightsEyebrow, heading: d.insightsHeading, body: d.insightsBody }),
       items: list(r.insightsItems, d.insightsItems, card, same),
+      backgroundImage: img(r.insightsBackgroundImage),
+      cutoutImage: img(r.insightsCutoutImage, text(r.insightsHeading, d.insightsHeading)),
     },
     cases: {
       ...head(r.casesEyebrow, r.casesHeading, r.casesBody, { eyebrow: d.casesEyebrow, heading: d.casesHeading, body: d.casesBody }),
@@ -78,7 +94,7 @@ export function normalizeIndustriesPage(raw: StrapiIndustriesPage | null): Indus
     },
     reach: {
       ...head(r.reachEyebrow, r.reachHeading, r.reachBody, { eyebrow: d.reachEyebrow, heading: d.reachHeading, body: d.reachBody }),
-      stats: list(r.reachStats, d.reachStats, (s) => ({ value: s.value, label: s.label }), same),
+      stats: list(r.reachStats, d.reachStats, (s) => ({ value: s.value, label: s.label, icon: toImageModel(s.icon, s.label) }), same),
     },
     process: {
       ...head(r.processEyebrow, r.processHeading, r.processBody, { eyebrow: d.processEyebrow, heading: d.processHeading, body: d.processBody }),
@@ -113,6 +129,7 @@ export function normalizeIndustriesPage(raw: StrapiIndustriesPage | null): Indus
       heading: text(r.finalCtaHeading, d.finalCtaHeading),
       body: text(r.finalCtaBody, d.finalCtaBody),
       action: link('industries-cta', r.finalCtaAction, d.finalCtaAction),
+      image: img(r.finalCtaImage),
     },
     seo: normalizeSeo(r.seo, 'Industries'),
   };

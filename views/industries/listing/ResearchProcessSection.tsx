@@ -60,7 +60,7 @@ export function ResearchProcessSection({ content }: { content: IndustriesPageCon
               className="group relative w-[85vw] shrink-0 cursor-pointer snap-start rounded-[24px] border border-[#e0e0df] bg-white pb-6 pl-[47px] pr-[41px] pt-[33px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none sm:w-[460px] lg:min-h-[540px]"
             >
               <p className="font-sans text-[66px] font-semibold capitalize leading-[79.2px] tracking-[-1px] text-[#02060e] opacity-15">{String(i + 1).padStart(2, '0')}</p>
-              <Image src={`${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={70} height={70} className="mt-[41.8px] size-[70px]" />
+              <Image src={step.icon?.src ?? `${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={70} height={70} className="mt-[41.8px] size-[70px]" />
               <h3 className="mt-[13.8px] font-sans text-[22px] font-semibold leading-[29.48px] text-[#04264e]">{step.title}</h3>
               <p className="mt-[9.4px] font-sans text-[14px] font-normal leading-[26.18px] text-black opacity-70">{step.body}</p>
             </li>

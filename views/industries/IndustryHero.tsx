@@ -11,11 +11,12 @@ import type { IndustriesPageContent } from '@/models/industriesPage';
  * title cap-top 346 (60/72px, -3px), subtitle 16/30.4px @ 80%, buttons
  * 264x60 (gradient) and 272x60 (1px white outline), 20px apart. */
 export function IndustryHero({ content }: { content: IndustriesPageContent['hero'] }) {
+  const heroSrc = content.image?.src ?? '/images/industries/hero.webp';
   return (
     <>
       <section className="relative w-full overflow-hidden bg-[#040112] text-white lg:h-[768px]">
         <Image
-          src="/images/industries/hero.webp"
+          src={heroSrc}
           alt=""
           priority
           width={2645}
@@ -23,7 +24,7 @@ export function IndustryHero({ content }: { content: IndustriesPageContent['hero
           sizes="2645px"
           className="pointer-events-none absolute left-[3.95px] top-[-70.25px] hidden max-w-none opacity-70 lg:block"
         />
-        <Image src="/images/industries/hero.webp" alt="" fill sizes="100vw" className="object-cover object-[60%_center] opacity-70 lg:hidden" />
+        <Image src={heroSrc} alt="" fill sizes="100vw" className="object-cover object-[60%_center] opacity-70 lg:hidden" />
         <div className="absolute inset-0 bg-[#010913]/40" aria-hidden="true" />
         <div
           className="absolute inset-x-0 top-0 h-[255px] opacity-[0.85]"

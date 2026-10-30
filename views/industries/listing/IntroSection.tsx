@@ -9,6 +9,7 @@ const ICON_DIR = '/icons/industries';
  * three 16/30.4 paragraphs @ 80% (849px wide) at x=180; the worker
  * illustration sits at x=1078,y=884. */
 export function IntroSection({ content }: { content: IndustriesPageContent['intro'] }) {
+  const workerSrc = content.image?.src ?? '/images/industries/worker-cutout.webp';
   return (
     <section className="bg-[#f9f9f7] py-16 min-[1500px]:h-[758px] min-[1500px]:py-0">
       <div className="mx-auto flex w-full max-w-[1540px] flex-col gap-10 px-4 sm:px-6 lg:px-8 min-[1500px]:flex-row min-[1500px]:gap-0 min-[1500px]:pt-[92px] min-[1580px]:px-0">
@@ -46,7 +47,7 @@ export function IntroSection({ content }: { content: IndustriesPageContent['intr
               }}
             >
               <Image
-                src="/images/industries/worker-cutout.webp"
+                src={workerSrc}
                 alt=""
                 width={1424}
                 height={949}
@@ -56,8 +57,8 @@ export function IntroSection({ content }: { content: IndustriesPageContent['intr
             </div>
             <div className="absolute left-[36px] top-0 h-[551px] w-[566px] -scale-x-100 overflow-hidden">
               <Image
-                src="/images/industries/worker-cutout.webp"
-                alt="Industry professional holding a safety helmet"
+                src={workerSrc}
+                alt={content.image?.alt || 'Industry professional holding a safety helmet'}
                 width={1424}
                 height={949}
                 sizes="1424px"

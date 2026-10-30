@@ -35,7 +35,7 @@ export function GlobalReachSection({ content }: { content: IndustriesPageContent
             >
               <span className="relative size-[124px] shrink-0" aria-hidden="true">
                 <Image src={`${ICON_DIR}/stat-ring.svg`} alt="" width={124} height={124} className="absolute inset-0 size-full" />
-                <Image src={`${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={64} height={64} className="absolute left-[30px] top-[30px] size-[64px]" />
+                <Image src={stat.icon?.src ?? `${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={64} height={64} className="absolute left-[30px] top-[30px] size-[64px]" />
               </span>
               <p className="mt-[19.8px] font-sans text-[34px] font-semibold leading-[45.56px] text-white">{stat.value}</p>
               <p className="mt-[4.1px] font-sans text-[16px] font-normal leading-[29.92px] text-white opacity-70">{stat.label}</p>
