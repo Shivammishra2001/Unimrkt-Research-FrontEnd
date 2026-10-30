@@ -23,7 +23,7 @@ export function IndustryGridView({ block }: { block: IndustryGridModel; index: n
         {/* Panel: #03121e, cityscape @40%, #010913 @20%, darkening gradient on the left. */}
         <div
           className="relative overflow-hidden rounded-[30px] bg-[#03121e] p-6 sm:p-10 lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:h-[var(--h)] lg:w-[var(--w)] lg:rounded-[2.6316cqw] lg:p-0"
-          style={geometry({ l: 78, t: 3, w: 1742, h: 657 })}
+          style={geometry({ l: 78, t: 0, w: 1742, h: 660 })}
         >
           {block.background && (
             <div
