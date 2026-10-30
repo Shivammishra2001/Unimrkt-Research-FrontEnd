@@ -104,6 +104,7 @@ export interface StrapiIndustriesProcess {
 export interface StrapiIndustriesTestimonials {
   eyebrow: string | null;
   heading: string | null;
+  backgroundWavesImage: StrapiMedia | null;
   items: StrapiIndustriesTestimonial[] | null;
 }
 export interface StrapiIndustriesFaq {
@@ -179,6 +180,7 @@ export interface IndustriesPageContent {
   testimonials: {
     eyebrow: string;
     heading: string;
+    backgroundWavesImage?: ImageModel;
     items: { title: string; quote: string; name: string; role: string }[];
   };
   faq: { cta: LinkModel; heading: string; items: FaqItemModel[] };

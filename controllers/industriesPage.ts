@@ -120,6 +120,7 @@ export function normalizeIndustriesPage(raw: StrapiIndustriesPage | null): Indus
     testimonials: {
       eyebrow: text(testimonials.eyebrow, d.testimonialsEyebrow),
       heading: text(testimonials.heading, d.testimonialsHeading),
+      backgroundWavesImage: img(testimonials.backgroundWavesImage),
       items: list(
         testimonials.items,
         d.testimonials,

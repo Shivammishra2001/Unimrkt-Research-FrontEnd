@@ -40,7 +40,7 @@ export function ClientSuccessStories({ content }: { content: IndustriesPageConte
           into the blogs band below (that section is transparent so it shows through). */}
       <div className="pointer-events-none absolute left-0 top-0 h-[560px] w-full overflow-hidden opacity-[0.15] [mask-image:linear-gradient(to_bottom,#000_55%,transparent)]" aria-hidden="true">
         <div className="absolute inset-x-0 top-[-267px] h-[845px]">
-          <Image src="/images/industries/process-bg.jpg" alt="" fill sizes="100vw" className="object-cover object-left-top" />
+          <Image src={content.backgroundWavesImage?.src ?? '/images/industries/process-bg.jpg'} alt="" fill sizes="100vw" className="object-cover object-left-top" />
         </div>
       </div>
       <SectionHeader
