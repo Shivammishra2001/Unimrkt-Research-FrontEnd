@@ -23,7 +23,7 @@ export function FaqView({ block }: { block: FaqModel; index: number }) {
       {block.background && (
         // Figma 267:1240/1241: a 1900x719 clip with the world map (1377x787 at -71px) @ 8% opacity.
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[719px] overflow-hidden" aria-hidden="true">
-          <div className="absolute left-1/2 top-[-71px] h-[787px] w-[1377px] -translate-x-1/2 opacity-[0.08]">
+          <div className="absolute left-1/2 top-[-71px] h-[787px] w-[1377px] -translate-x-1/2 opacity-[0.16]">
             <StrapiImage image={block.background} sizes="1377px" fill className="object-cover" />
           </div>
         </div>
