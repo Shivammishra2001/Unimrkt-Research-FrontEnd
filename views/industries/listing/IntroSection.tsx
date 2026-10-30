@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { EYEBROW_CLASS, H2_CLASS, BODY_CLASS } from './shared';
+import type { IndustriesPageContent } from '@/models/industriesPage';
 
 const ICON_DIR = '/icons/industries';
 
@@ -7,29 +8,19 @@ const ICON_DIR = '/icons/industries';
  * Eyebrow cap-top 923 (#cc1f1f), title 50/60 (-3px, 723px wide, #02060e),
  * three 16/30.4 paragraphs @ 80% (849px wide) at x=180; the worker
  * illustration sits at x=1078,y=884. */
-export function IntroSection() {
+export function IntroSection({ content }: { content: IndustriesPageContent['intro'] }) {
   return (
     <section className="bg-[#f9f9f7] py-16 min-[1500px]:h-[758px] min-[1500px]:py-0">
       <div className="mx-auto flex w-full max-w-[1540px] flex-col gap-10 px-4 sm:px-6 lg:px-8 min-[1500px]:flex-row min-[1500px]:gap-0 min-[1500px]:pt-[92px] min-[1580px]:px-0">
         <div className="min-[1500px]:w-[849px] min-[1500px]:shrink-0">
-          <p className={`${EYEBROW_CLASS} text-[#cc1f1f]`}>Our Industries</p>
-          <h2 className={`${H2_CLASS} mt-[7px] max-w-[723px] text-[#02060e]`}>Understanding Industries. Uncovering Opportunities.</h2>
+          <p className={`${EYEBROW_CLASS} text-[#cc1f1f]`}>{content.eyebrow}</p>
+          <h2 className={`${H2_CLASS} mt-[7px] max-w-[723px] text-[#02060e]`}>{content.heading}</h2>
           <div className={`${BODY_CLASS} mt-[12px] text-[#02060e] opacity-80`}>
-            <p className="mb-[30.4px]">
-              Every industry operates within a unique ecosystem shaped by customer expectations, market trends, competition, technology and
-              regulatory changes. Unimrkt Research helps organizations understand these dynamics through industry-focused research designed
-              around specific business questions and objectives.
-            </p>
-            <p className="mb-[30.4px]">
-              Our research explores market opportunities, customer behavior, competitive landscapes, emerging trends, product preferences and
-              changing industry needs. By combining primary, qualitative, quantitative and business research capabilities, we provide a
-              comprehensive view of the markets and audiences that matter most.
-            </p>
-            <p>
-              From established sectors to emerging markets, our approach can be adapted to different industries, geographies and audiences. We
-              bring together industry context, reliable data and meaningful analysis to help businesses identify opportunities, understand
-              challenges and make informed strategic decisions with greater confidence.
-            </p>
+            {content.paragraphs.map((paragraph, i) => (
+              <p key={i} className={i < content.paragraphs.length - 1 ? 'mb-[30.4px]' : undefined}>
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
         {/* Worker illustration — Figma 1384:26777, 602x645 at (1078,884): two

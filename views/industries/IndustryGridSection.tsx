@@ -5,6 +5,7 @@ import { IndustryCard } from './IndustryCard';
 import { Pagination } from '@/views/blog/Pagination';
 import { SectionHeader } from './listing/shared';
 import type { IndustrySummary } from '@/models/industry';
+import type { IndustriesPageContent } from '@/models/industriesPage';
 
 const PAGE_SIZE = 6; // Figma's 3x2 grid (nodes 1384:26881-26886)
 
@@ -15,7 +16,7 @@ const PAGE_SIZE = 6; // Figma's 3x2 grid (nodes 1384:26881-26886)
  * #ba2c29 active, #c4d7e8 border, #144168 text). Behind it: the faint
  * wave texture (50%) fading to white at the bottom. Industries come from
  * the CMS (`industries` collection) and paginate client-side. */
-export function IndustryGridSection({ industries }: { industries: IndustrySummary[] }) {
+export function IndustryGridSection({ industries, content }: { industries: IndustrySummary[]; content: IndustriesPageContent['grid'] }) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(industries.length / PAGE_SIZE));
   const start = (currentPage - 1) * PAGE_SIZE;
@@ -35,11 +36,11 @@ export function IndustryGridSection({ industries }: { industries: IndustrySummar
       />
       <div className="relative mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
         <SectionHeader
-          eyebrow="Industries"
-          title="Deep Expertise Across Diverse Industries"
+          eyebrow={content.eyebrow}
+          title={content.heading}
           titleMaxWidth="939px"
           bodyMaxWidth="1309px"
-          body="Our research expertise spans diverse industries, helping businesses understand the unique market dynamics, customer behaviours and challenges shaping their sectors. From Banking & Finance and Healthcare to Consumer & Retail, Technology, Automotive and B2B markets, we bring relevant industry understanding and research capabilities to every project."
+          body={content.body}
         />
 
         {pageItems.length > 0 ? (

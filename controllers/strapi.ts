@@ -39,6 +39,7 @@ import type { StrapiCaseStudyPageResponse } from '@/models/caseStudyPage';
 import type { StrapiPrivacyPolicyPageResponse } from '@/models/privacyPolicyPage';
 import type { StrapiTeamMemberListResponse } from '@/models/teamMember';
 import type { StrapiOurTeamPageResponse } from '@/models/ourTeamPage';
+import type { StrapiIndustriesPageResponse } from '@/models/industriesPage';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -360,6 +361,10 @@ export function getTeamMembers(): Promise<StrapiTeamMemberListResponse> {
     query: { pagination: { pageSize: 30 } },
     tag: 'team-members',
   });
+}
+
+export function getIndustriesPageSettings(): Promise<StrapiIndustriesPageResponse> {
+  return getPageContentBlock<StrapiIndustriesPageResponse>('industries', 'page-content.industries');
 }
 
 export function getOurTeamPageSettings(): Promise<StrapiOurTeamPageResponse> {

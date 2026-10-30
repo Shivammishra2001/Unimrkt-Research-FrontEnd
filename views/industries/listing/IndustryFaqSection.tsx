@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { H2_CLASS } from './shared';
 import { PlusIcon } from '@/views/ui/icons/PlusIcon';
-import type { FaqItemModel } from '@/models/domain';
+import type { IndustriesPageContent } from '@/models/industriesPage';
 
 /** FAQ — Figma 1384:26772, y10119-11105. A 222x60 gradient "Browse
  * Blogs" button (y=10162), the 50/60px title (cap-top 10321), then 1160x90
@@ -15,7 +15,8 @@ import type { FaqItemModel } from '@/models/domain';
  * 30px plus at the right. Single-open accordion; the faint world map
  * (5%) sits behind. The node repeats one placeholder question in rows
  * 2-6, so the real items keep the previously authored copy. */
-export function IndustryFaqSection({ items }: { items: FaqItemModel[] }) {
+export function IndustryFaqSection({ content }: { content: IndustriesPageContent['faq'] }) {
+  const items = content.items;
   const [openId, setOpenId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
 
@@ -23,15 +24,20 @@ export function IndustryFaqSection({ items }: { items: FaqItemModel[] }) {
 
   return (
     <section className="relative overflow-hidden bg-white pb-16 pt-16 lg:h-[986px] lg:pb-0 lg:pt-[43px]">
-      <Image src="/mock/faq-worldmap-bg.svg" alt="" fill sizes="100vw" className="pointer-events-none object-contain opacity-[0.05]" />
+      {/* Figma 1384:27167: the same 1900x719 clip as the home FAQ (world map 1377x787 at -71px) @ 8%. */}
+      <div className="pointer-events-none absolute inset-x-0 top-[93px] h-[719px] overflow-hidden" aria-hidden="true">
+        <div className="absolute left-1/2 top-[-71px] h-[787px] w-[1377px] -translate-x-1/2 opacity-[0.08]">
+          <Image src="/figma-home/faq-worldmap.png" alt="" fill sizes="1377px" className="object-cover" />
+        </div>
+      </div>
       <div className="relative flex flex-col items-center px-4 sm:px-6">
         <Link
-          href="/blogs"
+          href={content.cta.href}
           className="inline-flex h-[60px] w-[222px] items-center justify-center gap-1 rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-10 font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition-[filter] duration-300 ease-in-out hover:brightness-110 motion-reduce:transition-none"
         >
-          Browse Blogs
+          {content.cta.label}
         </Link>
-        <h2 className={`${H2_CLASS} mt-[43px] text-center text-[#02060e]`}>Frequently Asked Questions</h2>
+        <h2 className={`${H2_CLASS} mt-[43px] text-center text-[#02060e]`}>{content.heading}</h2>
 
         <div className="mt-[44.9px] flex w-full max-w-[1160px] flex-col gap-4">
           {items.map((item) => {

@@ -34,7 +34,7 @@ export function LatestBlogsSection({ posts }: { posts: BlogSummary[] }) {
   if (!featured) return null;
 
   return (
-    <section className="relative bg-white lg:h-[630px]">
+    <section className="relative bg-transparent lg:h-[630px]">
       <div className="bg-gradient-to-r from-gradient-from to-gradient-to px-4 py-12 sm:px-6 lg:absolute lg:left-0 lg:top-0 lg:h-[462px] lg:w-[861px] lg:py-0 lg:pl-[150px] lg:pr-0">
         <p className={`${EYEBROW_CLASS} text-white lg:pt-[102.6px]`}>
           Latest Blogs
@@ -80,7 +80,7 @@ export function LatestBlogsSection({ posts }: { posts: BlogSummary[] }) {
             >
               <Link
                 href={`/blogs/${post.slug}`}
-                className="group flex h-full min-h-[510px] flex-col rounded-[24px] border border-[#eee] bg-white p-[25px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)]"
+                className="group flex h-full min-h-[510px] cursor-pointer flex-col rounded-[24px] border border-[#eee] bg-white p-[25px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)]"
               >
                 <div className="relative aspect-[440/291] w-full overflow-hidden rounded-[30px] bg-slate-100">
                   {post.coverImage && (
@@ -89,7 +89,7 @@ export function LatestBlogsSection({ posts }: { posts: BlogSummary[] }) {
                       sizes="440px"
                       priority={i === 0}
                       fill
-                      className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 motion-reduce:transition-none"
+                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none"
                     />
                   )}
                 </div>
