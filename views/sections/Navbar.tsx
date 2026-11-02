@@ -168,7 +168,7 @@ export function Navbar({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ${hasHeroUnderHeader && !isScrolled ? 'py-2.5 sm:py-3 xl:py-7' : 'py-2.5 sm:py-3'} ${surfaceClassName}`}
+        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ${hasHeroUnderHeader && !isScrolled ? 'py-2.5 sm:py-3 xl:py-7 max-md:!py-[14px]' : 'py-2.5 sm:py-3 max-md:!py-[14px]'} ${surfaceClassName}`}
       >
         <div className="relative mx-auto flex w-full max-w-[1740px] items-center justify-between px-4 sm:px-6 xl:px-8 min-[1800px]:px-0">
           <Link href="/" className="shrink-0">
@@ -180,7 +180,7 @@ export function Navbar({
               width={138}
               height={99}
               priority
-              className="block h-[99px] w-[138px] max-w-none object-cover"
+              className="block h-[99px] w-[138px] max-w-none object-cover max-md:h-9 max-md:w-auto max-md:object-contain"
             />
           </Link>
           <nav className="hidden items-center gap-6 xl:flex min-[1536px]:gap-10 min-[1800px]:absolute min-[1800px]:left-1/2 min-[1800px]:top-1/2 min-[1800px]:-translate-x-1/2 min-[1800px]:-translate-y-1/2 min-[1800px]:gap-[72px]">
