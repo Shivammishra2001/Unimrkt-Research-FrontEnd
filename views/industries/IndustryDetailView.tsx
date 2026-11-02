@@ -1,5 +1,4 @@
 import { DetailHero } from './detail/DetailHero';
-import { TrustStrip } from '@/views/ui/detail/TrustStrip';
 import { ContentBlock } from './detail/ContentBlock';
 import { WhyResearchSection } from './detail/WhyResearchSection';
 import { ExpertiseStrip } from './detail/ExpertiseStrip';
@@ -8,13 +7,13 @@ import { WhoWeServeSection } from './detail/WhoWeServeSection';
 import { MethodologiesSection } from './detail/MethodologiesSection';
 import { EnquiryForm } from '@/views/ui/detail/EnquiryForm';
 import { CaseStudiesSection } from './detail/CaseStudiesSection';
-import { AboutIndustrySection } from './detail/AboutIndustrySection';
+import { AboutServicesCta } from './listing/AboutServicesCta';
 import { resolveIndustryDetail } from './detail/fallback';
-import { FeaturedBlogSection } from '@/views/blog/FeaturedBlogSection';
-import { BlogFaqAccordion } from '@/views/blog/BlogFaqAccordion';
-import { BlogBottomCta } from '@/views/blog/BlogBottomCta';
+import { BlogTeaserView } from '@/views/sections/BlogTeaserView';
+import { FaqView } from '@/views/sections/FaqView';
 import type { IndustryDetail } from '@/models/industry';
 import type { BlogSummary } from '@/models/blog';
+import type { CaseStudySummary } from '@/models/caseStudy';
 
 /**
  * /industries/[slug] detail page — Figma node 384:6205 ("Automotives").
@@ -30,15 +29,36 @@ import type { BlogSummary } from '@/models/blog';
  * /blogs/[slug], and /industries already), not per-industry content, so
  * they reuse the existing shared components unconditionally.
  */
-export function IndustryDetailView({ industry, blogPosts }: { industry: IndustryDetail; blogPosts: BlogSummary[] }) {
+export function IndustryDetailView({
+  industry,
+  blogPosts,
+  latestCaseStudies = [],
+}: {
+  industry: IndustryDetail;
+  blogPosts: BlogSummary[];
+  /** Fallback for the Case Studies section: the latest published case studies. */
+  latestCaseStudies?: CaseStudySummary[];
+}) {
   const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
   const content = resolveIndustryDetail(industry);
+
+  // Figma 384:6205 always draws this section: the industry's own picks when set,
+  // otherwise the two latest published case studies.
+  const caseStudies =
+    content.caseStudies ??
+    (latestCaseStudies.length > 0
+      ? {
+          eyebrow: 'Case Studies',
+          heading: `${content.title} Success Stories`,
+          body: `Discover how our research empowers ${content.title.toLowerCase()} brands with actionable insights, smarter decisions, and measurable business growth.`,
+          cta: { id: 'industry-case-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' as const },
+          items: latestCaseStudies.slice(-2).map((c) => ({ id: c.id, title: c.title, image: c.coverImage, accentColor: '#05101a' })),
+        }
+      : null);
 
   return (
     <>
       <DetailHero hero={content.hero} title={content.title} />
-      <TrustStrip heading={content.trust.heading} logos={content.trust.logos} />
-
       <ContentBlock
         eyebrow={content.whatWeDo.eyebrow}
         heading={content.whatWeDo.heading}
@@ -47,6 +67,7 @@ export function IndustryDetailView({ industry, blogPosts }: { industry: Industry
         image={content.whatWeDo.image}
         frame="rounded"
         imageSide="right"
+        minHeightClass="lg:min-h-[777px]"
       />
 
       <WhyResearchSection whyResearch={content.whyResearch} />
@@ -63,17 +84,57 @@ export function IndustryDetailView({ industry, blogPosts }: { industry: Industry
         image={content.empower.image}
         frame="circle"
         imageSide="right"
+        minHeightClass="lg:min-h-[892px]"
       />
 
       <EnquiryForm eyebrow={content.enquiry.eyebrow} heading={content.enquiry.heading} body={content.enquiry.body} image={content.enquiry.image} />
 
-      {sortedBlogPosts.length > 0 && <FeaturedBlogSection posts={sortedBlogPosts} heading="Latest Blogs" />}
+      {sortedBlogPosts.length > 0 && (
+        // The Home page's "Latest Blogs" band (red panel + post cards), fed the same way.
+        <BlogTeaserView
+          index={0}
+          block={{
+            kind: 'blogTeaser',
+            id: 'industry-latest-blogs',
+            theme: 'light',
+            eyebrow: 'Latest Blogs',
+            heading: 'Exploring Market Trends',
+            actions: [],
+            posts: sortedBlogPosts.slice(1, 4).map((post) => ({
+              id: `post-${post.slug}`,
+              title: post.title,
+              excerpt: post.excerpt,
+              image: post.coverImage,
+              href: `/blogs/${post.slug}`,
+            })),
+          }}
+        />
+      )}
 
-      <BlogFaqAccordion heading="Frequently Asked Questions" items={content.faqItems} />
+      {/* The Home page's FAQ section: world-map watermark, "Browse Blogs" button, same accordion. */}
+      <FaqView
+        index={0}
+        block={{
+          kind: 'faq',
+          id: 'industry-faq',
+          theme: 'light',
+          heading: 'Frequently Asked Questions',
+          background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
+          cta: { id: 'industry-faq-cta', label: 'Browse Blogs', href: '/blogs', isExternal: false, variant: 'primary' },
+          items: content.faqItems,
+        }}
+      />
 
-      <CaseStudiesSection caseStudies={content.caseStudies} />
-      <AboutIndustrySection about={content.about} />
-      <BlogBottomCta />
+      <CaseStudiesSection caseStudies={caseStudies} />
+      {/* Same About + closing-CTA design as /industries (Figma 384:6574-6388 = 1384:26772's closing frames). */}
+      <AboutServicesCta
+        about={{ eyebrow: content.about.eyebrow, heading: content.about.heading, paragraphs: content.about.body.split('\n\n').map((p) => p.trim()).filter(Boolean) }}
+        finalCta={{
+          heading: 'Start Your Research Journey',
+          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
+          action: { id: 'industry-final-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+        }}
+      />
     </>
   );
 }

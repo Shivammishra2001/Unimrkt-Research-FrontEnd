@@ -126,12 +126,14 @@ export interface DetailCardIconProps {
   icon?: ImageModel;
   iconIdentifier?: string;
   className?: string;
+  /** Line weight of the built-in icons (uploaded images ignore it). */
+  strokeWidth?: number;
 }
 
-export function DetailCardIcon({ icon, iconIdentifier, className }: DetailCardIconProps) {
+export function DetailCardIcon({ icon, iconIdentifier, className, strokeWidth = 1.5 }: DetailCardIconProps) {
   if (icon) {
     return <StrapiImage image={icon} sizes="80px" className={className ?? 'size-16 object-contain'} />;
   }
   const Icon = (iconIdentifier && ICON_MAP[iconIdentifier]) || Sparkles;
-  return <Icon className={className ?? 'size-16 text-brand-600'} strokeWidth={1.5} aria-hidden="true" />;
+  return <Icon className={className ?? 'size-16 text-brand-600'} strokeWidth={strokeWidth} aria-hidden="true" />;
 }

@@ -73,7 +73,7 @@ export function StatsBandList({ items }: { items: StatItemModel[] }) {
                   98 -> 84), label 15px under the numeral. The label's space
                   is always reserved, so revealing it never changes height. */}
               <div className={`relative transition-transform ${EASE} ${isActive ? 'lg:-translate-y-[14px]' : ''}`}>
-                <div className="relative w-fit origin-left whitespace-nowrap font-display text-[clamp(3rem,7.4vw,140px)] uppercase leading-[0.85] tracking-[1px] lg:scale-x-[0.815]">
+                <div className="relative w-fit origin-left whitespace-nowrap font-display text-[clamp(2.5rem,calc(10.28vw-57px),140px)] uppercase leading-[0.85] tracking-[1px] lg:scale-x-[0.815]">
                   <p className="text-stat-number">{item.value}</p>
                   {/* Glyphs overflow the 0.85 line box; the equal negative
                       inset + padding grows the gradient's paint area to cover
@@ -102,7 +102,7 @@ export function StatsBandList({ items }: { items: StatItemModel[] }) {
                         // Figma 268:3721: x617 of 1429, w362, vertically centred.
                         <div className="lg:absolute lg:inset-y-0 lg:left-[43.18%] lg:flex lg:w-[25.33%] lg:items-center">
                           <p
-                            className={`font-sans text-base font-normal leading-[1.9] text-heading/80 transition-[opacity,transform] ${EASE} ${isActive ? 'translate-x-0 opacity-100' : 'translate-x-3 opacity-0'}`}
+                            className={`min-w-0 font-sans text-sm font-normal leading-[1.9] text-heading/80 xl:text-base transition-[opacity,transform] ${EASE} ${isActive ? 'translate-x-0 opacity-100' : 'translate-x-3 opacity-0'}`}
                           >
                             {item.description}
                           </p>

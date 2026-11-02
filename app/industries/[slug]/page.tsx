@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getAllIndustrySlugs, getIndustryBySlug } from '@/controllers/industry';
 import { getAllBlogPosts } from '@/controllers/blog';
+import { getCaseStudyList } from '@/controllers/caseStudy';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { IndustryDetailView } from '@/views/industries/IndustryDetailView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
@@ -38,13 +39,18 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
 export default async function IndustryDetailPage({ params }: { params: RouteParams }) {
   let industry: IndustryDetail | null;
   let blogPosts: Awaited<ReturnType<typeof getAllBlogPosts>>;
+  let caseStudies: Awaited<ReturnType<typeof getCaseStudyList>>;
   try {
-    [industry, blogPosts] = await Promise.all([getIndustryBySlug(params.slug), getAllBlogPosts()]);
+    [industry, blogPosts, caseStudies] = await Promise.all([
+      getIndustryBySlug(params.slug),
+      getAllBlogPosts(),
+      getCaseStudyList().catch(() => []),
+    ]);
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     throw err;
   }
   if (!industry) notFound();
 
-  return <IndustryDetailView industry={industry} blogPosts={blogPosts} />;
+  return <IndustryDetailView industry={industry} blogPosts={blogPosts} latestCaseStudies={caseStudies} />;
 }

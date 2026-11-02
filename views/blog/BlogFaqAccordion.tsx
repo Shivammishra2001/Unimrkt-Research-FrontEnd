@@ -22,10 +22,12 @@ export function BlogFaqAccordion({
   heading,
   items,
   showCta = false,
+  className = '',
 }: {
   heading: string;
   items: FaqItemModel[];
   showCta?: boolean;
+  className?: string;
 }) {
   const [openId, setOpenId] = useState<string | null>(items[0]?.id ?? null);
   const shouldReduceMotion = useReducedMotion();
@@ -33,7 +35,7 @@ export function BlogFaqAccordion({
   if (items.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden bg-white py-16 sm:py-20 lg:py-24">
+    <section className={`relative overflow-hidden bg-white py-16 sm:py-20 lg:py-24 ${className}`}>
       <Image
         src="/mock/faq-worldmap-bg.svg"
         alt=""

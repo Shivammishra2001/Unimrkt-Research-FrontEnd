@@ -27,8 +27,15 @@ const CONTACT_LINK = (label: string, variant: LinkModel['variant'] = 'primary'):
   variant,
 });
 
-function fallbackCard(idSuffix: string, title: string, description: string, iconIdentifier: string): IndustryDetailCardModel {
-  return { id: `fallback-${idSuffix}`, title, description, iconIdentifier };
+function fallbackCard(idSuffix: string, title: string, description: string, iconIdentifier: string, imageSrc?: string): IndustryDetailCardModel {
+  return {
+    id: `fallback-${idSuffix}`,
+    title,
+    description,
+    iconIdentifier,
+    // Figma 384:6406-6408 draws a photo on each card; these are its generic business photos.
+    ...(imageSrc ? { image: { src: imageSrc, alt: title, width: 900, height: 600 } } : {}),
+  };
 }
 
 function fallbackIndustryItem(idSuffix: string, title: string, imageSrcId: string, image: IndustryItemModel['image']): IndustryItemModel {
@@ -110,7 +117,7 @@ export function resolveIndustryDetail(industry: IndustryDetail): ResolvedIndustr
       subheading:
         industry.heroSubheading ||
         `Helping organizations in the ${titleLower} sector make smarter, faster business decisions through reliable market intelligence and actionable insights.`,
-      image: industry.heroImage,
+      image: industry.heroImage ?? { src: '/images/industries/detail/hero-fallback.jpg', alt: '', width: 1900, height: 1000 },
       actions: industry.heroActions.length > 0 ? industry.heroActions : [CONTACT_LINK('Get a Custom Proposal', 'primary'), CONTACT_LINK('Talk to Our Experts', 'secondary')],
     },
 
@@ -131,9 +138,12 @@ export function resolveIndustryDetail(industry: IndustryDetail): ResolvedIndustr
       heading: industry.whatWeDoHeading || `Our ${title} Research Services`,
       body:
         industry.whatWeDoBody ||
-        `Unimrkt Research helps organizations in the ${titleLower} sector make confident, data-driven decisions. Our expertise spans consumer behavior, market trends, competitive intelligence, and product validation — using research methodologies such as CATI, Online Surveys, In-Depth Interviews (IDIs), and Focus Group Discussions (FGDs) to deliver high-quality, accurate data tailored to your business objectives.`,
+        `Unimrkt Research helps organizations in the ${titleLower} sector make confident, data-driven decisions. Our expertise spans consumer behavior, market trends, competitive intelligence, and product validation.
+
+Using research methodologies such as CATI, Online Surveys, In-Depth Interviews (IDIs), and Focus Group Discussions (FGDs) to deliver high-quality, accurate data tailored to your business objectives.`,
       cta: industry.whatWeDoCta || CONTACT_LINK('Talk to Our B2B Research Experts'),
-      image: industry.whatWeDoImage,
+      // The industry's own listing photo is the closest on-topic image until a dedicated one is uploaded.
+      image: industry.whatWeDoImage ?? industry.icon ?? { src: '/images/industries/detail/hero-fallback.jpg', alt: title, width: 1900, height: 1000 },
     },
 
     whyResearch: {
@@ -143,9 +153,9 @@ export function resolveIndustryDetail(industry: IndustryDetail): ResolvedIndustr
         industry.whyResearchCards.length > 0
           ? industry.whyResearchCards
           : [
-              fallbackCard('why-1', 'Understand Customer Preferences', 'Identify buying behavior, evolving trends, and customer expectations to build better products and services.', 'profile-2user'),
-              fallbackCard('why-2', 'Stay Ahead of Competitors', 'Benchmark pricing, offerings, and market positioning with real-time competitive intelligence.', 'chart'),
-              fallbackCard('why-3', 'Improve Product Strategy', 'Validate concepts, evaluate demand, and reduce launch risk with research-backed decision making.', 'flash'),
+              fallbackCard('why-1', 'Understand Customer Preferences', 'Identify buying behavior, evolving trends, and customer expectations to build better products and services.', 'profile-2user', '/images/industries/detail/why-customer-preferences.jpg'),
+              fallbackCard('why-2', 'Stay Ahead of Competitors', 'Benchmark pricing, offerings, and market positioning with real-time competitive intelligence.', 'chart', '/images/industries/detail/why-competitors.jpg'),
+              fallbackCard('why-3', 'Improve Product Strategy', 'Validate concepts, evaluate demand, and reduce launch risk with research-backed decision making.', 'flash', '/images/industries/detail/why-product-strategy.jpg'),
             ],
     },
 

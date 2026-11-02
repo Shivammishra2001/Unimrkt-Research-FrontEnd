@@ -17,7 +17,7 @@ import type { BlogSummary } from '@/models/blog';
  * already `order`-ascending pool — the large slot and the row are both
  * derived from it here, no separate "featured" flag needed.
  */
-export function FeaturedBlogSection({ posts, heading = 'Latest Blogs' }: { posts: BlogSummary[]; heading?: string }) {
+export function FeaturedBlogSection({ posts, heading = 'Latest Blogs', className = '' }: { posts: BlogSummary[]; heading?: string; className?: string }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [featured, ...rest] = posts;
   const latestThree = rest.slice(0, 3);
@@ -33,7 +33,7 @@ export function FeaturedBlogSection({ posts, heading = 'Latest Blogs' }: { posts
   if (!featured) return null;
 
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className={`bg-white py-16 sm:py-20 lg:py-24 ${className}`}>
       <Container>
         <div className="mb-8 flex items-center justify-between">
           <p className="font-nav text-[13px] font-semibold uppercase tracking-wider text-heading">{heading}</p>

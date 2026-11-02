@@ -42,7 +42,7 @@ export function EnquiryForm({
   }
 
   return (
-    <section className="relative overflow-hidden py-16 text-white sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden py-16 text-white sm:py-20 lg:min-h-[717px] lg:py-[62px]">
       {image && <StrapiImage image={image} sizes="100vw" fill className="object-cover" />}
       <div className="absolute inset-0 bg-[#101723]/85" aria-hidden="true" />
       <Container className="relative">

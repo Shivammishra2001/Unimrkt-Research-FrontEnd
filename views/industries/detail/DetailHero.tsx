@@ -11,26 +11,42 @@ import type { ResolvedIndustryDetail } from './fallback';
 export function DetailHero({ hero, title }: { hero: ResolvedIndustryDetail['hero']; title: string }) {
   return (
     <>
-      <section className="relative flex min-h-[520px] w-full flex-col justify-end overflow-hidden text-white sm:min-h-[600px] lg:min-h-[768px]">
-        {hero.image ? (
-          <StrapiImage image={hero.image} sizes="100vw" priority fill className="object-cover" />
-        ) : (
-          <div className="absolute inset-0 bg-[#040112]" aria-hidden="true" />
+      <section className="relative w-full overflow-hidden bg-[#040112] text-white lg:h-[768px]">
+        {/* 384:6237 — photo at 70%, drawn 2300x998 and cropped to the 1900x768 frame (zoomed ~1.2x, mirrored as drawn: the frame is rotated 180° and flipped). */}
+        {hero.image && (
+          <StrapiImage image={hero.image} sizes="100vw" priority fill className="origin-center object-cover opacity-70 [object-position:49%_57%] [transform:scale(-1.21,1.21)]" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040112] via-[#040112]/75 to-[#040112]/40" />
-        <div className="absolute inset-0 bg-[#040112]/35" />
-        <div className="relative z-10 mx-auto w-full max-w-container px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-[70px] lg:pt-40">
-          <p className="inline-flex items-center gap-3 rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] backdrop-blur-[2px] font-sans text-[13px] font-bold uppercase tracking-[3px] text-white">
-            <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
+        {/* 384:6238 — #010913 wash at 40%. */}
+        <div className="absolute inset-0 bg-[#010913]/40" aria-hidden="true" />
+        {/* 384:6239 — 1064px side shade, #02050e @ 80%, darkest on the left (transparent -> dark at 63%), so the copy sits on a deep, moody ground. */}
+        <div
+          className="absolute inset-y-0 left-0 w-[1064px] max-w-full opacity-80"
+          style={{ backgroundImage: 'linear-gradient(to left, rgba(0,0,0,0) 0%, #02050e 63%)' }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-x-0 top-0 h-[255px] opacity-[0.85]"
+          style={{ backgroundImage: 'linear-gradient(to bottom, #06070d 37%, rgba(6,7,13,0) 100%)' }}
+          aria-hidden="true"
+        />
+        <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-0 lg:pt-[276px] min-[1500px]:px-0">
+          <p className="inline-flex h-10 items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
+            <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
             {hero.eyebrow}
           </p>
-          <h1 className="mt-3 max-w-[930px] text-4xl font-semibold capitalize leading-[1.2] text-white sm:text-5xl lg:text-[60px] lg:tracking-[-3px]">
-            {hero.heading}
+          <h1 className="mt-[14.5px] max-w-[960px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
+            {/* Hyphenated words ("Data-Driven") stay on one line instead of splitting after the hyphen. */}
+            {hero.heading.split(' ').map((word, i) => (
+              <span key={i}>
+                {i > 0 && ' '}
+                {word.includes('-') ? <span className="whitespace-nowrap">{word}</span> : word}
+              </span>
+            ))}
           </h1>
-          <p className="mt-6 max-w-[884px] text-base leading-[1.9] text-white/85 sm:text-lg">{hero.subheading}</p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            {hero.actions.map((action) => (
-              <Button key={action.id} link={action} />
+          <p className="mt-[12.8px] max-w-[884px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">{hero.subheading}</p>
+          <div className="mt-[44.3px] flex flex-wrap gap-5">
+            {hero.actions.map((action, i) => (
+              <Button key={action.id} link={i > 0 ? { ...action, variant: 'ghost' } : action} className={i > 0 ? 'border border-white' : undefined} />
             ))}
           </div>
         </div>

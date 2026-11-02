@@ -13,17 +13,19 @@ interface ContentBlockProps {
    * 'circle' = node 384:6475 (circular frame, translucent ring). */
   frame: 'rounded' | 'circle';
   imageSide: 'left' | 'right';
+  /** Desktop section height from the Figma frame, e.g. 'lg:min-h-[777px]'. */
+  minHeightClass?: string;
 }
 
 /** Reused for both long-form content blocks — "What We Do" (Figma node
  * 384:6360-6366, 579:8010) and the mirrored "{Title} Research" block
  * (384:6361-6364, 384:6475). Every field is CMS-driven
  * (`whatWeDo*`/`empower*`); renders nothing without a `heading`. */
-export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageSide }: ContentBlockProps) {
+export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageSide, minHeightClass }: ContentBlockProps) {
   if (!heading) return null;
 
   const imageBlock = image && (
-    <div className="relative mx-auto aspect-[643/501] w-full max-w-[560px]">
+    <div className={`relative mx-auto w-full ${frame === 'rounded' ? 'aspect-[686/534] max-w-[686px]' : 'aspect-[643/501] max-w-[560px]'}`}>
       {frame === 'circle' ? (
         <>
           <div className="absolute inset-0 -m-[5%] rounded-full bg-white/10 max-lg:m-0" aria-hidden="true" />
@@ -39,19 +41,30 @@ export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageS
     </div>
   );
 
+  // Figma 384:6362 — two paragraphs with one blank line (30.4px) between them.
+  const paragraphs = (body ?? '').split(/\r?\n/).map((p) => p.trim()).filter(Boolean);
+
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
-      <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+    <section className={`flex items-center bg-white py-16 sm:py-20 lg:items-start lg:pb-[103px] lg:pt-[72px] ${minHeightClass ?? ''}`}>
+      <Container className="w-full max-w-[1600px] min-[1700px]:px-0">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,833px)_minmax(0,686px)] lg:gap-x-16">
           <div className={imageSide === 'right' ? 'lg:order-1' : 'lg:order-2'}>
-            {eyebrow && <p className="font-sans text-sm font-bold uppercase tracking-[0.2em] text-brand-600">{eyebrow}</p>}
-            <h2 className="mt-3 text-3xl font-semibold leading-[1.2] text-heading sm:text-4xl lg:text-[44px] lg:tracking-[-1px]">
+            {eyebrow && <p className="font-sans text-[13px] font-bold uppercase tracking-[3px] text-brand-600">{eyebrow}</p>}
+            <h2 className="mt-3 max-w-[460px] lg:mt-[3px] font-sans text-3xl font-semibold capitalize leading-[1.2] text-[#02060e] sm:text-4xl lg:text-[50px] lg:leading-[1.2] lg:tracking-[-3px]">
               {heading}
             </h2>
-            {body && <p className="mt-6 max-w-[500px] text-base leading-[1.9] text-heading/80">{body}</p>}
-            {cta && <Button link={cta} className="mt-8" />}
+            {paragraphs.length > 0 && (
+              <div className="mt-6 max-w-[833px] font-sans text-[16px] leading-[1.9] text-[#02060e]/80 lg:mt-[15px]">
+                {paragraphs.map((p, i) => (
+                  <p key={i} className={i > 0 ? 'mt-[30.4px]' : undefined}>
+                    {p}
+                  </p>
+                ))}
+              </div>
+            )}
+            {cta && <Button link={cta} className="mt-8 lg:mt-[50px]" />}
           </div>
-          {imageBlock && <div className={imageSide === 'right' ? 'lg:order-2' : 'lg:order-1'}>{imageBlock}</div>}
+          {imageBlock && <div className={`${imageSide === 'right' ? 'lg:order-2' : 'lg:order-1'} lg:mt-3`}>{imageBlock}</div>}
         </div>
       </Container>
     </section>
