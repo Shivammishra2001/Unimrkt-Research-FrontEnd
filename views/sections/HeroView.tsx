@@ -122,7 +122,7 @@ export function HeroView({ block, index }: { block: HeroModel; index: number }) 
           </div>
           <div className="w-full">
           {(bannerVideo.length > 0 || block.media) && (
-            <div className="relative mt-[30px] aspect-[1227/571] overflow-hidden rounded-[4px] bg-gradient-to-r from-[#63284f] to-[#c75e4a]">
+            <div className="relative mx-auto mt-8 aspect-[1227/571] w-full max-w-[880px] overflow-hidden rounded-[4px] shadow-xl md:max-w-[960px] lg:mt-10 lg:max-h-[480px] lg:max-w-[1040px] bg-gradient-to-r from-[#63284f] to-[#c75e4a]">
               {bannerVideo.length > 0 ? (
                 // Figma 267:1478/1479/1482: footage at 80% over the #63284f→#c75e4a
                 // gradient in a 1227x571 / 4px-radius frame. The 16:9 footage is not

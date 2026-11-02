@@ -13,7 +13,7 @@ import type { StatsBandModel } from '@/models/domain';
 export function StatsBandView({ block }: { block: StatsBandModel; index: number }) {
   return (
     <Section theme={block.theme} anchorId={block.anchorId} className="lg:pb-0 lg:pt-[44px]">
-      <div className="mx-auto w-full max-w-[1429px] px-4 sm:px-6 lg:px-8 2xl:px-0">
+      <div className="mx-auto w-full max-w-[960px] px-4 sm:px-6 lg:max-w-[1040px] lg:px-0">
         {block.heading && (
           <Heading as="h2" size="h2" className="mb-10">
             {block.heading}

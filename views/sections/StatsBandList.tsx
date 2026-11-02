@@ -57,7 +57,7 @@ export function StatsBandList({ items }: { items: StatItemModel[] }) {
                   toggle(i);
                 }
               }}
-              className={`relative cursor-default overflow-hidden py-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600/40 lg:h-[232px] lg:py-0 lg:pl-[31px] lg:pt-[57px] ${i > 0 ? 'border-t-[3px] border-stat-divider' : ''}`}
+              className={`relative cursor-default overflow-hidden py-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600/40 lg:h-[170px] lg:py-0 lg:pl-6 lg:pt-[34px] ${i > 0 ? 'border-t-[3px] border-stat-divider' : ''}`}
             >
               {/* Row background — Figma 268:3716 mask group rendered as-is
                   (white wave at 70% + 106px white edge fades), 1429x232. */}
@@ -73,7 +73,7 @@ export function StatsBandList({ items }: { items: StatItemModel[] }) {
                   98 -> 84), label 15px under the numeral. The label's space
                   is always reserved, so revealing it never changes height. */}
               <div className={`relative transition-transform ${EASE} ${isActive ? 'lg:-translate-y-[14px]' : ''}`}>
-                <div className="relative w-fit origin-left whitespace-nowrap font-display text-[clamp(2.5rem,calc(10.28vw-57px),140px)] uppercase leading-[0.85] tracking-[1px] lg:scale-x-[0.815]">
+                <div className="relative w-fit origin-left whitespace-nowrap font-display text-[clamp(2.5rem,4.5vw,4.5rem)] uppercase leading-[0.85] tracking-[1px] lg:scale-x-[0.815]">
                   <p className="text-stat-number">{item.value}</p>
                   {/* Glyphs overflow the 0.85 line box; the equal negative
                       inset + padding grows the gradient's paint area to cover

@@ -71,9 +71,9 @@ export function buildHeroSlides(block: HeroModel): HeroSlide[] {
 // --- side-list geometry (Figma 1794:16996..17140) ---------------------------
 // Rows fan out along an arc around the selected one. `top` is measured from the
 // list's top edge (Figma y 255); distances past 3 park just outside the box.
-const SLOT_TOP: Record<number, number> = { [-3]: 0, [-2]: 75, [-1]: 150, 0: 233, 1: 346, 2: 421, 3: 496 };
-const LIST_HEIGHT = 546;
-const OFFSET_LEFT = [0, 71, 92, 114] as const;
+const SLOT_TOP: Record<number, number> = { [-3]: 0, [-2]: 60, [-1]: 120, 0: 186, 1: 277, 2: 337, 3: 397 };
+const LIST_HEIGHT = 437;
+const OFFSET_LEFT = [0, 57, 74, 91] as const;
 
 const TILE_SHADOW_SM =
   'shadow-[inset_1.929px_1.929px_1.607px_-2.25px_rgba(255,255,255,0.5),inset_-2.25px_-2.25px_1.286px_-1.929px_rgba(255,255,255,0.3),inset_0px_0px_1.286px_0.321px_rgba(255,255,255,0.15)]';
@@ -82,10 +82,10 @@ const TILE_SHADOW_LG =
 
 /** Visual state per distance from the selected row (0 = selected). */
 const STEPS = [
-  { gap: 'gap-[14px]', tile: 'size-20 rounded-[18px]', icon: 'size-[50px]', shadow: TILE_SHADOW_LG, text: 'text-[32px]', tileOpacity: 'opacity-100', textOpacity: 'opacity-100' },
-  { gap: 'gap-[15px]', tile: 'size-[50px] rounded-[11.25px]', icon: 'size-[30px]', shadow: TILE_SHADOW_SM, text: 'text-[24px]', tileOpacity: 'opacity-60', textOpacity: 'opacity-35' },
-  { gap: 'gap-[15px]', tile: 'size-[50px] rounded-[11.25px]', icon: 'size-[30px]', shadow: TILE_SHADOW_SM, text: 'text-[24px]', tileOpacity: 'opacity-50', textOpacity: 'opacity-25' },
-  { gap: 'gap-[15px]', tile: 'size-[50px] rounded-[11.25px]', icon: 'size-[30px]', shadow: TILE_SHADOW_SM, text: 'text-[24px]', tileOpacity: 'opacity-20', textOpacity: 'opacity-15' },
+  { gap: 'gap-[14px]', tile: 'size-[60px] rounded-[14px]', icon: 'size-[36px]', shadow: TILE_SHADOW_LG, text: 'text-[24px]', tileOpacity: 'opacity-100', textOpacity: 'opacity-100' },
+  { gap: 'gap-[15px]', tile: 'size-10 rounded-[9px]', icon: 'size-6', shadow: TILE_SHADOW_SM, text: 'text-[18px]', tileOpacity: 'opacity-60', textOpacity: 'opacity-35' },
+  { gap: 'gap-[15px]', tile: 'size-10 rounded-[9px]', icon: 'size-6', shadow: TILE_SHADOW_SM, text: 'text-[18px]', tileOpacity: 'opacity-50', textOpacity: 'opacity-25' },
+  { gap: 'gap-[15px]', tile: 'size-10 rounded-[9px]', icon: 'size-6', shadow: TILE_SHADOW_SM, text: 'text-[18px]', tileOpacity: 'opacity-20', textOpacity: 'opacity-15' },
 ] as const;
 
 const WHEEL_COOLDOWN_MS = 450;
@@ -265,20 +265,20 @@ export function HeroSplash({
                 {...(isActive ? {} : ({ inert: '' } as object))}
               >
                 {slide.tag && (
-                  <p className="inline-flex h-10 items-center gap-3 rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] backdrop-blur-[2px] font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-white">
+                  <p className="inline-flex h-9 items-center gap-2.5 rounded-lg border border-white/10 bg-white/10 px-3.5 py-1.5 backdrop-blur-[2px] font-sans text-[11px] font-semibold uppercase leading-[1.2] tracking-[1.5px] sm:text-[12px] text-white">
                     <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
                     {slide.tag}
                   </p>
                 )}
                 {/* Figma 1794:16932: 60px / semibold / -3px (-0.05em) tracking / 1.2 leading — full size from 1667px; never below 46px on laptops. Vertical offsets are proportional to the viewport height (Figma: 364 / 255 of 1005) so the arc and copy stay in view on short laptop screens without scaling. */}
-                <h1 className="mt-3 capitalize text-4xl sm:text-5xl lg:text-[clamp(46px,3.6vw,60px)] font-semibold lg:tracking-[-0.05em] !leading-[1.2] text-white">
+                <h1 className="mt-3 capitalize text-[clamp(1.75rem,2.5vw,2.5rem)] font-semibold lg:tracking-[-0.03em] !leading-[1.2] text-white">
                   {slide.title}
                 </h1>
                 {slide.description && (
-                  <p className="mt-4 max-w-[757px] text-base leading-[1.9] text-white/80">{slide.description}</p>
+                  <p className="mt-4 max-w-[480px] text-sm leading-[1.7] text-white/75 lg:text-[15px]">{slide.description}</p>
                 )}
                 {slide.ctaLink && (
-                  <div className="mt-[51px] flex flex-wrap gap-4">
+                  <div className="mt-8 flex flex-wrap gap-4 [&_a]:text-[13px] [&_button]:text-[13px]">
                     <Button link={slide.ctaLink} variant={slide.ctaLink.variant} />
                   </div>
                 )}
@@ -296,7 +296,7 @@ export function HeroSplash({
             aria-orientation="vertical"
             onKeyDown={onListKeyDown}
             {...pauseProps}
-            className="relative hidden w-[520px] shrink-0 xl:mt-[clamp(110px,25.4svh,255px)] xl:block"
+            className="relative hidden w-[440px] shrink-0 xl:mt-[clamp(110px,25.4svh,255px)] xl:block"
             style={{ height: LIST_HEIGHT }}
           >
             {slides.map((slide, i) => {

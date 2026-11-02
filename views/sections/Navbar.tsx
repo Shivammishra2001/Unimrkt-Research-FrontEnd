@@ -43,7 +43,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         href={item.href}
         target={item.isExternal ? '_blank' : undefined}
         rel={item.isExternal ? 'noopener noreferrer' : undefined}
-        className="flex items-center gap-1 whitespace-nowrap font-nav text-[16px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
+        className="flex items-center gap-1 whitespace-nowrap font-nav text-[13px] min-[1600px]:text-[15px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
       >
         {item.label}
         {/* `showIndicator`: Figma shows this chevron on "About unimrkt"
@@ -64,7 +64,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         type="button"
         // onClick toggles for touch devices, which never fire onMouseEnter.
         onClick={() => (open ? closeWithDelay() : openNow())}
-        className="flex items-center gap-1 whitespace-nowrap font-nav text-[16px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
+        className="flex items-center gap-1 whitespace-nowrap font-nav text-[13px] min-[1600px]:text-[15px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
         aria-expanded={open}
       >
         {item.label}
