@@ -148,7 +148,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         ) : (
           <header className="border-b border-slate-200 p-4 text-center text-sm">{BRAND_NAME}</header>
         )}
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 [overflow-x:clip]">{children}</main>
         {global && <Footer footer={global.footer} />}
         <ChatWidget />
       </body>
