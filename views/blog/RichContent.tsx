@@ -4,20 +4,34 @@ import { toAbsoluteUrl } from '@/controllers/image';
 import type { StrapiBlocksContent, StrapiBlocksNode } from '@/models/blog';
 
 /**
- * Renders a Strapi Blocks (structured rich text) tree for the article
- * body — Figma node 587:3338's main column. Exact styles pulled off the
- * node (not estimated):
- *  - h2: Montserrat SemiBold 36px / leading-[1.2] / tracking-[-2px] /
- *    capitalize / #02060e (node 595:3908)
- *  - paragraph: Montserrat Regular 16px / leading-[1.9] / 80% opacity /
- *    #02060e (node 587:3460)
- *  - list: 16px / leading-[2.5] / 80% opacity / #02060e, custom maroon
- *    circular marker instead of the browser default disc (node 596:3926)
- *  - quote/callout: bg #f3ebee, rounded-[20px], 7px left accent bar in
- *    the brand gradient-from maroon (node 596:4047/4048)
+ * Renders a Strapi Blocks (structured rich text) tree for the article body — Figma 587:3338's 1023px text column.
+ * Values measured off the node:
+ *  - h2: Montserrat SemiBold 36px / 1.2 / -2px / capitalize / #02060e (595:3908)
+ *  - paragraph: Regular 16px / 1.9 / 80% / #02060e (587:3460)
+ *  - list: SemiBold 16px / 2.5 / 80% / #02060e, 10px #722a48 dot 7px in, text indented 24px (596:3926)
+ *  - quote (596:4047): #f3ebee, r20, 1005x166, 7px #7a2b45 left bar, 23px SemiBold -1px #7a2b45 / 1.4 text at 65px
+ * Figma spaces the blocks by trimmed text edges; the `GAP` table below is those distances converted to line-box
+ * margins (paragraph -> h2 31, h2 -> paragraph 13.6, paragraph -> list 5, list -> paragraph 22, to/from the quote 75/54).
  */
 export function RichContent({ content }: { content: StrapiBlocksContent }) {
-  return <div className="flex flex-col gap-6">{content.map((node, i) => renderNode(node, i))}</div>;
+  return <div className="flex flex-col">{content.map((node, i) => renderNode(node, i, i > 0 ? content[i - 1].type : null))}</div>;
+}
+
+const GAP: Record<string, string> = {
+  'paragraph>heading': 'mt-[31px]',
+  'list>heading': 'mt-9',
+  'quote>heading': 'mt-[54px]',
+  'heading>paragraph': 'mt-[12.3px]',
+  'paragraph>list': 'mt-[5px]',
+  'list>paragraph': 'mt-[22px]',
+  'paragraph>quote': 'mt-[75px]',
+  'list>quote': 'mt-[75px]',
+  'quote>paragraph': 'mt-[54px]',
+};
+
+function gapClass(prev: string | null, type: string): string {
+  if (!prev) return '';
+  return GAP[`${prev}>${type}`] ?? 'mt-6';
 }
 
 function renderText(node: StrapiBlocksNode, key: number): ReactNode {
@@ -33,7 +47,7 @@ function renderChildren(children: StrapiBlocksNode[]) {
   return children.map((child, i) => (child.type === 'text' ? renderText(child, i) : renderNode(child, i)));
 }
 
-function renderNode(node: StrapiBlocksNode, key: number): ReactNode {
+function renderNode(node: StrapiBlocksNode, key: number, prev: string | null = null): ReactNode {
   if (node.type === 'text') return renderText(node, key);
 
   switch (node.type) {
@@ -42,7 +56,7 @@ function renderNode(node: StrapiBlocksNode, key: number): ReactNode {
       return (
         <Tag
           key={key}
-          className="capitalize font-sans text-[28px] font-semibold leading-[1.2] tracking-[-1px] text-[#02060e] sm:text-[32px] lg:text-[36px] lg:tracking-[-2px]"
+          className={`${gapClass(prev, 'heading')} capitalize font-sans text-[28px] font-semibold leading-[1.2] tracking-[-1px] text-[#02060e] sm:text-[32px] lg:text-[36px] lg:tracking-[-2px]`}
         >
           {renderChildren(node.children)}
         </Tag>
@@ -50,17 +64,17 @@ function renderNode(node: StrapiBlocksNode, key: number): ReactNode {
     }
     case 'paragraph':
       return (
-        <p key={key} className="font-sans text-base leading-[1.9] text-[#02060e] opacity-80">
+        <p key={key} className={`${gapClass(prev, 'paragraph')} font-sans text-base leading-[1.9] text-[#02060e] opacity-80`}>
           {renderChildren(node.children)}
         </p>
       );
     case 'list': {
       const Tag = node.format === 'ordered' ? 'ol' : 'ul';
       return (
-        <Tag key={key} className="flex flex-col gap-1 pl-0">
+        <Tag key={key} className={`${gapClass(prev, 'list')} flex flex-col`}>
           {node.children.map((item, i) => (
-            <li key={i} className="flex items-start gap-3 font-sans text-base leading-[2.5] text-[#02060e] opacity-80">
-              <span className="mt-[1.05em] size-[10px] shrink-0 rounded-full bg-[#722a48]" aria-hidden="true" />
+            <li key={i} className="relative pl-6 font-sans text-base font-semibold leading-[2.5] text-[#02060e] opacity-80">
+              <span className="absolute left-[7px] top-[15px] size-[10px] rounded-full bg-[#722a48]" aria-hidden="true" />
               <span>{item.type !== 'text' && renderChildren(item.children)}</span>
             </li>
           ))}
@@ -71,10 +85,12 @@ function renderNode(node: StrapiBlocksNode, key: number): ReactNode {
       return (
         <blockquote
           key={key}
-          className="relative overflow-hidden rounded-[20px] bg-[#f3ebee] py-6 pl-8 pr-6 font-sans text-lg italic leading-[1.6] text-[#02060e]"
+          className={`${gapClass(prev, 'quote')} relative flex min-h-[166px] items-center overflow-hidden rounded-[20px] bg-[#f3ebee] py-8 pl-8 pr-6 sm:pl-[65px] lg:pr-[145px]`}
         >
-          <span className="absolute inset-y-0 left-0 w-[7px] bg-gradient-from" aria-hidden="true" />
-          {renderChildren(node.children)}
+          <span className="absolute inset-y-0 left-0 w-[7px] bg-[#7a2b45]" aria-hidden="true" />
+          <p className="font-sans text-[18px] font-semibold capitalize leading-[1.4] tracking-[-1px] text-[#7a2b45] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] sm:text-[23px]">
+            {renderChildren(node.children)}
+          </p>
         </blockquote>
       );
     case 'image': {
@@ -83,7 +99,7 @@ function renderNode(node: StrapiBlocksNode, key: number): ReactNode {
       const width = node.image.width ?? 1000;
       const height = node.image.height ?? 700;
       return (
-        <figure key={key} className="mx-auto flex flex-col items-center gap-3">
+        <figure key={key} className="mx-auto mt-6 flex flex-col items-center gap-3">
           <Image src={src} alt={node.image.alternativeText ?? ''} width={width} height={height} className="rounded-2xl object-cover" sizes="(min-width: 1024px) 700px, 100vw" />
           {node.image.caption && <figcaption className="text-center text-sm opacity-60">{node.image.caption}</figcaption>}
         </figure>

@@ -25,6 +25,9 @@ export interface StrapiBlogSummary {
   coverImage: StrapiMedia | null;
   order: number;
   updatedAt: string;
+  /** `populate=*` returns these with every list item; the list view only uses them for read-time + recency. */
+  body?: StrapiBlocksContent | null;
+  publishedAt?: string | null;
 }
 
 // Strapi Blocks (structured rich text) — minimal shape covering just the
@@ -86,6 +89,9 @@ export interface BlogSummary {
   category: CategoryModel | null;
   coverImage?: ImageModel;
   order: number;
+  publishedAt?: string;
+  /** Estimated from the body's word count (~200wpm); undefined when the list response carries no body. */
+  readTimeMinutes?: number;
 }
 
 export interface BlogDetail extends BlogSummary {

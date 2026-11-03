@@ -65,9 +65,13 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
             const hasMore = Boolean(summary || study.href);
             const body = (
               <>
-                {/* Photo: fixed Figma 420x390 box. On hover the image zooms and a white panel with the summary and
-                    the EXPLORE link slides up over its bottom edge; nothing in the card reflows. */}
-                <div className="relative aspect-[420/390] w-full shrink-0 overflow-hidden rounded-[24px] bg-[#05101a] lg:aspect-auto lg:h-[390px]">
+                {/* Photo: full card width, 390px tall; on hover it shortens to 300px (bottom crop) while the image
+                    zooms, the title rides up with it and the summary + EXPLORE open underneath. The card stays 510px. */}
+                <div
+                  className={`relative aspect-[420/390] w-full shrink-0 overflow-hidden rounded-[24px] bg-[#05101a] transition-[height] duration-300 ease-in-out motion-reduce:transition-none lg:aspect-auto lg:h-[390px] ${
+                    hasMore ? 'lg:group-hover:h-[300px] lg:group-focus-visible:h-[300px]' : ''
+                  }`}
+                >
                   {study.image && (
                     <StrapiImage
                       image={study.image}
@@ -76,21 +80,23 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
                       className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-focus-visible:scale-105 motion-reduce:transition-none"
                     />
                   )}
-                  {hasMore && (
-                    <div className="absolute inset-x-0 bottom-0 translate-y-3 bg-white px-4 pb-4 pt-3 opacity-0 transition-[transform,opacity] duration-300 ease-in-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none max-lg:hidden">
-                      {summary && <p className="line-clamp-3 font-sans text-[13px] leading-[1.6] text-[#04264e]/70">{summary}</p>}
+                </div>
+                <p className="mt-[26px] max-w-[400px] px-4 font-sans text-[20px] font-semibold leading-[1.34] text-[#04264e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                  {study.title}
+                </p>
+                {hasMore && (
+                  <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-in-out group-hover:grid-rows-[1fr] group-hover:opacity-100 group-focus-visible:grid-rows-[1fr] group-focus-visible:opacity-100 motion-reduce:transition-none max-lg:hidden">
+                    <div className="min-h-0 overflow-hidden px-4">
+                      {summary && <p className="mt-[14px] line-clamp-2 font-sans text-[13px] leading-[1.6] text-[#6b7280]">{summary}</p>}
                       {study.href && (
-                        <span className="mt-2 inline-flex items-center gap-1 font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-[#A6192E]">
+                        <span className="mt-[18px] inline-flex items-center gap-1 font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-[#A6192E]">
                           EXPLORE
                           <SendArrowIcon className="size-3" aria-hidden="true" />
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-                <p className="mt-[26px] max-w-[400px] px-4 font-sans text-[20px] font-semibold leading-[1.34] text-[#04264e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
-                  {study.title}
-                </p>
+                  </div>
+                )}
               </>
             );
             const cardClass =

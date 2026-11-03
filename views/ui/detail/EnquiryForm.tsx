@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import Link from 'next/link';
 import { StrapiImage } from '@/views/ui/StrapiImage';
+import { RecaptchaBox } from '@/views/ui/RecaptchaBox';
 import { SendArrowIcon } from '@/views/ui/icons/SendArrowIcon';
 import type { ImageModel } from '@/models/domain';
 
@@ -35,9 +35,15 @@ export function EnquiryForm({
   image?: ImageModel;
 }) {
   const [submitted, setSubmitted] = useState(false);
+  const [robotToken, setRobotToken] = useState<string | null>(null);
+  const [robotError, setRobotError] = useState(false);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!robotToken) {
+      setRobotError(true);
+      return;
+    }
     setSubmitted(true);
   }
 
@@ -98,24 +104,8 @@ export function EnquiryForm({
                   <input type="text" name="company" required placeholder="Company name*" className={FIELD_CLASS} />
                 </div>
 
-                {/* Figma 483:7195 — the reCAPTCHA checkbox widget: 302x74, #fafafa, 1px #d6d6d6, r2. */}
-                <div className="relative h-[74px] w-[302px] max-w-full rounded-[2px] border border-[#d6d6d6] bg-[#fafafa] shadow-[0_1px_1px_rgba(0,0,0,0.1)]">
-                  <label className="absolute left-[12px] top-1/2 flex -translate-y-1/2 cursor-pointer items-center gap-[14px] font-[Roboto,Arial,sans-serif] text-[14px] font-medium text-black">
-                    <input
-                      type="checkbox"
-                      required
-                      className="size-6 shrink-0 cursor-pointer appearance-none rounded-[1px] border-2 border-[#c1c1c1] bg-white checked:border-[#4a90e2] checked:bg-[#4a90e2]"
-                    />
-                    I&apos;m not a robot
-                  </label>
-                  <div className="absolute right-[10px] top-[calc(50%+0.5px)] flex -translate-y-1/2 flex-col items-center gap-1">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/figma-industries/enquiry/recaptcha-logo.svg" alt="" width={48} height={46} className="h-[46px] w-12" />
-                    <p className="font-[Roboto,Arial,sans-serif] text-[8px] font-medium text-[#a6a6a6]">
-                      <Link href="/privacy-policy">Privacy</Link> - <Link href="/contact">Terms</Link>
-                    </p>
-                  </div>
-                </div>
+                {/* Figma 483:7195 — reCAPTCHA checkbox widget. */}
+                <RecaptchaBox onChange={setRobotToken} invalid={robotError} />
 
                 <button
                   type="submit"

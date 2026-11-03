@@ -17,7 +17,9 @@ const ARROW_BUTTON =
  * right edge as a horizontal scroller, and the CTA centered underneath.
  * From lg up it is scaled with container units (views/ui/stage.ts); below
  * lg it stacks. */
-export function BlogTeaserView({ block }: { block: BlogTeaserModel; index: number }) {
+export function BlogTeaserView({ block, variant = 'home' }: { block: BlogTeaserModel; index: number; /** 'blog' = the /blogs frame (Figma 522:4808-4828): 746px band, 13px eyebrow, description line, arrows at y336. */ variant?: 'home' | 'blog' | 'post' }) {
+  // 'post' = /blogs/[slug] (Figma 1499:16864-16884): same panel as 'blog' but the band is 648px tall.
+  const blogFrame = variant === 'blog' || variant === 'post';
   const trackRef = useRef<HTMLUListElement>(null);
 
   function scrollBy(direction: 1 | -1) {
@@ -36,7 +38,7 @@ export function BlogTeaserView({ block }: { block: BlogTeaserModel; index: numbe
       id={block.anchorId}
       className="relative overflow-hidden bg-white text-slate-900 lg:[container-type:inline-size]"
     >
-      <div className="relative flex flex-col gap-8 pb-12 lg:block lg:h-[38.7895cqw] lg:pb-0">
+      <div className={`relative flex flex-col gap-8 pb-12 lg:block lg:pb-0 ${variant === 'post' ? 'lg:h-[34.1053cqw]' : blogFrame ? 'lg:h-[39.2632cqw]' : 'lg:h-[38.7895cqw]'}`}>
         <div
           className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to px-6 py-10 text-white sm:px-10 lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:h-[var(--h)] lg:w-[var(--w)] lg:p-0"
           style={geometry({ l: 0, t: 0, w: 861, h: 462 })}
@@ -51,16 +53,16 @@ export function BlogTeaserView({ block }: { block: BlogTeaserModel; index: numbe
           />
           <div
             className="relative lg:absolute lg:left-[var(--l)] lg:top-[var(--t)]"
-            style={geometry({ l: 150, t: 145 })}
+            style={geometry({ l: 150, t: blogFrame ? 103.3 : 145 })}
           >
             {block.eyebrow && (
-              <p className="font-nav text-[18px] font-semibold leading-[1.1] text-white lg:text-[length:var(--fs)]" style={geometry({ fs: 18 })}>
+              <p className={`font-nav font-semibold leading-[1.1] text-white lg:text-[length:var(--fs)] ${blogFrame ? 'text-[13px] uppercase' : 'text-[18px]'}`} style={geometry({ fs: blogFrame ? 13 : 18 })}>
                 {block.eyebrow}
               </p>
             )}
             {/* Inter, the only non-Montserrat heading on the page. */}
             <h2
-              className="mt-2 font-nav text-4xl font-semibold !leading-[1.2] tracking-[-0.0192em] lg:mt-[0.65cqw] lg:text-[length:var(--fs)]"
+              className={`mt-2 font-nav text-4xl font-semibold !leading-[1.2] tracking-[-0.0192em] lg:text-[length:var(--fs)] ${blogFrame ? 'lg:mt-[0.5789cqw]' : 'lg:mt-[0.65cqw]'}`}
               style={geometry({ fs: 52 })}
             >
               {firstWord}
@@ -71,10 +73,15 @@ export function BlogTeaserView({ block }: { block: BlogTeaserModel; index: numbe
                 </>
               )}
             </h2>
+            {blogFrame && block.description && (
+              <p className="mt-4 max-w-[334px] font-sans text-[14px] font-normal leading-[1.4] text-white/90 lg:mt-[0.8211cqw] lg:max-w-[17.5789cqw] lg:text-[length:var(--fs)]" style={geometry({ fs: 14 })}>
+                {block.description}
+              </p>
+            )}
           </div>
           <div
             className="relative mt-8 flex gap-[10px] lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:mt-0"
-            style={geometry({ l: 150, t: 322 })}
+            style={geometry({ l: 150, t: blogFrame ? 336 : 322 })}
           >
             <button type="button" onClick={() => scrollBy(-1)} aria-label="Previous post" className={ARROW_BUTTON}>
               <span className={ARROW_MASK} aria-hidden="true" />

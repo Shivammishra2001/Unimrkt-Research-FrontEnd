@@ -17,3 +17,18 @@ html {
   max-width: 100vw;
   overflow-x: clip;
 }
+
+/* /contact "Our Presence" map: only the active office's pin shows, dropping in on select (Leaflet owns the marker's own transform). */
+.office-map .office-pin { background: none; border: 0; }
+.office-map .office-pin > * { opacity: 0; transform: translateY(-50px); transition: opacity 0.2s ease-out; }
+.office-map .office-pin.is-active > * { opacity: 1; animation: office-pin-drop 0.7s cubic-bezier(0.3, 1.5, 0.5, 1) both; }
+@keyframes office-pin-drop {
+  0% { opacity: 0; transform: translateY(-60px); }
+  55% { opacity: 1; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .office-map .office-pin.is-active > * { animation: none; transform: none; }
+}
+.office-map .leaflet-tile-pane { filter: grayscale(1) contrast(0.85) brightness(1.08); }
+.office-map .leaflet-control-attribution { font-size: 10px; }

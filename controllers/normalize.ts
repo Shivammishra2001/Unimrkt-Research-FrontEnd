@@ -743,6 +743,10 @@ function normalizeBlogSummaryFields(data: StrapiBlogSummary): BlogSummary {
     category: data.category ? normalizeCategory(data.category) : null,
     coverImage: toImageModel(data.coverImage, data.title),
     order: data.order ?? 0,
+    publishedAt: data.publishedAt ?? undefined,
+    readTimeMinutes: data.body
+      ? Math.max(1, Math.round(extractPlainText(data.body).split(/\s+/).filter(Boolean).length / 200))
+      : undefined,
   };
 }
 

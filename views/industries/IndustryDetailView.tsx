@@ -138,6 +138,7 @@ export function IndustryDetailView({
       <CaseStudiesSection caseStudies={caseStudies} />
       {/* Same About + closing-CTA design as /industries (Figma 384:6574-6388 = 1384:26772's closing frames). */}
       <AboutServicesCta
+        detail
         about={{ eyebrow: content.about.eyebrow, heading: content.about.heading, paragraphs: content.about.body.split('\n\n').map((p) => p.trim()).filter(Boolean) }}
         finalCta={{
           heading: 'Start Your Research Journey',

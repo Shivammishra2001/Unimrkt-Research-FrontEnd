@@ -28,7 +28,7 @@ export function WhoWeServeSection({ whoWeServe }: { whoWeServe: ResolvedIndustry
         <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-[#cc1f1f] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
           {whoWeServe.eyebrow}
         </p>
-        <h2 className="mx-auto mt-[26px] max-w-[560px] font-sans text-3xl font-semibold capitalize leading-[1.2] text-[#02060e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] sm:text-4xl lg:text-[52px] lg:leading-[1.2] lg:tracking-[-3px]">
+        <h2 className={`mx-auto mt-[26px] ${whoWeServe.heading.length > 40 ? 'max-w-[800px]' : 'max-w-[560px]'} font-sans text-3xl font-semibold capitalize leading-[1.2] text-[#02060e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] sm:text-4xl lg:text-[52px] lg:leading-[1.2] lg:tracking-[-3px]`}>
           {whoWeServe.heading}
         </h2>
       </header>
@@ -40,7 +40,7 @@ export function WhoWeServeSection({ whoWeServe }: { whoWeServe: ResolvedIndustry
             const twoLineTitle = card.title.length > 26;
             return (
               <li key={card.id} className="w-[min(460px,86vw)] shrink-0">
-                <div className="group relative flex min-h-[567px] cursor-pointer flex-col rounded-[24px] border border-[#e0e0df] bg-white pb-[65px] pl-[53px] pr-[45px] pt-[64px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:border-[#a82c31] hover:bg-[#a82c31] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none">
+                <div className="group relative flex h-full min-h-[567px] cursor-pointer flex-col rounded-[24px] border border-[#e0e0df] bg-white pb-[65px] pl-[53px] pr-[45px] pt-[64px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:border-[#a82c31] hover:bg-[#a82c31] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none">
                   <h3 className="max-w-[314px] font-sans text-[22px] font-semibold leading-[1.34] text-[#04264e] transition-colors duration-300 ease-in-out group-hover:text-white motion-reduce:transition-none [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">{card.title}</h3>
                   {card.description && (
                     <p className={`max-w-[360px] font-sans text-[14px] font-normal leading-[1.87] text-black/70 transition-colors duration-300 ease-in-out group-hover:text-white group-hover:opacity-90 motion-reduce:transition-none [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] ${twoLineTitle ? 'mt-[27px]' : 'mt-[37px]'}`}>

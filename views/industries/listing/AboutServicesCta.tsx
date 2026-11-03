@@ -9,10 +9,10 @@ import { SectionHeader } from './shared';
  * 151px. Then the shared 1740x455 r40 #101723 CTA band at y=11676 (20%
  * people photo, 227px bottom gradient, title cap-top +119, body +186,
  * button +289), 40px above the footer. */
-export function AboutServicesCta({ about, finalCta }: { about: IndustriesPageContent['about']; finalCta: IndustriesPageContent['finalCta'] }) {
+export function AboutServicesCta({ about, finalCta, detail = false, compact = false }: { about: IndustriesPageContent['about']; finalCta: IndustriesPageContent['finalCta']; /** Industry detail page: Figma 384:6574-6576 geometry. */ detail?: boolean; /** /contact (Figma 1495:16699-16701): copy starts 66px down, one-line title, band at y+518. */ compact?: boolean }) {
   return (
     <>
-      <section className="relative bg-[#f9f9f7] pb-16 pt-16 lg:h-[571px] lg:pb-0 lg:pt-[99.6px]">
+      <section className={`relative bg-[#f9f9f7] pb-16 pt-16 ${compact ? 'lg:h-[518px] lg:pt-[65.6px]' : `lg:h-[571px] ${detail ? 'lg:pt-[98.6px]' : 'lg:pt-[99.6px]'}`} lg:pb-0`}>
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-[151px]"
           style={{ backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 86.538%)' }}
@@ -21,7 +21,8 @@ export function AboutServicesCta({ about, finalCta }: { about: IndustriesPageCon
         <SectionHeader
           eyebrow={about.eyebrow}
           title={about.heading}
-          titleMaxWidth="854px"
+          titleMaxWidth={compact ? '920px' : detail ? '764px' : '854px'}
+          detail={detail}
           bodyMaxWidth="1281px"
           className="px-4 sm:px-6"
           body={about.paragraphs.map((paragraph, i) => (
@@ -32,6 +33,15 @@ export function AboutServicesCta({ about, finalCta }: { about: IndustriesPageCon
         />
       </section>
 
+      <FinalCtaBand finalCta={finalCta} />
+    </>
+  );
+}
+
+/** The shared closing band (Figma 1384:26772 / 522:4769 / 1499:16832): 1740x455 r40 #101723, 40px above the footer. */
+export function FinalCtaBand({ finalCta }: { finalCta: IndustriesPageContent['finalCta'] }) {
+  return (
+    <>
       <section className="bg-white px-4 pb-10 sm:px-6 lg:px-10">
         <div className="mx-auto w-full max-w-[1740px]">
           <div className="relative flex min-h-[455px] flex-col items-center overflow-hidden rounded-[40px] bg-[#101723] px-6 pb-16 pt-16 text-center lg:pb-[106px] lg:pt-[108px]">

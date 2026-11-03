@@ -1,43 +1,47 @@
 import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import { Button } from '@/views/ui/Button';
-import { StrapiImage } from '@/views/ui/StrapiImage';
+import Image from 'next/image';
 import type { ResolvedContact } from './fallback';
 
-/** /contact hero + breadcrumb — Figma node 637:10433 (y0-828). Same dark
- * full-bleed shell as every other detail-page hero this session
- * (ServiceDetailHero.tsx/our-company's HeroSection.tsx), with a 2-level
- * breadcrumb (Home > Contact) matching this node's own breadcrumb text
- * exactly. The 3 phone/mail/@ icon circles visible over the hero photo
- * are baked into the background image itself (confirmed via Figma's own
- * asset export — not separate vector layers), so they need no separate
- * markup here. */
+/** /contact hero + breadcrumb — Figma node 637:10433 (y0-828). 768px #040112 hero with the photo (the phone/mail/@
+ * circles are baked into it), a 40% #010913 wash, the 1064px left shade and the 255px top fade; the header floats over it.
+ * Content at x=217: badge y261, 60/72px title (cap-top 331, 828px wide), 818px intro (482), 286x60 button (552). */
 export function HeroSection({ hero }: { hero: ResolvedContact['hero'] }) {
   return (
     <>
-      <section className="relative flex min-h-[480px] w-full flex-col justify-end overflow-hidden text-white sm:min-h-[560px] lg:min-h-[768px]">
-        {hero.image ? (
-          <StrapiImage image={hero.image} sizes="100vw" priority fill className="object-cover" />
-        ) : (
-          <div className="absolute inset-0 bg-[#040112]" aria-hidden="true" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040112] via-[#040112]/75 to-[#040112]/40" />
-        <div className="absolute inset-0 bg-[#040112]/35" />
-        <div className="relative z-10 mx-auto w-full max-w-container px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-[70px] lg:pt-40">
-          <p className="inline-flex items-center gap-3 rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] backdrop-blur-[2px] font-sans text-[13px] font-bold uppercase tracking-[3px] text-white">
-            <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
+      <section className="relative w-full bg-[#040112] text-white lg:min-h-[768px]">
+        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+          {/* Figma 640:11255: the raw 1984x1181 photo at (0, -117) in the 1900x768 frame, 70% — the saved hero image was
+              already darkened, so the CMS image is not used here. */}
+          <div className="absolute left-0 top-[-15.2%] h-[153.8%] w-[104.4%] opacity-70">
+            <Image src="/images/contact/contact-hero-photo.jpg" alt="" fill priority sizes="100vw" className="object-cover object-right" />
+          </div>
+          <div className="absolute inset-0 bg-[#010913]/40" />
+          <div
+            className="absolute inset-y-0 left-0 w-[1064px] max-w-full opacity-70"
+            style={{ backgroundImage: 'linear-gradient(to left, rgba(0,0,0,0) 0%, #02050e 63%)' }}
+          />
+          <div
+            className="absolute inset-x-0 top-0 h-[255px] opacity-90"
+            style={{ backgroundImage: 'linear-gradient(to bottom, #06070d 37%, rgba(6,7,13,0) 100%)' }}
+          />
+        </div>
+        <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-16 lg:pt-[261px] min-[1500px]:px-0">
+          <p className="inline-flex h-10 items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
+            <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
             {hero.eyebrow}
           </p>
-          <h1 className="mt-3 max-w-[830px] text-4xl font-semibold leading-[1.2] text-white sm:text-5xl lg:text-[60px] lg:tracking-[-3px]">
+          <h1 className="mt-[14.5px] max-w-[828px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
             {hero.heading}
           </h1>
-          <p className="mt-6 max-w-[820px] text-base leading-[1.9] text-white/85 sm:text-lg">{hero.subheading}</p>
-          <div className="mt-8">
+          <p className="mt-[12.8px] max-w-[818px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">{hero.subheading}</p>
+          <div className="mt-8 lg:mt-[49.3px]">
             <Button link={hero.cta} />
           </div>
         </div>
       </section>
 
-      <Breadcrumb items={[{ label: 'Home', href: '/'},{ label: 'Contact'}]} />
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
     </>
   );
 }

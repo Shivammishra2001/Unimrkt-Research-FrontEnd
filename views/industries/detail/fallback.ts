@@ -104,7 +104,67 @@ const FALLBACK_FAQ_ITEMS: FaqItemModel[] = [
   },
 ];
 
+/** "Agriculture & Agritech Market Research" -> "Agriculture & Agritech": the name without the generic
+ * words the page templates append themselves ("... Research Services", "... Market Intelligence"). */
+export const getCleanIndustryTitle = (name: string): string => {
+  const words = name.split(' ').filter(Boolean);
+  const lower = words.map((w) => w.toLowerCase());
+  const kept: string[] = [];
+  for (let i = 0; i < words.length; i++) {
+    if (lower[i] === 'market' && lower[i + 1] === 'research') {
+      i += 1;
+      continue;
+    }
+    if (lower[i] === 'research') continue;
+    kept.push(words[i]);
+  }
+  return kept.join(' ').trim();
+};
+
+const isWordChar = (c: string | undefined) => c !== undefined && c.toLowerCase() !== c.toUpperCase();
+
+/** Swaps the full name for the clean one wherever a
+ * template continues after it ("Our <name> Research Services"). A name that ends a string (the hero eyebrow) is kept. */
+function tidyTitleEcho(text: string, title: string, clean: string): string {
+  const out = text;
+  const lowerTitle = title.toLowerCase();
+  let result = '';
+  let from = 0;
+  for (let at = out.toLowerCase().indexOf(lowerTitle); at !== -1; at = out.toLowerCase().indexOf(lowerTitle, from)) {
+    const end = at + title.length;
+    const matched = out.slice(at, end);
+    result += out.slice(from, at);
+    if (out[end] === ' ' && isWordChar(out[end + 1])) {
+      result += matched === matched.toUpperCase() ? clean.toUpperCase() : matched === matched.toLowerCase() ? clean.toLowerCase() : clean;
+    } else {
+      result += matched;
+    }
+    from = end;
+  }
+  return result + out.slice(from);
+}
+
+function tidyDeep<T>(value: T, title: string, clean: string): T {
+  if (typeof value === 'string') return tidyTitleEcho(value, title, clean) as unknown as T;
+  if (Array.isArray(value)) return value.map((v) => tidyDeep(v, title, clean)) as unknown as T;
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) out[k] = k === 'src' || k === 'href' || k === 'id' ? v : tidyDeep(v, title, clean);
+    return out as T;
+  }
+  return value;
+}
+
+/** Every industry-name template on the page (hero, What We Do, About, Who We Serve ...) goes through here so a name that
+ * already contains "Market Research" never reads "... Market Research Market Research" or "... Research Research". */
 export function resolveIndustryDetail(industry: IndustryDetail): ResolvedIndustryDetail {
+  const resolved = buildIndustryDetail(industry);
+  const clean = getCleanIndustryTitle(industry.title);
+  if (!clean || clean === industry.title) return resolved;
+  return { ...tidyDeep(resolved, industry.title, clean), title: resolved.title };
+}
+
+function buildIndustryDetail(industry: IndustryDetail): ResolvedIndustryDetail {
   const { title } = industry;
   const titleLower = title.toLowerCase();
 

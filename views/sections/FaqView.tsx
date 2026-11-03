@@ -13,13 +13,13 @@ import type { FaqModel } from '@/models/domain';
 /** blocks.faq — single-open accordion, height/opacity spring, plus-to-x
  * rotation (45°) rather than swapping icon assets. Reduced motion collapses
  * both the height spring and the icon rotation to a near-instant toggle. */
-export function FaqView({ block }: { block: FaqModel; index: number }) {
+export function FaqView({ block, variant = 'home' }: { block: FaqModel; index: number; /** 'blog' = the /blogs frame (Figma 522:4788-4832): content 18px higher, 91px bottom padding. */ variant?: 'home' | 'blog' | 'contact' }) {
   // Figma 267:1242..1246: every row is collapsed at rest.
   const [openId, setOpenId] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <Section theme={block.theme} anchorId={block.anchorId} className="relative lg:!pb-[92px] lg:!pt-[114.5px]">
+    <Section theme={block.theme} anchorId={block.anchorId} className={`relative ${variant === 'blog' ? 'lg:!pb-[91px] lg:!pt-[96.5px]' : variant === 'contact' ? 'lg:!pb-[70px] lg:!pt-[96.5px]' : 'lg:!pb-[92px] lg:!pt-[114.5px]'}`}>
       {block.background && (
         // Figma 267:1240/1241: a 1900x719 clip with the world map (1377x787 at -71px) @ 8% opacity.
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[719px] overflow-hidden" aria-hidden="true">
@@ -37,7 +37,7 @@ export function FaqView({ block }: { block: FaqModel; index: number }) {
             (its top sits 51px above it). Optional: no other page using
             blocks.faq sets a cta. */}
         {block.cta && (
-          <div className="mb-6 lg:absolute lg:left-1/2 lg:top-[-165.5px] lg:mb-0 lg:-translate-x-1/2">
+          <div className={`mb-6 lg:absolute lg:left-1/2 lg:mb-0 lg:-translate-x-1/2 ${variant === 'blog' || variant === 'contact' ? 'lg:top-[-156.5px]' : 'lg:top-[-165.5px]'}`}>
             <Button link={block.cta} />
           </div>
         )}

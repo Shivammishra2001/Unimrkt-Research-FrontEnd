@@ -14,7 +14,7 @@ import type { ServiceTreeItemModel } from '@/models/service';
 
 const CLOSE_DELAY_MS = 200;
 
-function NavLink({ item }: { item: NavigationItemModel }) {
+function NavLink({ item, light = false }: { item: NavigationItemModel; /** Dark text for the white header on /blogs/[slug]. */ light?: boolean }) {
   const [open, setOpen] = useState(false);
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -43,7 +43,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         href={item.href}
         target={item.isExternal ? '_blank' : undefined}
         rel={item.isExternal ? 'noopener noreferrer' : undefined}
-        className="flex items-center gap-1 whitespace-nowrap font-nav text-[13px] min-[1600px]:text-[15px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
+        className={`flex items-center gap-1 whitespace-nowrap font-nav text-[13px] min-[1600px]:text-[15px] font-bold uppercase leading-normal tracking-[0.16px] transition-colors ${light ? 'text-[#02060e] hover:text-[#02060e]/70' : 'text-white hover:text-white/80'}`}
       >
         {item.label}
         {/* `showIndicator`: Figma shows this chevron on "About unimrkt"
@@ -52,7 +52,7 @@ function NavLink({ item }: { item: NavigationItemModel }) {
             aria-expanded) rather than faking an interactive control with
             no menu behind it. */}
         {item.showIndicator && (
-          <NavChevronIcon className="size-3.5 rotate-90 text-white" aria-hidden="true" />
+          <NavChevronIcon className="size-3.5 rotate-90" aria-hidden="true" />
         )}
       </Link>
     );
@@ -64,14 +64,14 @@ function NavLink({ item }: { item: NavigationItemModel }) {
         type="button"
         // onClick toggles for touch devices, which never fire onMouseEnter.
         onClick={() => (open ? closeWithDelay() : openNow())}
-        className="flex items-center gap-1 whitespace-nowrap font-nav text-[13px] min-[1600px]:text-[15px] font-bold uppercase leading-normal tracking-[0.16px] text-white transition-colors hover:text-white/80"
+        className={`flex items-center gap-1 whitespace-nowrap font-nav text-[13px] min-[1600px]:text-[15px] font-bold uppercase leading-normal tracking-[0.16px] transition-colors ${light ? 'text-[#02060e] hover:text-[#02060e]/70' : 'text-white hover:text-white/80'}`}
         aria-expanded={open}
       >
         {item.label}
         {/* Native asset points right; rotate-90 (down) at rest matches
             Figma, -rotate-90 (up) while open signals "collapse". */}
         <NavChevronIcon
-          className={`size-3.5 text-white transition-transform ${open ? '-rotate-90' : 'rotate-90'}`}
+          className={`size-3.5 transition-transform ${open ? '-rotate-90' : 'rotate-90'}`}
           aria-hidden="true"
         />
       </button>
@@ -121,12 +121,14 @@ export function Navbar({
 }) {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
-  // Pages whose hero runs under the fixed header (Figma 827:7965 /gallery, 1126:54628 /our-team, 1384:26787 /industries)
+  // Pages whose hero runs under the fixed header (Figma 827:7965 /gallery, 1126:54628 /our-team, 1384:26787 /industries, 522:4838 /blogs, 637:10561 /contact)
   // and whose header CTA is the top-most gradient frame (827:8010, 1126:54673).
   // /industries/[slug] (Figma 384:6205) opens on the same full-bleed hero under a transparent header.
   const isIndustryDetail = pathname.startsWith('/industries/');
-  const isGradientCtaPage = isHomePage || pathname === '/gallery' || pathname === '/our-team' || pathname === '/industries' || isIndustryDetail;
+  const isGradientCtaPage = isHomePage || pathname === '/gallery' || pathname === '/our-team' || pathname === '/industries' || pathname === '/blogs' || pathname === '/contact' || isIndustryDetail;
   const hasHeroUnderHeader = isHomePage || isGradientCtaPage;
+  // /blogs/[slug]: the hero is light, so the header uses the Home page's dark glass surface (white text, gradient CTA) at every scroll position.
+  const isPostPage = pathname.startsWith('/blogs/');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -159,7 +161,9 @@ export function Navbar({
     };
   }, [isMobileOpen]);
 
-  const surfaceClassName = !hasHeroUnderHeader
+  const surfaceClassName = isPostPage
+    ? 'bg-[#0a0f1d]/95 backdrop-blur-md shadow-lg border-b border-white/10'
+    : !hasHeroUnderHeader
     ? 'bg-[#0a0f1d] shadow-md border-b border-slate-800'
     : isScrolled
       ? 'bg-[#0a0f1d]/95 backdrop-blur-md shadow-lg border-b border-white/10'
@@ -168,7 +172,7 @@ export function Navbar({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ${hasHeroUnderHeader && !isScrolled ? 'py-2.5 sm:py-3 xl:py-7 max-md:!py-[14px]' : 'py-2.5 sm:py-3 max-md:!py-[14px]'} ${surfaceClassName}`}
+        className={`fixed top-0 left-0 z-50 w-full transition-all duration-300 text-white ${hasHeroUnderHeader && !isScrolled ? 'py-2.5 sm:py-3 xl:py-7 max-md:!py-[14px]' : 'py-2.5 sm:py-3 max-md:!py-[14px]'} ${surfaceClassName}`}
       >
         <div className="relative mx-auto flex w-full max-w-[1740px] items-center justify-between px-4 sm:px-6 xl:px-8 min-[1800px]:px-0">
           <Link href="/" className="shrink-0">
@@ -194,7 +198,7 @@ export function Navbar({
               variant={navigation.cta.variant}
               // Home (Figma 1794:16957): flat #cc1f1f, 234x60, 4px radius. Gallery (827:8010,
               // the top of the two stacked frames): #6c2a4a -> #be2c28 gradient, same box.
-              className={`hidden max-xl:ml-auto sm:inline-flex ${isGradientCtaPage ? '' : '!bg-none bg-[#cc1f1f]'}`}
+              className={`hidden max-xl:ml-auto sm:inline-flex ${isGradientCtaPage || isPostPage ? '' : '!bg-none bg-[#cc1f1f]'}`}
             />
           )}
           <button
@@ -202,7 +206,7 @@ export function Navbar({
             onClick={() => setIsMobileOpen((v) => !v)}
             aria-expanded={isMobileOpen}
             aria-label="Toggle navigation"
-            className="ml-3 flex h-11 w-11 items-center justify-center text-white xl:hidden"
+            className={`ml-3 flex h-11 w-11 items-center justify-center xl:hidden text-white`}
           >
             {isMobileOpen ? (
               <CloseIcon className="size-6" aria-hidden="true" />

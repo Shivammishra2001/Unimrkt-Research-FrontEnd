@@ -260,12 +260,14 @@ export function GalleryView({ data }: { data: GalleryData }) {
             <p className="mt-12 text-center opacity-70">No photos in this category yet.</p>
           )}
 
-          {hasMore && (
+          {/* Figma 827:7897 draws the button under the grid; it stays put at full strength and just stops responding once every photo is showing. */}
+          {filteredImages.length > 0 && (
             <div className="mt-[51px] flex justify-center">
               <button
                 type="button"
+                disabled={!hasMore}
                 onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                className="inline-flex h-[60px] items-center justify-center gap-2 rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-10 py-[23px] font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition hover:brightness-110 motion-reduce:transition-none"
+                className="inline-flex h-[60px] items-center justify-center gap-2 rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-10 py-[23px] font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition enabled:hover:brightness-110 disabled:cursor-default motion-reduce:transition-none"
               >
                 <RefreshIcon className="size-5 shrink-0" aria-hidden="true" />
                 Load More

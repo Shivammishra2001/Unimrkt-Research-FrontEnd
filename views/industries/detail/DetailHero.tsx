@@ -11,7 +11,9 @@ import type { ResolvedIndustryDetail } from './fallback';
 export function DetailHero({ hero, title }: { hero: ResolvedIndustryDetail['hero']; title: string }) {
   return (
     <>
-      <section className="relative w-full overflow-hidden bg-[#040112] text-white lg:h-[768px]">
+      <section className="relative w-full bg-[#040112] text-white lg:min-h-[768px]">
+        {/* Backdrop layers are clipped by their own wrapper so the section can grow with long titles without clipping the copy. */}
+        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         {/* 384:6237 — photo at 70%, drawn 2300x998 and cropped to the 1900x768 frame (zoomed ~1.2x, mirrored as drawn: the frame is rotated 180° and flipped). */}
         {hero.image && (
           <StrapiImage image={hero.image} sizes="100vw" priority fill className="origin-center object-cover opacity-70 [object-position:49%_57%] [transform:scale(-1.21,1.21)]" />
@@ -29,12 +31,13 @@ export function DetailHero({ hero, title }: { hero: ResolvedIndustryDetail['hero
           style={{ backgroundImage: 'linear-gradient(to bottom, #06070d 37%, rgba(6,7,13,0) 100%)' }}
           aria-hidden="true"
         />
-        <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-0 lg:pt-[276px] min-[1500px]:px-0">
+        </div>
+        <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-16 lg:pt-[276px] min-[1500px]:px-0">
           <p className="inline-flex h-10 items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
             <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
             {hero.eyebrow}
           </p>
-          <h1 className="mt-[14.5px] max-w-[960px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
+          <h1 className={`mt-[14.5px] max-w-[960px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:tracking-[-3px] ${hero.heading.length > 60 ? 'lg:text-[52px] lg:leading-[62px]' : 'lg:text-[60px] lg:leading-[72px]'}`}>
             {/* Hyphenated words ("Data-Driven") stay on one line instead of splitting after the hyphen. */}
             {hero.heading.split(' ').map((word, i) => (
               <span key={i}>

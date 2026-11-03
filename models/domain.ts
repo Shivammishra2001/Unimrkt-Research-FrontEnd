@@ -236,6 +236,8 @@ export interface BlogTeaserModel extends BlockBase {
   kind: 'blogTeaser';
   eyebrow?: string;
   heading: string;
+  /** Optional line under the heading (the /blogs band, Figma 522:4813). */
+  description?: string;
   actions: LinkModel[];
   posts: BlogPostItemModel[];
 }

@@ -21,6 +21,10 @@ export function Pagination({
   textColor,
   squareSize = '49px',
   gap = '15px',
+  radius = '6px',
+  borderWidth = '1px',
+  fontSize,
+  iconSize = '18px',
 }: {
   currentPage: number;
   totalPages: number;
@@ -41,13 +45,20 @@ export function Pagination({
   textColor?: string;
   squareSize?: string;
   gap?: string;
+  /** /blogs (Figma 522:5050) uses 4.571px radius, 0.762px border, 10.45px numerals, 18.286px chevrons. */
+  radius?: string;
+  borderWidth?: string;
+  fontSize?: string;
+  iconSize?: string;
 }) {
   if (totalPages <= 1) return null;
 
   const pages = getPageWindow(currentPage, totalPages);
-  const squareStyle = { width: squareSize, height: squareSize };
+  const squareStyle = { width: squareSize, height: squareSize, borderRadius: radius, borderWidth };
+  const numberStyle = fontSize ? { fontSize } : undefined;
+  const iconStyle = { width: iconSize, height: iconSize };
   const resolvedTextColor = textColor ?? borderColor;
-  const inactiveClass = 'border transition-colors hover:bg-black/5';
+  const inactiveClass = 'border-solid transition-colors hover:bg-black/5';
 
   return (
     <nav aria-label={ariaLabel} className="flex flex-wrap items-center justify-center" style={{ gap }}>
@@ -57,15 +68,15 @@ export function Pagination({
         disabled={currentPage === 1}
         aria-label="Previous page"
         style={{ ...squareStyle, borderColor, color: resolvedTextColor }}
-        className={`flex items-center justify-center rounded-[6px] ${inactiveClass} disabled:opacity-40`}
+        className={`flex items-center justify-center ${inactiveClass} disabled:opacity-40`}
       >
-        <ChevronIcon className="size-[18px] rotate-180" aria-hidden="true" />
+        <ChevronIcon className="rotate-180" style={iconStyle} aria-hidden="true" />
       </button>
 
       {pages.map((page, i) =>
         page === 'ellipsis' ? (
           // eslint-disable-next-line react/no-array-index-key -- static filler between page numbers, never reordered
-          <span key={`ellipsis-${i}`} style={{ ...squareStyle, color: resolvedTextColor }} className="flex items-center justify-center font-sans text-sm">
+          <span key={`ellipsis-${i}`} style={{ ...squareStyle, ...numberStyle, borderWidth: 0, color: resolvedTextColor }} className="flex items-center justify-center font-sans text-sm">
             …
           </span>
         ) : (
@@ -76,10 +87,10 @@ export function Pagination({
             aria-current={page === currentPage ? 'page' : undefined}
             style={
               page === currentPage
-                ? { ...squareStyle, backgroundColor: activeColor }
-                : { ...squareStyle, borderColor, color: resolvedTextColor }
+                ? { ...squareStyle, ...numberStyle, borderWidth: 0, backgroundColor: activeColor }
+                : { ...squareStyle, ...numberStyle, borderColor, color: resolvedTextColor }
             }
-            className={`flex items-center justify-center rounded-[6px] font-sans text-sm font-medium ${
+            className={`flex items-center justify-center font-sans text-sm font-medium ${
               page === currentPage ? 'text-white' : inactiveClass
             }`}
           >
@@ -94,9 +105,9 @@ export function Pagination({
         disabled={currentPage === totalPages}
         aria-label="Next page"
         style={{ ...squareStyle, borderColor, color: resolvedTextColor }}
-        className={`flex items-center justify-center rounded-[6px] ${inactiveClass} disabled:opacity-40`}
+        className={`flex items-center justify-center ${inactiveClass} disabled:opacity-40`}
       >
-        <ChevronIcon className="size-[18px]" aria-hidden="true" />
+        <ChevronIcon style={iconStyle} aria-hidden="true" />
       </button>
     </nav>
   );

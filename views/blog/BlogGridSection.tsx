@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { BlogCard } from './BlogCard';
+import { BlogListCard } from './BlogListCard';
 import { Pagination } from './Pagination';
 import type { BlogSummary } from '@/models/blog';
 import type { CategoryModel } from '@/models/category';
@@ -45,7 +45,17 @@ export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; c
 
   return (
     <div>
-      <div className="flex flex-wrap justify-center gap-3">
+      {/* Figma 522:4836-4837: title (cap-top y898) + 2-line intro (y967) under the 60px section lead-in. */}
+      <h2 className="text-center font-sans text-[34px] font-semibold capitalize leading-[1.2] tracking-[-1.5px] text-[#02060e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] sm:text-[42px] lg:text-[50px] lg:tracking-[-3px]">
+        Insights &amp; Stories
+      </h2>
+      <p className="mx-auto mt-6 max-w-[966px] text-center font-sans text-[16px] font-normal leading-[1.9] text-[#02060e]/80 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] lg:mt-[34px]">
+        Explore expert insights, industry trends, research methodologies, and success stories designed to help businesses stay
+        informed, uncover opportunities, make data-driven decisions, and achieve sustainable growth.
+      </p>
+
+      {/* Figma 522:4914 — 56px tabs, 12px gap; active #6c2a4a -> #be2c28 / 13.234px, inactive white + #dedede / 13.125px. */}
+      <div className="mt-10 flex flex-wrap justify-center gap-3 lg:mt-[69px]">
         {tabs.map((tab) => {
           const isActive = tab.slug === activeSlug;
           return (
@@ -54,10 +64,10 @@ export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; c
               type="button"
               onClick={() => handleCategoryChange(tab.slug)}
               aria-pressed={isActive}
-              className={`min-h-[44px] rounded-[3px] px-6 py-2 font-sans text-[13px] font-semibold uppercase tracking-wider transition-colors ${
+              className={`flex h-[56px] items-center justify-center rounded-[3px] pb-[10px] pt-[9px] font-sans font-semibold uppercase leading-[normal] transition-colors motion-reduce:transition-none ${
                 isActive
-                  ? 'bg-gradient-to-r from-gradient-from to-gradient-to text-white'
-                  : 'border border-[#dedede] bg-white text-[#1e1e1e] hover:border-brand-600'
+                  ? 'bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-[30px] text-[13.234px] text-white'
+                  : 'border border-[#dedede] bg-white px-[29px] text-[13.125px] text-[#1e1e1e] hover:border-[#be2c28] hover:text-[#be2c28]'
               }`}
             >
               {tab.label}
@@ -67,22 +77,27 @@ export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; c
       </div>
 
       {pageItems.length > 0 ? (
-        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:mt-[41px] lg:grid-cols-3">
           {pageItems.map((post, i) => (
-            <BlogCard
-              key={post.slug}
-              post={post}
-              priority={i === 0}
-              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            />
+            <BlogListCard key={post.slug} post={post} priority={i < 3} />
           ))}
         </div>
       ) : (
         <p className="mt-12 text-center opacity-70">No posts in this category yet.</p>
       )}
 
-      <div className="mt-12">
-        <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setCurrentPage} />
+      <div className="mt-12 lg:mt-[59.6px]">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={setCurrentPage}
+          squareSize="48.762px"
+          gap="15.238px"
+          radius="4.571px"
+          borderWidth="0.762px"
+          fontSize="10.45px"
+          iconSize="18.286px"
+        />
       </div>
     </div>
   );

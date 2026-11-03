@@ -19,6 +19,15 @@ function pickRelatedPosts(all: BlogSummary[], post: BlogDetail): BlogSummary[] {
   return [...sameCategory, ...rest].slice(0, 4);
 }
 
+/** The 5 most recently published posts, never the open one — the sidebar's "Recent Posts" (Figma 1499:16766). */
+function pickRecentPosts(all: BlogSummary[], currentSlug: string): BlogSummary[] {
+  const stamp = (p: BlogSummary) => (p.publishedAt ? Date.parse(p.publishedAt) : 0);
+  return all
+    .filter((p) => p.slug !== currentSlug)
+    .sort((a, b) => stamp(b) - stamp(a) || a.order - b.order)
+    .slice(0, 5);
+}
+
 interface RouteParams {
   slug: string;
 }
@@ -58,5 +67,5 @@ export default async function BlogDetailPage({ params }: { params: RouteParams }
   }
   if (!post) notFound();
 
-  return <BlogDetailView post={post} relatedPosts={pickRelatedPosts(allPosts, post)} />;
+  return <BlogDetailView post={post} relatedPosts={pickRelatedPosts(allPosts, post)} recentPosts={pickRecentPosts(allPosts, post.slug)} />;
 }

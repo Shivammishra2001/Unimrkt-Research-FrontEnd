@@ -8,6 +8,9 @@ import type { ReactNode } from 'react';
 export const EYEBROW_CLASS = 'font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px]';
 export const H2_CLASS =
   'font-sans text-[32px] font-semibold capitalize leading-[38px] tracking-[-1.5px] sm:text-[40px] sm:leading-[48px] lg:text-[50px] lg:leading-[60px] lg:tracking-[-3px]';
+/** Industry detail pages (Figma 384:6575): the same title at 52px / 1.2. */
+export const H2_DETAIL_CLASS =
+  'font-sans text-[32px] font-semibold capitalize leading-[38px] tracking-[-1.5px] sm:text-[40px] sm:leading-[48px] lg:text-[52px] lg:leading-[1.2] lg:tracking-[-3px]';
 export const BODY_CLASS = 'font-sans text-[16px] font-normal leading-[30.4px]';
 
 /** Frame-width container used by the card rows (150px side margins at 1900). */
@@ -24,6 +27,7 @@ export function SectionHeader({
   titleMaxWidth,
   bodyMaxWidth,
   className = '',
+  detail = false,
 }: {
   eyebrow: string;
   title: string;
@@ -32,17 +36,19 @@ export function SectionHeader({
   titleMaxWidth?: string;
   bodyMaxWidth?: string;
   className?: string;
+  /** Industry detail variant — Figma 384:6574-6576: 52px title, 9.4px / 22.9px gaps. */
+  detail?: boolean;
 }) {
   const dark = tone === 'dark';
   return (
     <header className={`mx-auto flex flex-col items-center text-center ${className}`}>
       <p className={`${EYEBROW_CLASS} ${dark ? 'text-white' : 'text-[#cc1f1f]'}`}>{eyebrow}</p>
-      <h2 className={`${H2_CLASS} mt-[7px] ${dark ? 'text-white' : 'text-[#02060e]'}`} style={{ maxWidth: titleMaxWidth }}>
+      <h2 className={`${detail ? `${H2_DETAIL_CLASS} lg:mt-[9.4px] mt-[7px]` : `${H2_CLASS} mt-[7px]`} ${dark ? 'text-white' : 'text-[#02060e]'}`} style={{ maxWidth: titleMaxWidth }}>
         {title}
       </h2>
       {body && (
         <div
-          className={`${BODY_CLASS} mt-[12px] opacity-80 ${dark ? 'text-white' : 'text-[#02060e]'}`}
+          className={`${BODY_CLASS} ${detail ? 'mt-[12px] lg:mt-[22.9px]' : 'mt-[12px]'} opacity-80 ${dark ? 'text-white' : 'text-[#02060e]'}`}
           style={{ maxWidth: bodyMaxWidth }}
         >
           {body}
