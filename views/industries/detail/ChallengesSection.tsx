@@ -20,19 +20,19 @@ export function ChallengesSection({ challenges }: { challenges: ResolvedIndustry
   return (
     <section className="relative overflow-hidden bg-[#0f1825] py-16 text-white sm:py-20 lg:min-h-[817px] lg:pb-12 lg:pt-[97px]">
       {/* Figma 384:6409-6413: a solid #0f1825 base with the photo laid over it at 30% — no heavy overlay. */}
-      <Image src="/images/industries/detail/challenges-bg.jpg" alt="" fill sizes="100vw" className="object-cover opacity-30" />
+      <Image src="/images/industries/detail/challenges-bg.jpg" alt="" fill sizes="100vw" className="object-cover object-[50%_43.3%] opacity-30" />
       <Container className="relative max-w-[1600px] min-[1700px]:px-0">
-        <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-[#A6192E]">{challenges.eyebrow}</p>
-        <h2 className="mt-3 max-w-2xl lg:mt-[7px] font-sans text-3xl font-semibold capitalize leading-[1.2] text-white sm:text-4xl lg:text-[50px] lg:leading-[1.2] lg:tracking-[-1px]">
+        <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">{challenges.eyebrow}</p>
+        <h2 className="mt-3 max-w-2xl lg:mt-[13.5px] font-sans text-3xl font-semibold capitalize leading-[1.2] text-white sm:text-4xl lg:text-[50px] lg:leading-[1.2] lg:tracking-[-1px]">
           {challenges.heading}
         </h2>
         <p className="mt-4 max-w-[833px] text-base leading-[1.9] text-white/80 lg:mt-[21px]">{challenges.body}</p>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-[50px] lg:grid-cols-4 lg:gap-[29px]">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-[50px] lg:grid-cols-4 lg:gap-[29px] min-[1700px]:grid-cols-[repeat(4,378px)]">
           {challenges.cards.map((card) => (
             <div
               key={card.id}
-              className="group cursor-pointer transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none flex min-h-[390px] flex-col items-center gap-[31px] rounded-[20px] border border-white/10 bg-white/[0.08] px-8 pb-10 pt-12 text-center lg:pb-4 backdrop-blur-[21px] hover:border-white/20 hover:bg-white/[0.12] lg:px-[51px] lg:pt-[68px]"
+              className="group cursor-pointer transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none flex min-h-[390px] flex-col items-center gap-[31px] rounded-[20px] border border-white/10 bg-white/[0.08] px-8 pb-10 pt-12 text-center lg:h-[390px] lg:pb-0 backdrop-blur-[21px] hover:border-white/20 hover:bg-white/[0.12] lg:px-[50px] lg:pt-[67px]"
             >
               <span className="flex size-[124px] shrink-0 items-center justify-center rounded-full bg-white">
                 {!card.icon && card.iconIdentifier && FIGMA_ICONS[card.iconIdentifier] ? (
@@ -49,8 +49,8 @@ export function ChallengesSection({ challenges }: { challenges: ResolvedIndustry
                 )}
               </span>
               <div className="flex w-full flex-col gap-6">
-                <p className="font-sans text-[18px] font-semibold leading-[1.34] text-white">{card.title}</p>
-                {card.description && <p className="font-sans text-[14px] leading-[1.87] text-white/70">{card.description}</p>}
+                <p className="font-sans text-[18px] font-semibold leading-[1.34] text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] lg:whitespace-nowrap">{card.title}</p>
+                {card.description && <p className="font-sans text-[14px] leading-[1.87] text-white/70 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">{card.description}</p>}
               </div>
             </div>
           ))}

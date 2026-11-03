@@ -176,6 +176,8 @@ export interface IndustryItemModel {
   title: string;
   /** Hover-state copy (Figma 363:6474). */
   description?: string;
+  /** Optional link target (e.g. a case study's own page). */
+  href?: string;
   image?: ImageModel;
   accentColor: string;
 }

@@ -9,7 +9,7 @@ const DOT_COUNT = 3;
  * and the last one is cropped by the frame), followed by the 3-dot pager
  * (a 32x15 pill + two 15px circles). The row's left edge lines up with the
  * 1600px content column. */
-export function ScrollCards({ children, label }: { children: React.ReactNode; label: string }) {
+export function ScrollCards({ children, label, tight = false }: { children: React.ReactNode; label: string; /** Figma 384:6214: pager sits 37px under the cards. */ tight?: boolean }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
 
@@ -38,11 +38,11 @@ export function ScrollCards({ children, label }: { children: React.ReactNode; la
         ref={trackRef}
         onScroll={sync}
         aria-label={label}
-        className="flex gap-8 overflow-x-auto scroll-smooth px-4 pb-10 pt-2 [scrollbar-width:none] sm:px-6 lg:px-8 min-[1700px]:pl-[calc((100vw_-_1600px)/2)] min-[1700px]:pr-0 [&::-webkit-scrollbar]:hidden"
+        className={`flex gap-8 overflow-x-auto scroll-smooth px-4 pb-10 ${tight ? '-mt-4 pt-6' : 'pt-2'} [scrollbar-width:none] sm:px-6 lg:px-8 min-[1700px]:pl-[calc((100vw_-_1600px)/2)] min-[1700px]:pr-0 [&::-webkit-scrollbar]:hidden`}
       >
         {children}
       </ul>
-      <div className="mt-2 flex items-center justify-center gap-2" role="tablist" aria-label={`${label} pages`}>
+      <div className={`flex items-center justify-center gap-2 ${tight ? '-mt-[3px]' : 'mt-2'}`} role="tablist" aria-label={`${label} pages`}>
         {Array.from({ length: DOT_COUNT }).map((_, i) => (
           <button
             key={i}
@@ -51,7 +51,7 @@ export function ScrollCards({ children, label }: { children: React.ReactNode; la
             aria-selected={active === i}
             aria-label={`Page ${i + 1}`}
             onClick={() => goTo(i)}
-            className={`h-[15px] rounded-full transition-all duration-300 ${active === i ? 'w-8 bg-[#b63a40]' : 'w-[15px] bg-[#d9d9d9]'}`}
+            className={`h-[15px] rounded-full transition-all duration-300 ${active === i ? 'w-8 bg-[#b63a40]' : 'w-[15px] bg-[#BDBDBD]/40'}`}
           />
         ))}
       </div>

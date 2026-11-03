@@ -44,15 +44,25 @@ export function IndustryDetailView({
 
   // Figma 384:6205 always draws this section: the industry's own picks when set,
   // otherwise the two latest published case studies.
+  // CMS picks only carry a title/photo; link them to the published case study of the same title (borrowing its excerpt), else the case-study listing.
+  const picks = content.caseStudies
+    ? {
+        ...content.caseStudies,
+        items: content.caseStudies.items.map((item) => {
+          const match = latestCaseStudies.find((c) => c.title.trim().toLowerCase() === item.title.trim().toLowerCase());
+          return { ...item, description: item.description || match?.excerpt || undefined, href: item.href ?? (match ? `/case-study/${match.slug}` : '/case-study') };
+        }),
+      }
+    : null;
   const caseStudies =
-    content.caseStudies ??
+    picks ??
     (latestCaseStudies.length > 0
       ? {
           eyebrow: 'Case Studies',
           heading: `${content.title} Success Stories`,
           body: `Discover how our research empowers ${content.title.toLowerCase()} brands with actionable insights, smarter decisions, and measurable business growth.`,
           cta: { id: 'industry-case-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' as const },
-          items: latestCaseStudies.slice(-2).map((c) => ({ id: c.id, title: c.title, image: c.coverImage, accentColor: '#05101a' })),
+          items: latestCaseStudies.slice(-2).map((c) => ({ id: c.id, title: c.title, description: c.excerpt || undefined, href: `/case-study/${c.slug}`, image: c.coverImage, accentColor: '#05101a' })),
         }
       : null);
 

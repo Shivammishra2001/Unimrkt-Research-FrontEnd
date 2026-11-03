@@ -2,13 +2,13 @@
 
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { Container } from '@/views/ui/Container';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import { SendArrowIcon } from '@/views/ui/icons/SendArrowIcon';
 import type { ImageModel } from '@/models/domain';
 
+// Figma 483:7180 — white 434x65 field, r10, no border; 13px Medium #5e5e5e text, 17px inset.
 const FIELD_CLASS =
-  'h-[65px] w-full rounded-[10px] border border-[#e4e2e2] bg-[#fbfbfb] px-5 font-sans text-[13px] font-medium text-[#464646] placeholder:text-[#464646] focus:outline-none focus:ring-2 focus:ring-brand-600';
+  'h-[65px] w-full rounded-[10px] bg-white px-[17px] font-sans text-[13px] font-medium text-[#5e5e5e] placeholder:text-[#5e5e5e] focus:outline-none focus:ring-2 focus:ring-brand-600';
 
 /**
  * "Get a Free Quote!" enquiry band — Figma node 483:7166-7209
@@ -42,60 +42,84 @@ export function EnquiryForm({
   }
 
   return (
-    <section className="relative overflow-hidden py-16 text-white sm:py-20 lg:min-h-[717px] lg:py-[62px]">
-      {image && <StrapiImage image={image} sizes="100vw" fill className="object-cover" />}
-      <div className="absolute inset-0 bg-[#101723]/85" aria-hidden="true" />
-      <Container className="relative">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-600">{eyebrow}</p>
-            <h2 className="mt-3 text-3xl font-semibold leading-[1.2] text-white sm:text-4xl lg:text-[44px] lg:tracking-[-1px]">
+    // Figma 483:7166 (1900x717): #0f1825 base, photo at 30%, a 478px #06070d vignette at 50%; text column
+    // at x264 and the 540x590 glass card at x1098 → a 1374px content box.
+    <section className="relative overflow-hidden bg-[#0f1825] py-16 text-white sm:py-20 lg:min-h-[717px] lg:pb-[64px] lg:pt-[63px]">
+      {image && (
+        <div className="absolute -left-[11.05%] -top-[2.4%] h-[104.6%] w-[118.4%] opacity-30" aria-hidden="true">
+          <StrapiImage image={image} sizes="100vw" fill className="object-cover" />
+        </div>
+      )}
+      <div
+        className="absolute inset-x-0 top-0 h-[478px] opacity-50 [background:linear-gradient(180deg,#06070d_0%,#06070d_37%,rgba(6,7,13,0)_100%)]"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto w-full max-w-[1374px] px-4 sm:px-6 lg:px-8 min-[1440px]:px-0">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_540px] lg:items-start lg:gap-x-8">
+          <div className="lg:pt-[183px]">
+            <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+              {eyebrow}
+            </p>
+            <h2 className="mt-[26px] max-w-[443px] font-sans text-3xl font-semibold capitalize leading-[1.2] text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] sm:text-4xl lg:text-[50px] lg:leading-[1.2] lg:tracking-[-1px]">
               {heading}
             </h2>
-            <p className="mt-6 max-w-[606px] text-base leading-[1.9] text-white/80">{body}</p>
+            <p className="mt-[40px] max-w-[606px] font-sans text-base leading-[1.9] text-white/80 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+              {body}
+            </p>
           </div>
 
-          <div className="rounded-[24px] bg-white p-6 shadow-blog sm:p-8">
+          <div className="mx-auto w-full max-w-[540px] rounded-[20px] border border-white/10 bg-white/[0.08] p-6 backdrop-blur-[21px] sm:p-8 lg:px-[52px] lg:py-[50px]">
             {submitted ? (
-              <p className="rounded-[10px] bg-[#fbfbfb] p-5 font-sans text-sm text-[#464646]">
+              <p className="rounded-[10px] bg-white p-5 font-sans text-sm text-[#5e5e5e]">
                 Thanks — we&apos;ve received your enquiry and will be in touch shortly.
               </p>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                <input type="text" name="name" required placeholder="Name*" className={FIELD_CLASS} />
-                <input type="email" name="email" required placeholder="Email ID*" className={FIELD_CLASS} />
-                <div className="flex h-[65px] w-full items-center gap-3 rounded-[10px] border border-[#e4e2e2] bg-[#fbfbfb] px-5">
-                  <span className="font-sans text-[13px] font-medium text-[#464646]" aria-hidden="true">
-                    +91
-                  </span>
-                  <span className="h-6 w-px bg-[#e4e2e2]" aria-hidden="true" />
-                  <input
-                    type="tel"
-                    name="phone"
-                    required
-                    placeholder="Phone number*"
-                    className="h-full flex-1 bg-transparent font-sans text-[13px] font-medium text-[#464646] placeholder:text-[#464646] focus:outline-none"
-                  />
+              <form onSubmit={handleSubmit} className="flex flex-col gap-[26px]">
+                <div className="flex flex-col gap-[14px]">
+                  <input type="text" name="name" required placeholder="Name*" className={FIELD_CLASS} />
+                  <input type="email" name="email" required placeholder="Email ID*" className={FIELD_CLASS} />
+                  <div className="flex h-[65px] w-full items-center rounded-[10px] bg-white pl-[17px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/figma-industries/enquiry/flag-in.png" alt="" width={33} height={22} className="h-[22px] w-[33px] shrink-0 object-cover" />
+                    <span className="ml-[6.3px] font-sans text-[20px] text-black" aria-hidden="true">
+                      +91
+                    </span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/figma-industries/enquiry/chevron.svg" alt="" width={20} height={20} className="ml-[17.7px] size-5 shrink-0" />
+                    <span className="ml-[15.4px] h-[26px] w-[1.6px] shrink-0 bg-[#d9d9d9]" aria-hidden="true" />
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      placeholder="Phone number*"
+                      className="ml-[13px] h-full min-w-0 flex-1 bg-transparent pr-4 font-sans text-[13px] font-medium text-[#5e5e5e] placeholder:text-[#5e5e5e] focus:outline-none"
+                    />
+                  </div>
+                  <input type="text" name="company" required placeholder="Company name*" className={FIELD_CLASS} />
                 </div>
-                <input type="text" name="company" required placeholder="Company name*" className={FIELD_CLASS} />
 
-                <label className="mt-2 flex items-center gap-3 font-sans text-sm text-[#464646]">
-                  <input type="checkbox" required className="size-5 rounded border-[#e4e2e2] text-brand-600 focus:ring-brand-600" />
-                  I&apos;m not a robot
-                </label>
-                <p className="font-sans text-xs text-[#868484]">
-                  <Link href="/privacy-policy" className="underline hover:text-brand-600">
-                    Privacy
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/contact" className="underline hover:text-brand-600">
-                    Terms
-                  </Link>
-                </p>
+                {/* Figma 483:7195 — the reCAPTCHA checkbox widget: 302x74, #fafafa, 1px #d6d6d6, r2. */}
+                <div className="relative h-[74px] w-[302px] max-w-full rounded-[2px] border border-[#d6d6d6] bg-[#fafafa] shadow-[0_1px_1px_rgba(0,0,0,0.1)]">
+                  <label className="absolute left-[12px] top-1/2 flex -translate-y-1/2 cursor-pointer items-center gap-[14px] font-[Roboto,Arial,sans-serif] text-[14px] font-medium text-black">
+                    <input
+                      type="checkbox"
+                      required
+                      className="size-6 shrink-0 cursor-pointer appearance-none rounded-[1px] border-2 border-[#c1c1c1] bg-white checked:border-[#4a90e2] checked:bg-[#4a90e2]"
+                    />
+                    I&apos;m not a robot
+                  </label>
+                  <div className="absolute right-[10px] top-[calc(50%+0.5px)] flex -translate-y-1/2 flex-col items-center gap-1">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/figma-industries/enquiry/recaptcha-logo.svg" alt="" width={48} height={46} className="h-[46px] w-12" />
+                    <p className="font-[Roboto,Arial,sans-serif] text-[8px] font-medium text-[#a6a6a6]">
+                      <Link href="/privacy-policy">Privacy</Link> - <Link href="/contact">Terms</Link>
+                    </p>
+                  </div>
+                </div>
 
                 <button
                   type="submit"
-                  className="mt-2 flex h-[60px] items-center justify-center gap-2 rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-white transition-transform hover:brightness-110"
+                  className="flex h-[60px] w-full items-center justify-center gap-1 rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-10 font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.78px] text-white transition-[filter] duration-300 hover:brightness-110 motion-reduce:transition-none"
                 >
                   Send
                   <SendArrowIcon className="size-4" aria-hidden="true" />
@@ -104,7 +128,7 @@ export function EnquiryForm({
             )}
           </div>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
