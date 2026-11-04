@@ -29,3 +29,10 @@ export class StrapiError extends Error {
 export function isBackendUnreachable(err: unknown): err is StrapiError {
   return err instanceof StrapiError && err.status >= 500;
 }
+
+/** True for the 404 Strapi sends when a page exists but its "Page visibility" switch is OFF (as opposed to never having been created). */
+export function isInactiveError(err: unknown): boolean {
+  if (!(err instanceof StrapiError) || err.status !== 404) return false;
+  const details = (err.body as { error?: { details?: { code?: string } } } | undefined)?.error?.details;
+  return details?.code === 'INACTIVE';
+}

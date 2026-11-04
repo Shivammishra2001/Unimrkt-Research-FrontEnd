@@ -13,6 +13,8 @@ import type { StrapiCategory, CategoryModel } from './category';
 // ---------------------------------------------------------------------------
 
 export interface StrapiBlogSummary {
+  /** CMS "Page visibility" switch; null/absent = active. */
+  isActive?: boolean | null;
   id: number;
   documentId?: string;
   title: string;
@@ -95,6 +97,8 @@ export interface BlogSummary {
 }
 
 export interface BlogDetail extends BlogSummary {
+  /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
+  isActive?: boolean;
   body: StrapiBlocksContent;
   faqItems: FaqItemModel[];
   /** Computed from `body`'s word count (~200wpm) in normalizeBlogDetail —

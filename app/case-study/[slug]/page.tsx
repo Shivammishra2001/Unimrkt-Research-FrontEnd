@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import { hiddenFromVisitors } from '@/controllers/visibility';
+import { InactivePreviewBanner } from '@/views/ui/InactivePreviewBanner';
 import type { Metadata } from 'next';
 import { getCaseStudyDetail, getCaseStudySlugList, getCaseStudyList } from '@/controllers/caseStudy';
 import { getCaseStudyPageContent } from '@/controllers/caseStudyPage';
@@ -50,8 +52,14 @@ export default async function CaseStudyDetailPage({ params }: { params: RoutePar
     throw err;
   }
   if (!caseStudy) notFound();
+  const inactivePreview = hiddenFromVisitors(caseStudy);
 
   const relatedCaseStudies = allCaseStudies.filter((cs) => cs.slug !== caseStudy.slug);
 
-  return <CaseStudyDetailView caseStudy={caseStudy} relatedCaseStudies={relatedCaseStudies} settings={settings} />;
+  return (
+    <>
+      {inactivePreview && <InactivePreviewBanner />}
+      <CaseStudyDetailView caseStudy={caseStudy} relatedCaseStudies={relatedCaseStudies} settings={settings} />
+    </>
+  );
 }

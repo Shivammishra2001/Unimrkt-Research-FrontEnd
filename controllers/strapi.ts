@@ -135,7 +135,8 @@ export async function strapiFetch<T>(endpoint: string, options: FetchOptions = {
 
       if (res.status === 404) {
         // Always thrown immediately, never retried.
-        throw new StrapiError('Not found', 404, endpoint);
+        // The body is kept: Strapi marks a switched-off page with details.code === 'INACTIVE' (see isInactiveError).
+        throw new StrapiError('Not found', 404, endpoint, await res.json().catch(() => undefined));
       }
       if (!res.ok) {
         const body = await res.json().catch(() => undefined);

@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import { hiddenFromVisitors } from '@/controllers/visibility';
+import { InactivePreviewBanner } from '@/views/ui/InactivePreviewBanner';
 import type { Metadata } from 'next';
 import { getAllServiceSlugs, getServiceBySlug } from '@/controllers/service';
 import { getAllBlogPosts } from '@/controllers/blog';
@@ -45,6 +47,12 @@ export default async function ServiceDetailPage({ params }: { params: RouteParam
     throw err;
   }
   if (!service) notFound();
+  const inactivePreview = hiddenFromVisitors(service);
 
-  return <ServiceDetailView service={service} blogPosts={blogPosts} />;
+  return (
+    <>
+      {inactivePreview && <InactivePreviewBanner />}
+      <ServiceDetailView service={service} blogPosts={blogPosts} />
+    </>
+  );
 }

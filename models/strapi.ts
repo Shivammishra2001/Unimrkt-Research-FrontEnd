@@ -302,6 +302,8 @@ export type StrapiBlock =
 
 export interface StrapiPage {
   id: number;
+  /** CMS "Page visibility" switch; null/absent = active. */
+  isActive?: boolean | null;
   documentId?: string;
   title: string;
   slug: string;

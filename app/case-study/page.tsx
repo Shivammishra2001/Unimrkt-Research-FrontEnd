@@ -1,3 +1,4 @@
+import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getCaseStudyList } from '@/controllers/caseStudy';
 import { getCaseStudyPageContent } from '@/controllers/caseStudyPage';
@@ -18,6 +19,7 @@ export default async function CaseStudyPage() {
     return <CaseStudyView caseStudies={caseStudies} settings={settings} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
+    notFoundIfMissing(err);
     throw err;
   }
 }

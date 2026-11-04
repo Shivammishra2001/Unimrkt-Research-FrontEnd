@@ -4,6 +4,7 @@
  * emptied. */
 import { cache } from 'react';
 import { getIndustriesPageSettings, StrapiError } from './strapi';
+import { isInactiveError } from './errors';
 import { normalizeSeo } from './normalize';
 import { toImageModel } from './image';
 import defaults from '@/views/industries/defaultContent.json';
@@ -160,7 +161,7 @@ export const getIndustriesPageContent = cache(async (): Promise<IndustriesPageCo
   } catch (err) {
     // Entry not created yet (404): ship the built-in copy. Any other failure
     // (backend down) is surfaced by the page's own industry/blog fetches.
-    if (err instanceof StrapiError && err.status === 404) return normalizeIndustriesPage(null);
+    if (err instanceof StrapiError && err.status === 404 && !isInactiveError(err)) return normalizeIndustriesPage(null);
     throw err;
   }
 });

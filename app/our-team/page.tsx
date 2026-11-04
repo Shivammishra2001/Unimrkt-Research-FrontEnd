@@ -1,3 +1,4 @@
+import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getTeamMemberList } from '@/controllers/teamMember';
 import { getOurTeamPageContent } from '@/controllers/ourTeamPage';
@@ -18,6 +19,7 @@ export default async function OurTeamPage() {
     return <OurTeamView members={members} settings={settings} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
+    notFoundIfMissing(err);
     throw err;
   }
 }

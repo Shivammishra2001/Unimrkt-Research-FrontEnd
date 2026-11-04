@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import { hiddenFromVisitors } from '@/controllers/visibility';
+import { InactivePreviewBanner } from '@/views/ui/InactivePreviewBanner';
 import type { Metadata } from 'next';
 import { getAllIndustrySlugs, getIndustryBySlug } from '@/controllers/industry';
 import { getAllBlogPosts } from '@/controllers/blog';
@@ -51,6 +53,12 @@ export default async function IndustryDetailPage({ params }: { params: RoutePara
     throw err;
   }
   if (!industry) notFound();
+  const inactivePreview = hiddenFromVisitors(industry);
 
-  return <IndustryDetailView industry={industry} blogPosts={blogPosts} latestCaseStudies={caseStudies} />;
+  return (
+    <>
+      {inactivePreview && <InactivePreviewBanner />}
+      <IndustryDetailView industry={industry} blogPosts={blogPosts} latestCaseStudies={caseStudies} />
+    </>
+  );
 }

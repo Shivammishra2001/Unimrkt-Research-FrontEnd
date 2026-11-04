@@ -25,6 +25,8 @@ export interface StrapiServiceStatItem {
 }
 
 export interface StrapiServiceSummary {
+  /** CMS "Page visibility" switch; null/absent = active. */
+  isActive?: boolean | null;
   id: number;
   documentId?: string;
   title: string;
@@ -142,6 +144,8 @@ export interface ServiceSummary {
 }
 
 export interface ServiceDetail extends ServiceSummary {
+  /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
+  isActive?: boolean;
   features: FeatureModel[];
   seo?: SeoModel;
   legacyUrl?: string;

@@ -287,6 +287,8 @@ export type BlockModel =
 export type BlockKind = BlockModel['kind'];
 
 export interface PageModel {
+  /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
+  isActive?: boolean;
   title: string;
   slug: string;
   seo?: SeoModel;

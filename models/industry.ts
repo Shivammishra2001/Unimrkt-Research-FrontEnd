@@ -32,6 +32,8 @@ export interface StrapiTrustLogo {
 }
 
 export interface StrapiIndustrySummary {
+  /** CMS "Page visibility" switch; null/absent = active. */
+  isActive?: boolean | null;
   id: number;
   documentId?: string;
   title: string;
@@ -146,6 +148,8 @@ export interface TrustLogoModel {
 }
 
 export interface IndustryDetail extends IndustrySummary {
+  /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
+  isActive?: boolean;
   legacyUrl?: string;
   suggestedUrl?: string;
   seo?: SeoModel;

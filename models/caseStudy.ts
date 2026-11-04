@@ -19,6 +19,8 @@ import type { StrapiFaqItem } from './strapi';
 // ---------------------------------------------------------------------------
 
 export interface StrapiCaseStudy {
+  /** CMS "Page visibility" switch; null/absent = active. */
+  isActive?: boolean | null;
   id: number;
   documentId?: string;
   title: string;
@@ -71,6 +73,8 @@ export interface CaseStudySummary {
 }
 
 export interface CaseStudyDetail {
+  /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
+  isActive?: boolean;
   id: string;
   title: string;
   slug: string;

@@ -1,3 +1,4 @@
+import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getAllIndustries } from '@/controllers/industry';
 import { getAllBlogPosts } from '@/controllers/blog';
@@ -40,6 +41,7 @@ export default async function IndustriesPage() {
     return <IndustryListingView industries={industries} blogPosts={blogPosts} content={content} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
+    notFoundIfMissing(err);
     throw err;
   }
 }

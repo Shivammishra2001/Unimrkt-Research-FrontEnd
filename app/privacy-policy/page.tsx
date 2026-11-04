@@ -1,3 +1,4 @@
+import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getPrivacyPolicyPageContent } from '@/controllers/privacyPolicyPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
@@ -17,6 +18,7 @@ export default async function PrivacyPolicyPage() {
     return <PrivacyPolicyView settings={settings} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
+    notFoundIfMissing(err);
     throw err;
   }
 }

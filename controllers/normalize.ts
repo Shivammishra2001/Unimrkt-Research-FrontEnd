@@ -456,6 +456,7 @@ export function normalizePage(res: StrapiPageResponse): PageModel {
   return {
     title: data.title,
     slug: data.slug,
+    isActive: data.isActive !== false,
     seo: normalizeSeo(data.seo, data.title),
     blocks: data.blocks.map(normalizeBlock).filter((b): b is BlockModel => !!b),
   };
@@ -502,6 +503,7 @@ export function normalizeServiceDetail(res: StrapiServiceDetailResponse): Servic
   const { data } = res;
   return {
     ...normalizeServiceSummaryFields(data),
+    isActive: data.isActive !== false,
     features: (data.features ?? []).map(normalizeFeatureItem),
     seo: normalizeSeo(data.seo, data.title),
     // Category hierarchy (Google Sheet IA migration) — optional on the raw
@@ -604,6 +606,7 @@ export function normalizeIndustryDetail(res: StrapiIndustryDetailResponse): Indu
   const { data } = res;
   return {
     ...normalizeIndustrySummaryFields(data),
+    isActive: data.isActive !== false,
     legacyUrl: data.legacyUrl ?? undefined,
     suggestedUrl: data.suggestedUrl ?? undefined,
     seo: normalizeSeo(data.seo, data.title),
@@ -771,6 +774,7 @@ export function normalizeBlogDetail(res: StrapiBlogDetailResponse): BlogDetail {
   const wordCount = extractPlainText(body).split(/\s+/).filter(Boolean).length;
   return {
     ...normalizeBlogSummaryFields(data),
+    isActive: data.isActive !== false,
     body,
     faqItems: (data.faqItems ?? []).map((item): FaqItemModel => ({
       id: `blog-faq-${item.id}`,
@@ -1073,6 +1077,7 @@ export function normalizeCaseStudyDetail(cs: StrapiCaseStudy): CaseStudyDetail {
     id: `case-study-${cs.id}`,
     title: cs.title,
     slug: cs.slug,
+    isActive: cs.isActive !== false,
     excerpt: cs.excerpt,
     category: cs.category,
     coverImage: toImageModel(cs.coverImage, cs.title),

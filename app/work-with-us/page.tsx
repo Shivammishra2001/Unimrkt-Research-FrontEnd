@@ -1,3 +1,4 @@
+import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getWorkWithUsPageContent } from '@/controllers/workWithUsPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
@@ -20,6 +21,7 @@ export default async function WorkWithUsPage() {
     return <WorkWithUsView settings={settings} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
+    notFoundIfMissing(err);
     throw err;
   }
 }

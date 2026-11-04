@@ -1,3 +1,4 @@
+import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getOurCompanyPageContent } from '@/controllers/ourCompanyPage';
 import { getAllBlogPosts } from '@/controllers/blog';
@@ -21,6 +22,7 @@ export default async function OurCompanyPage() {
     return <OurCompanyView settings={settings} blogPosts={blogPosts} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
+    notFoundIfMissing(err);
     throw err;
   }
 }

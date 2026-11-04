@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import { hiddenFromVisitors } from '@/controllers/visibility';
+import { InactivePreviewBanner } from '@/views/ui/InactivePreviewBanner';
 import type { Metadata } from 'next';
 import { fetchPageBySegments, getStaticPageParams } from '@/controllers/page';
 import { getGlobal, StrapiError, isBackendUnreachable } from '@/controllers/strapi';
@@ -74,6 +76,7 @@ export default async function CatchAllPage({ params }: { params: RouteParams }) 
     throw err;
   }
   if (!page) notFound();
+  const inactivePreview = hiddenFromVisitors(page);
 
   // The fixed Navbar can't know what's behind it. A background-alignment
   // hero self-clears (its own internal pt-36, sized for a full-bleed
@@ -83,6 +86,7 @@ export default async function CatchAllPage({ params }: { params: RouteParams }) 
 
   return (
     <div className={needsNavClearance ? 'pt-32 sm:pt-36' : undefined}>
+      {inactivePreview && <InactivePreviewBanner />}
       <BlockDispatcher blocks={page.blocks} />
     </div>
   );

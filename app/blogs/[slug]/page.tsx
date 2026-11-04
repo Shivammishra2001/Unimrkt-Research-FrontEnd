@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import { hiddenFromVisitors } from '@/controllers/visibility';
+import { InactivePreviewBanner } from '@/views/ui/InactivePreviewBanner';
 import type { Metadata } from 'next';
 import { getAllBlogPosts, getAllBlogSlugs, getBlogPostBySlug } from '@/controllers/blog';
 import { isBackendUnreachable } from '@/controllers/strapi';
@@ -66,6 +68,12 @@ export default async function BlogDetailPage({ params }: { params: RouteParams }
     throw err;
   }
   if (!post) notFound();
+  const inactivePreview = hiddenFromVisitors(post);
 
-  return <BlogDetailView post={post} relatedPosts={pickRelatedPosts(allPosts, post)} recentPosts={pickRecentPosts(allPosts, post.slug)} />;
+  return (
+    <>
+      {inactivePreview && <InactivePreviewBanner />}
+      <BlogDetailView post={post} relatedPosts={pickRelatedPosts(allPosts, post)} recentPosts={pickRecentPosts(allPosts, post.slug)} />
+    </>
+  );
 }

@@ -1,3 +1,4 @@
+import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getContactPageContent } from '@/controllers/contactPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
@@ -21,6 +22,7 @@ export default async function ContactPage() {
     return <ContactView settings={settings} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
+    notFoundIfMissing(err);
     throw err;
   }
 }
