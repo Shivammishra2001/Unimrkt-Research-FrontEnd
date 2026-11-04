@@ -7,7 +7,7 @@ import { QuestionsInsightsSection } from './listing/QuestionsInsightsSection';
 import { CaseStudiesSection } from './listing/CaseStudiesSection';
 import { GlobalReachSection } from './listing/GlobalReachSection';
 import { ResearchProcessSection } from './listing/ResearchProcessSection';
-import { LatestBlogsSection } from './listing/LatestBlogsSection';
+import { BlogTeaserView } from '@/views/sections/BlogTeaserView';
 import { IndustryFaqSection } from './listing/IndustryFaqSection';
 import { AboutServicesCta } from './listing/AboutServicesCta';
 import type { IndustrySummary } from '@/models/industry';
@@ -21,7 +21,7 @@ import type { IndustriesPageContent } from '@/models/industriesPage';
  * verbatim from the node (no `industries-page` singleType exists). Order:
  * hero, intro, industries grid, beyond-industries cards + question band,
  * questions-to-insights, case studies, global reach, research process,
- * client success stories, latest blogs, FAQ, about services + CTA. */
+ * client success stories, latest blogs (the Home band), FAQ, about services + CTA. */
 export function IndustryListingView({
   industries,
   blogPosts,
@@ -45,7 +45,27 @@ export function IndustryListingView({
       <GlobalReachSection content={content.reach} />
       <ResearchProcessSection content={content.process} />
       <ClientSuccessStories content={content.testimonials} />
-      <LatestBlogsSection posts={sortedBlogPosts} />
+      {sortedBlogPosts.length > 0 && (
+        // The Home page's "Latest Blogs" band (red panel, arrow circles, post-card scroller), fed from the same blog posts.
+        <BlogTeaserView
+          index={0}
+          block={{
+            kind: 'blogTeaser',
+            id: 'industries-latest-blogs',
+            theme: 'light',
+            eyebrow: 'Latest Blogs',
+            heading: 'Exploring Market Trends',
+            actions: [],
+            posts: sortedBlogPosts.slice(0, 6).map((post) => ({
+              id: `post-${post.slug}`,
+              title: post.title,
+              excerpt: post.excerpt,
+              image: post.coverImage,
+              href: `/blogs/${post.slug}`,
+            })),
+          }}
+        />
+      )}
       <IndustryFaqSection content={content.faq} />
       <AboutServicesCta about={content.about} finalCta={content.finalCta} />
     </>

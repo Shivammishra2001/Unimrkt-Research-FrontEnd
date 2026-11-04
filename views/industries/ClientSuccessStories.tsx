@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { SectionHeader } from './listing/shared';
 import { DotPagination } from './DotPagination';
+import { useSnapTrack } from '@/views/ui/useSnapTrack';
 import type { IndustriesPageContent } from '@/models/industriesPage';
 
 // Figma nodes 1384:27214-27216 (Components 920-922). Copy comes from the CMS (Pages > Industries).
@@ -16,32 +16,24 @@ import type { IndustriesPageContent } from '@/models/industriesPage';
  * 70%, name 16px semibold + role 14px @ 70% at y=294. */
 export function ClientSuccessStories({ content }: { content: IndustriesPageContent['testimonials'] }) {
   const TESTIMONIALS = content.items;
-  const trackRef = useRef<HTMLUListElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  function scrollToIndex(index: number) {
-    const track = trackRef.current;
-    const card = track?.children[index] as HTMLElement | undefined;
-    if (!track || !card) return;
-    track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
-    setActiveIndex(index);
-  }
-
-  function handleScroll() {
-    const track = trackRef.current;
-    const card = track?.children[0] as HTMLElement | undefined;
-    if (!track || !card) return;
-    setActiveIndex(Math.min(TESTIMONIALS.length - 1, Math.round(track.scrollLeft / (card.offsetWidth + 32))));
-  }
+  const { ref: trackRef, active: activeIndex, onScroll, goTo } = useSnapTrack<HTMLUListElement>();
 
   return (
     <section className="relative bg-white py-16 lg:h-[821px] lg:pb-0 lg:pt-[99.6px]">
-      {/* Figma 1384:27212 "image 74": the 6% wave graphic straddling this section's lower edge
-          into the blogs band below (that section is transparent so it shows through). */}
-      <div className="pointer-events-none absolute left-0 top-0 h-[560px] w-full overflow-hidden opacity-[0.15] [mask-image:linear-gradient(to_bottom,#000_55%,transparent)]" aria-hidden="true">
-        <div className="absolute inset-x-0 top-[-267px] h-[845px]">
-          <Image src={content.backgroundWavesImage?.src ?? '/images/industries/process-bg.jpg'} alt="" fill sizes="100vw" className="object-cover object-left-top" />
-        </div>
+      {/* Figma 1384:27212 "image 74": 1900x697 wave artwork at 6% opacity, mix-blend darken, starting 696px into the section and
+          straddling its lower edge into the blogs band below. Always the node's own PNG: the decorative layer is not CMS-driven. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-1/2 h-[55%] overflow-hidden opacity-[0.06] mix-blend-darken lg:top-[696px] lg:h-[697px]"
+        aria-hidden="true"
+      >
+        <Image
+          src="/images/industries/client-waves.png"
+          alt=""
+          width={2000}
+          height={889}
+          sizes="100vw"
+          className="absolute left-[-0.03%] top-0 h-[121.23%] w-[100.05%] max-w-none object-cover object-left-top"
+        />
       </div>
       <SectionHeader
         eyebrow={content.eyebrow}
@@ -51,8 +43,8 @@ export function ClientSuccessStories({ content }: { content: IndustriesPageConte
       />
       <ul
         ref={trackRef}
-        onScroll={handleScroll}
-        className="relative mt-[29.9px] flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-4 pb-6 pt-4 [scrollbar-width:none] sm:px-6 lg:scroll-pl-[max(32px,calc(50vw-800px))] lg:pl-[max(32px,calc(50vw-800px))] lg:pr-8 [&::-webkit-scrollbar]:hidden"
+        onScroll={onScroll}
+        className="relative mt-[29.9px] flex snap-x snap-mandatory scroll-px-4 gap-8 overflow-x-auto sm:scroll-px-6 scroll-smooth px-4 pb-6 pt-4 [scrollbar-width:none] sm:px-6 lg:scroll-pl-[max(32px,calc(50vw-800px))] lg:pl-[max(32px,calc(50vw-800px))] lg:pr-8 [&::-webkit-scrollbar]:hidden"
       >
         {TESTIMONIALS.map((t) => (
           <li
@@ -68,7 +60,7 @@ export function ClientSuccessStories({ content }: { content: IndustriesPageConte
         ))}
       </ul>
       <div className="relative mt-[1px] flex justify-center">
-        <DotPagination count={TESTIMONIALS.length} activeIndex={activeIndex} onSelect={scrollToIndex} />
+        <DotPagination count={TESTIMONIALS.length} activeIndex={activeIndex} onSelect={goTo} />
       </div>
     </section>
   );

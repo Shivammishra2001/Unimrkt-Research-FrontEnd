@@ -1,10 +1,10 @@
 'use client';
 
-import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { SectionHeader } from './shared';
 import type { IndustriesPageContent } from '@/models/industriesPage';
 import { DotPagination } from '../DotPagination';
+import { useSnapTrack } from '@/views/ui/useSnapTrack';
 
 const ICON_DIR = '/icons/industries';
 
@@ -19,23 +19,7 @@ const ICONS = ['process-clipboard.svg', 'process-brush.svg', 'process-presentati
  * starts at x=1614), y=8002; 78x15 dots at y=8568. Step number 66/79.2px
  * @ 15%, icon 70px at (48,155), title 22px, body 14/26.18px @ 70%. */
 export function ResearchProcessSection({ content }: { content: IndustriesPageContent['process'] }) {
-  const trackRef = useRef<HTMLUListElement>(null);
-  const [active, setActive] = useState(0);
-
-  function scrollToIndex(i: number) {
-    const track = trackRef.current;
-    const card = track?.children[i] as HTMLElement | undefined;
-    if (!track || !card) return;
-    track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
-    setActive(i);
-  }
-
-  function onScroll() {
-    const track = trackRef.current;
-    const first = track?.children[0] as HTMLElement | undefined;
-    if (!track || !first) return;
-    setActive(Math.min(content.steps.length - 1, Math.round(track.scrollLeft / (first.offsetWidth + 28))));
-  }
+  const { ref: trackRef, active, onScroll, goTo } = useSnapTrack<HTMLUListElement>();
 
   return (
     <section className="relative overflow-hidden bg-[#f9f9f7] py-16 lg:h-[964px] lg:pb-0 lg:pt-[80.6px]">
@@ -52,7 +36,7 @@ export function ResearchProcessSection({ content }: { content: IndustriesPageCon
         <ul
           ref={trackRef}
           onScroll={onScroll}
-          className="mt-[15.5px] flex snap-x snap-mandatory gap-[28px] overflow-x-auto scroll-smooth px-4 pb-6 pt-4 [scrollbar-width:none] sm:px-6 lg:scroll-pl-[max(32px,calc(50vw-800px))] lg:pl-[max(32px,calc(50vw-800px))] lg:pr-8 [&::-webkit-scrollbar]:hidden"
+          className="mt-[15.5px] flex snap-x snap-mandatory scroll-px-4 gap-[28px] sm:scroll-px-6 overflow-x-auto scroll-smooth px-4 pb-6 pt-4 [scrollbar-width:none] sm:px-6 lg:scroll-pl-[max(32px,calc(50vw-800px))] lg:pl-[max(32px,calc(50vw-800px))] lg:pr-8 [&::-webkit-scrollbar]:hidden"
         >
           {content.steps.map((step, i) => (
             <li
@@ -67,7 +51,7 @@ export function ResearchProcessSection({ content }: { content: IndustriesPageCon
           ))}
         </ul>
         <div className="mt-[2px] flex justify-center">
-          <DotPagination count={content.steps.length - 1} activeIndex={Math.min(active, content.steps.length - 2)} onSelect={scrollToIndex} />
+          <DotPagination count={content.steps.length - 1} activeIndex={Math.min(active, content.steps.length - 2)} onSelect={goTo} />
         </div>
       </div>
     </section>

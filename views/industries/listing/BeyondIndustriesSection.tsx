@@ -77,38 +77,45 @@ export function BeyondIndustriesSection({ content }: { content: IndustriesPageCo
 export function QuestionBand({ content }: { content: IndustriesPageContent['band'] }) {
   return (
     <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1600px] px-4 sm:px-6 lg:-mt-[264px] lg:px-8 min-[1700px]:px-0">
-      <div className="relative min-h-[455px] rounded-[30px] bg-gradient-to-r from-gradient-from to-gradient-to lg:rounded-[50px]">
+      <div className="relative min-h-[455px] rounded-[30px] bg-gradient-to-r from-gradient-from to-gradient-to [container-type:inline-size] lg:rounded-[50px]">
         <div className="absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
           <Image src={content.backgroundImage?.src ?? '/images/industries/texture.jpg'} alt="" fill sizes="1600px" className="object-cover opacity-[0.09] mix-blend-luminosity" />
         </div>
-        <div className="absolute right-0 top-[-85px] hidden h-[541px] w-[690px] overflow-hidden lg:block lg:right-[93px]" aria-hidden="true">
+        {/* Text column: x=114 and at most 42% of the band (674px at 1600), so it always ends before the couple photo, which starts at 51% of the band. */}
+        <div className="relative px-6 pt-14 sm:px-10 lg:px-0 lg:pb-[3cqw] lg:pl-[7.125cqw] lg:pt-[5.6875cqw]">
+          <div className="lg:max-w-[42cqw]">
+            <h2 className="font-sans text-[34px] font-semibold capitalize leading-[41px] tracking-[-1.5px] text-white sm:text-[44px] sm:leading-[53px] lg:text-[clamp(34px,3.25cqw,52px)] lg:leading-[1.2] lg:tracking-[-0.0577em]">
+              {content.heading.split('\n').map((line, i) => (
+                <span key={i} className="block">
+                  {line}
+                </span>
+              ))}
+            </h2>
+            <p className="mt-[7px] max-w-[674px] font-sans text-[16px] font-normal leading-[1.9] text-white opacity-80 lg:text-[clamp(14px,1cqw,16px)]">
+              {content.body}
+            </p>
+            <Link
+              href={content.cta.href}
+              className="mt-[35px] inline-flex h-[60px] items-center justify-center gap-1 rounded-[4px] bg-[#040f1d] px-10 font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition-[filter] duration-300 ease-in-out hover:brightness-125 motion-reduce:transition-none"
+            >
+              {content.cta.label}
+              <SendArrowIcon className="size-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+        {/* Couple cut-out (690x541 at 1600): below the text on mobile/tablet; from lg pinned to the band's bottom-right at 43.125% of its width. */}
+        <div
+          className="pointer-events-none relative mx-auto mt-6 aspect-[690/541] w-[min(100%,420px)] overflow-hidden lg:absolute lg:bottom-0 lg:right-[5.8125cqw] lg:mx-0 lg:mt-0 lg:w-[43.125cqw]"
+          aria-hidden="true"
+        >
           <Image
             src={content.personImage?.src ?? '/images/industries/couple-cutout.webp'}
             alt={content.personImage?.alt ?? ''}
             width={931}
             height={621}
             sizes="931px"
-            className="absolute left-[-114.5px] top-[-80.3px] max-w-none"
+            className="absolute left-[-16.594%] top-[-14.843%] h-[114.787%] w-[134.928%] max-w-none"
           />
-        </div>
-        <div className="relative px-6 py-14 sm:px-10 lg:px-0 lg:py-0 lg:pl-[114px] lg:pt-[91px]">
-          <h2 className="font-sans text-[34px] font-semibold capitalize leading-[41px] tracking-[-1.5px] text-white sm:text-[44px] sm:leading-[53px] lg:text-[52px] lg:leading-[62.4px] lg:tracking-[-3px]">
-            {content.heading.split('\n').map((line, i) => (
-              <span key={i} className="block">
-                {line}
-              </span>
-            ))}
-          </h2>
-          <p className="mt-[7px] max-w-[674px] font-sans text-[16px] font-normal leading-[30.4px] text-white opacity-80">
-            {content.body}
-          </p>
-          <Link
-            href={content.cta.href}
-            className="mt-[35px] inline-flex h-[60px] items-center justify-center gap-1 rounded-[4px] bg-[#040f1d] px-10 font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition-[filter] duration-300 ease-in-out hover:brightness-125 motion-reduce:transition-none"
-          >
-            {content.cta.label}
-            <SendArrowIcon className="size-4" aria-hidden="true" />
-          </Link>
         </div>
       </div>
     </div>
