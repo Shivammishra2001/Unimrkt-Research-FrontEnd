@@ -118,7 +118,7 @@ export function ContactFormSection({ form }: { form: ResolvedContact['form'] }) 
             <button
               type="submit"
               disabled={status === 'submitting'}
-              className="mx-auto mt-2 flex h-[60px] w-full max-w-[264px] items-center justify-center gap-1 rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-10 font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.78px] text-white transition-[filter] duration-300 hover:brightness-110 disabled:opacity-60 motion-reduce:transition-none lg:mt-[10px]"
+              className="mx-auto mt-2 flex h-[60px] w-full max-w-none items-center sm:max-w-[264px] justify-center gap-1 rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-10 font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.78px] text-white transition-[filter] duration-300 hover:brightness-110 disabled:opacity-60 motion-reduce:transition-none lg:mt-[10px]"
             >
               {status === 'submitting' ? 'Sending…' : 'Send'}
               <SendArrowIcon className="size-4" aria-hidden="true" />

@@ -9,10 +9,10 @@ import { SectionHeader } from './shared';
  * 151px. Then the shared 1740x455 r40 #101723 CTA band at y=11676 (20%
  * people photo, 227px bottom gradient, title cap-top +119, body +186,
  * button +289), 40px above the footer. */
-export function AboutServicesCta({ about, finalCta, detail = false, compact = false }: { about: IndustriesPageContent['about']; finalCta: IndustriesPageContent['finalCta']; /** Industry detail page: Figma 384:6574-6576 geometry. */ detail?: boolean; /** /contact (Figma 1495:16699-16701): copy starts 66px down, one-line title, band at y+518. */ compact?: boolean }) {
+export function AboutServicesCta({ about, finalCta, detail = false, compact = false, careers = false }: { about: IndustriesPageContent['about']; finalCta: IndustriesPageContent['finalCta']; /** Industry detail page: Figma 384:6574-6576 geometry. */ detail?: boolean; /** /contact (Figma 1495:16699-16701): copy starts 66px down, one-line title, band at y+518. */ compact?: boolean; /** /work-with-us (Figma 924:23390-23392): copy starts 74px down, two-line 642px title, band at y+473. */ careers?: boolean }) {
   return (
     <>
-      <section className={`relative bg-[#f9f9f7] pb-16 pt-16 ${compact ? 'lg:h-[518px] lg:pt-[65.6px]' : `lg:h-[571px] ${detail ? 'lg:pt-[98.6px]' : 'lg:pt-[99.6px]'}`} lg:pb-0`}>
+      <section className={`relative bg-[#f9f9f7] pb-16 pt-16 ${careers ? 'lg:h-[473px] lg:pt-[73.6px]' : compact ? 'lg:h-[518px] lg:pt-[65.6px]' : `lg:h-[571px] ${detail ? 'lg:pt-[98.6px]' : 'lg:pt-[99.6px]'}`} lg:pb-0`}>
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-[151px]"
           style={{ backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 86.538%)' }}
@@ -21,7 +21,7 @@ export function AboutServicesCta({ about, finalCta, detail = false, compact = fa
         <SectionHeader
           eyebrow={about.eyebrow}
           title={about.heading}
-          titleMaxWidth={compact ? '920px' : detail ? '764px' : '854px'}
+          titleMaxWidth={careers ? '642px' : compact ? '920px' : detail ? '764px' : '854px'}
           detail={detail}
           bodyMaxWidth="1281px"
           className="px-4 sm:px-6"

@@ -97,7 +97,7 @@ export function RecaptchaBox({ onChange, invalid = false }: { onChange: (token: 
           aria-checked={phase === 'done'}
           aria-labelledby={labelId}
           onClick={verify}
-          className="absolute left-[12px] top-1/2 flex -translate-y-1/2 cursor-pointer items-center gap-[14px] font-[Roboto,Arial,sans-serif] text-[14px] font-medium text-black focus-visible:outline-none"
+          className="absolute left-[12px] top-1/2 flex min-h-[44px] -translate-y-1/2 cursor-pointer items-center gap-[14px] font-[Roboto,Arial,sans-serif] text-[14px] font-medium text-black focus-visible:outline-none"
         >
           <span
             className={`relative flex size-6 shrink-0 items-center justify-center rounded-[1px] border-2 bg-white transition-colors motion-reduce:transition-none ${

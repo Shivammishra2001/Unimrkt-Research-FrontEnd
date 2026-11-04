@@ -34,8 +34,8 @@ export function WhyWorkSection() {
           Why work with unimrkt?
         </p>
         <h2 className="mt-[19px] font-nav text-[32px] font-semibold leading-[1.2] tracking-[-1px] text-white sm:text-[40px] lg:text-[52px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
-          More Than Research.
-          <br />A Partner For Better Decisions.
+          More Than Research.{' '}
+          <br className="max-sm:hidden" />A Partner For Better Decisions.
         </h2>
         <p className="mx-auto mt-6 max-w-[1090px] font-sans text-[16px] font-normal leading-[1.9] text-white/90 lg:mt-8 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
           From defining the research question to delivering actionable insights, our team combines research expertise,

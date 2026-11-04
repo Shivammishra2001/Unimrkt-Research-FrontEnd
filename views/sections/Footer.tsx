@@ -73,7 +73,7 @@ export function Footer({ footer }: { footer: FooterModel }) {
                       href={link.href}
                       target={link.isExternal ? '_blank' : undefined}
                       rel={link.isExternal ? 'noopener noreferrer' : undefined}
-                      className="block text-[14px] leading-[2.2] text-white transition-colors hover:text-white/80"
+                      className="flex min-h-[44px] items-center text-[14px] leading-[2.2] text-white transition-colors hover:text-white/80 lg:block lg:min-h-0"
                     >
                       {link.label}
                     </Link>

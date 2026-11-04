@@ -51,8 +51,6 @@ function OfficeCard({ office, active, onActivate }: { office: Office; active: bo
       role="button"
       tabIndex={0}
       aria-pressed={active}
-      onMouseEnter={onActivate}
-      onFocus={onActivate}
       onClick={onActivate}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -60,7 +58,7 @@ function OfficeCard({ office, active, onActivate }: { office: Office; active: bo
           onActivate();
         }
       }}
-      className="relative cursor-pointer overflow-hidden rounded-[24px] border border-[#e0e0df] bg-white px-5 py-8 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:px-[37px] lg:h-[223px] lg:py-[36px]"
+      className="relative cursor-pointer overflow-hidden rounded-[24px] border border-[#e0e0df] bg-white px-5 py-8 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:px-[37px] lg:min-h-[223px] lg:px-6 lg:py-[36px] xl:px-[37px]"
     >
       <div
         className={`pointer-events-none absolute inset-0 bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${active ? 'opacity-100' : 'opacity-0'}`}
@@ -111,8 +109,7 @@ function OfficeCard({ office, active, onActivate }: { office: Office; active: bo
 
 /**
  * "Our Presence" — Figma 637:10433 (y1225-2343). 13px #cc1f1f eyebrow (cap-top +73), 52px/-3px title, then a 1740x868 r40
- * map panel (#d9d9d9, 1px #e5e5e5) holding the three 645px office cards at (90, 74) with 21px between. Hovering, focusing or
- * tapping a card makes it the active (gradient) card and moves the map pin to that office; India starts active, as drawn.
+ * map panel (#d9d9d9, 1px #e5e5e5) holding the three 645px office cards at (90, 74) with 21px between. Clicking, tapping or pressing Enter/Space on a card makes it the active (gradient) card and moves the map pin to that office; India starts active, as drawn.
  * The map is a real Leaflet map (CARTO light tiles) that flies between the offices instead of the node's static vector map;
  * only the India card/pin states and the India Gate artwork are Figma's — the USA/UK pins and monument silhouettes are added here.
  * CMS-first, template-fallback — always renders. */
@@ -138,8 +135,8 @@ export function ContactPresence({ office }: { office: ResolvedContact['office'] 
         </h2>
       </div>
 
-      <div className="relative mx-auto mt-10 max-w-[1740px] overflow-hidden rounded-[24px] border border-[#e5e5e5] bg-[#d9d9d9] p-4 sm:p-6 lg:mt-[49px] lg:h-[868px] lg:rounded-[40px] lg:p-0">
-        <div className="relative z-10 flex flex-col gap-[21px] lg:absolute lg:left-[5.17%] lg:top-[74px] lg:w-[645px] lg:max-w-[37.07%]">
+      <div className="relative mx-auto mt-10 max-w-[1740px] overflow-hidden rounded-[24px] border border-[#e5e5e5] bg-[#d9d9d9] p-4 sm:p-6 lg:mt-[49px] lg:min-h-[868px] lg:rounded-[40px] lg:p-0">
+        <div className="relative z-10 flex flex-col gap-[21px] lg:my-[74px] lg:ml-[5.17%] lg:w-[645px] lg:max-w-[37.07%]">
           {office.items.map((item) => (
             <OfficeCard key={item.id} office={item} active={item.id === activeId} onActivate={() => setActiveId(item.id)} />
           ))}

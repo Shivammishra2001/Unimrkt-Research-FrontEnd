@@ -265,7 +265,7 @@ export function HeroSplash({
                 {...(isActive ? {} : ({ inert: '' } as object))}
               >
                 {slide.tag && (
-                  <p className="inline-flex h-9 items-center gap-2.5 rounded-lg border border-white/10 bg-white/10 px-3.5 py-1.5 backdrop-blur-[2px] font-sans text-[11px] font-semibold uppercase leading-[1.2] tracking-[1.5px] sm:text-[12px] text-white">
+                  <p className="inline-flex h-9 items-center gap-2.5 rounded-lg border border-white/10 bg-white/10 px-3.5 py-1.5 backdrop-blur-[2px] font-sans text-[12px] font-semibold uppercase leading-[1.2] tracking-[1.5px] text-white">
                     <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
                     {slide.tag}
                   </p>

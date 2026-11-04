@@ -1,13 +1,12 @@
 import { HeroSection } from './HeroSection';
-import { ValuesSection } from './ValuesSection';
-import { BenefitsSection } from './BenefitsSection';
+import { WwuValues } from './WwuValues';
+import { WwuBenefits } from './WwuBenefits';
 import { JobsSection } from './JobsSection';
-import { JourneySection } from './JourneySection';
-import { JoinUsSection } from './JoinUsSection';
-import { AboutCareersSection } from './AboutCareersSection';
+import { WwuJourney } from './WwuJourney';
+import { WwuJoinUs } from './WwuJoinUs';
 import { resolveWorkWithUs } from './fallback';
-import { BlogFaqAccordion } from '@/views/blog/BlogFaqAccordion';
-import { BlogBottomCta } from '@/views/blog/BlogBottomCta';
+import { FaqView } from '@/views/sections/FaqView';
+import { AboutServicesCta } from '@/views/industries/listing/AboutServicesCta';
 import type { WorkWithUsSettings } from '@/models/workWithUsPage';
 
 /**
@@ -32,14 +31,37 @@ export function WorkWithUsView({ settings }: { settings: WorkWithUsSettings }) {
   return (
     <>
       <HeroSection hero={content.hero} />
-      <ValuesSection values={content.values} />
-      <BenefitsSection benefits={content.benefits} />
+      <WwuValues values={content.values} />
+      <WwuBenefits benefits={content.benefits} />
       <JobsSection jobs={content.jobs} />
-      <JourneySection journey={content.journey} />
-      <JoinUsSection joinUs={content.joinUs} disclaimer={content.disclaimer} />
-      <BlogFaqAccordion heading="Frequently Asked Questions" items={content.faqItems} />
-      <AboutCareersSection aboutCareers={content.aboutCareers} />
-      <BlogBottomCta />
+      <WwuJourney journey={content.journey} />
+      <WwuJoinUs joinUs={content.joinUs} disclaimer={content.disclaimer} />
+      <FaqView
+        index={0}
+        variant="careers"
+        block={{
+          kind: 'faq',
+          id: 'wwu-faq',
+          theme: 'light',
+          heading: 'Frequently Asked Questions',
+          background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
+          items: content.faqItems,
+        }}
+      />
+      <AboutServicesCta
+        detail
+        careers
+        about={{
+          eyebrow: content.aboutCareers.eyebrow,
+          heading: content.aboutCareers.heading,
+          paragraphs: content.aboutCareers.body.split('\n\n').map((p) => p.trim()).filter(Boolean),
+        }}
+        finalCta={{
+          heading: 'Start Your Research Journey',
+          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
+          action: { id: 'wwu-final-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+        }}
+      />
     </>
   );
 }

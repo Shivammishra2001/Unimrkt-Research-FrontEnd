@@ -17,10 +17,11 @@ export function DotPagination({
   if (count <= 1) return null;
 
   return (
-    <div className="flex items-center gap-2" role="tablist" aria-label="Slide navigation">
+    <div className="flex items-center" role="tablist" aria-label="Slide navigation">
       {Array.from({ length: count }, (_, i) => {
         const isActive = i === activeIndex;
         return (
+          // 44px-tall hit area (23px wide: the 15px dot plus half of the 8px gap on each side) around the unchanged Figma dot.
           <button
             key={i}
             type="button"
@@ -28,12 +29,16 @@ export function DotPagination({
             aria-selected={isActive}
             aria-label={`Go to slide ${i + 1}`}
             onClick={() => onSelect?.(i)}
-            className={
-              isActive
-                ? 'h-[15px] w-8 rounded-[40px] bg-[#b63a40] transition-all'
-                : 'size-[15px] rounded-full bg-[#e2e2e2] transition-all hover:bg-[#c9c9c9]'
-            }
-          />
+            className="group flex h-11 items-center justify-center px-1"
+          >
+            <span
+              className={
+                isActive
+                  ? 'block h-[15px] w-8 rounded-[40px] bg-[#b63a40] transition-all'
+                  : 'block size-[15px] rounded-full bg-[#e2e2e2] transition-all group-hover:bg-[#c9c9c9]'
+              }
+            />
+          </button>
         );
       })}
     </div>

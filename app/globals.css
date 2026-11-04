@@ -31,4 +31,7 @@ html {
   .office-map .office-pin.is-active > * { animation: none; transform: none; }
 }
 .office-map .leaflet-tile-pane { filter: grayscale(1) contrast(0.85) brightness(1.08); }
-.office-map .leaflet-control-attribution { font-size: 10px; }
+.office-map .leaflet-control-attribution { font-size: 12px; }
+@media (pointer: coarse) {
+  .office-map .leaflet-bar a { width: 44px; height: 44px; line-height: 44px; font-size: 20px; }
+}

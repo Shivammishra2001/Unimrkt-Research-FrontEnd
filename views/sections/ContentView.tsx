@@ -130,7 +130,7 @@ export function ContentView({
           <div className="text-center">
             {block.heading && (
               <Heading as="h2" size="h2" className="lg:!tracking-[-1px]">
-                {words.length > 0 && <>{words.join(' ')}<br /></>}
+                {words.length > 0 && <>{words.join(' ')}{' '}<br className="max-sm:hidden" /></>}
                 {prev && <>{prev} </>}
                 <span className="text-brand-600">{last}</span>
               </Heading>

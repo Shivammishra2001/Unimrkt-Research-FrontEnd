@@ -185,8 +185,8 @@ export function GalleryView({ data }: { data: GalleryData }) {
             OUR GALLERY
           </p>
           <h1 className="mt-[15px] max-w-[748px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
-            Moments that
-            <br />
+            Moments that{' '}
+            <br className="max-sm:hidden" />
             show our journey
           </h1>
           <p className="mt-[12px] max-w-[630px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">

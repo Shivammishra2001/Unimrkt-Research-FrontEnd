@@ -55,7 +55,12 @@ export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; c
       </p>
 
       {/* Figma 522:4914 — 56px tabs, 12px gap; active #6c2a4a -> #be2c28 / 13.234px, inactive white + #dedede / 13.125px. */}
-      <div className="mt-10 flex flex-wrap justify-center gap-3 lg:mt-[69px]">
+      {/* Below lg the pills form one momentum-scrolling row (full-bleed to the gutter edge) instead of wrapping into stacked lines. */}
+      <div
+        role="group"
+        aria-label="Filter posts by category"
+        className="-mx-4 mt-10 flex snap-x scroll-px-4 gap-3 overflow-x-auto overscroll-x-contain scroll-smooth px-4 pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:mx-0 lg:mt-[69px] lg:flex-wrap lg:justify-center lg:overflow-visible lg:px-0 lg:pb-0 [&::-webkit-scrollbar]:hidden"
+      >
         {tabs.map((tab) => {
           const isActive = tab.slug === activeSlug;
           return (
@@ -64,7 +69,7 @@ export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; c
               type="button"
               onClick={() => handleCategoryChange(tab.slug)}
               aria-pressed={isActive}
-              className={`flex h-[56px] items-center justify-center rounded-[3px] pb-[10px] pt-[9px] font-sans font-semibold uppercase leading-[normal] transition-colors motion-reduce:transition-none ${
+              className={`flex h-[56px] shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-[3px] pb-[10px] pt-[9px] font-sans font-semibold uppercase leading-[normal] transition-colors motion-reduce:transition-none ${
                 isActive
                   ? 'bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-[30px] text-[13.234px] text-white'
                   : 'border border-[#dedede] bg-white px-[29px] text-[13.125px] text-[#1e1e1e] hover:border-[#be2c28] hover:text-[#be2c28]'

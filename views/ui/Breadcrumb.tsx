@@ -50,7 +50,7 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
               {item.href && !isLast ? (
                 <Link
                   href={item.href}
-                  className="font-sans text-[14px] font-semibold leading-[1.2] text-[#b52c2c] transition-colors duration-200 ease-in-out hover:text-[#8a1f1f] focus-visible:text-[#8a1f1f]"
+                  className="inline-flex min-h-[44px] items-center font-sans text-[14px] font-semibold leading-[1.2] text-[#b52c2c] transition-colors duration-200 ease-in-out hover:text-[#8a1f1f] focus-visible:text-[#8a1f1f]"
                 >
                   {item.label}
                 </Link>

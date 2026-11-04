@@ -114,7 +114,12 @@ export function HeroView({ block, index }: { block: HeroModel; index: number }) 
             >
               {headingLines.map((line, i) => (
                 <span key={line}>
-                  {i > 0 && <br />}
+                  {i > 0 && (
+                    <>
+                      {' '}
+                      <br className="max-sm:hidden" />
+                    </>
+                  )}
                   {line}
                 </span>
               ))}

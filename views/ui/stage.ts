@@ -18,7 +18,7 @@ export const cq = (px: number, canvasWidth: number = CANVAS_W) => `${((px / canv
  * breakpoint where the class does — below it the layout flows normally.)
  */
 export function geometry(
-  g: { l?: number; t?: number; w?: number; h?: number; fs?: number },
+  g: { l?: number; t?: number; w?: number; h?: number; fs?: number; minFs?: number },
   canvasWidth: number = CANVAS_W,
 ): CSSProperties {
   const style: Record<string, string> = {};
@@ -26,6 +26,7 @@ export function geometry(
   if (g.t !== undefined) style['--t'] = cq(g.t, canvasWidth);
   if (g.w !== undefined) style['--w'] = cq(g.w, canvasWidth);
   if (g.h !== undefined) style['--h'] = cq(g.h, canvasWidth);
-  if (g.fs !== undefined) style['--fs'] = cq(g.fs, canvasWidth);
+  // The canvas scale would take body copy to 7-10px between 1024 and 1440px wide; keep it readable (never above the authored size).
+  if (g.fs !== undefined) style['--fs'] = `max(${Math.min(g.fs, g.minFs ?? 13)}px, ${cq(g.fs, canvasWidth)})`;
   return style as CSSProperties;
 }

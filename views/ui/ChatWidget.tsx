@@ -140,7 +140,7 @@ export function ChatWidget() {
             type="button"
             onClick={() => setIsOpen(false)}
             aria-label="Close chat"
-            className="flex size-8 shrink-0 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white"
           >
             <CloseIcon className="size-4" aria-hidden="true" />
           </button>
@@ -168,7 +168,7 @@ export function ChatWidget() {
                   key={action.id}
                   type="button"
                   onClick={() => handleQuickAction(action)}
-                  className="rounded-full border border-brand-600 px-3 py-1.5 font-sans text-xs font-semibold text-brand-600 transition-colors hover:bg-brand-600 hover:text-white"
+                  className="min-h-[44px] rounded-full border border-brand-600 px-4 py-1.5 font-sans text-xs font-semibold text-brand-600 transition-colors hover:bg-brand-600 hover:text-white"
                 >
                   {action.label}
                 </button>

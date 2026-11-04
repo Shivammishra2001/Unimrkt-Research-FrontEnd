@@ -1,20 +1,18 @@
-import { Container } from '@/views/ui/Container';
+import type { ReactNode } from 'react';
+import { BODY, H2, TRIM } from './text';
 import type { ResolvedPrivacyPolicy } from './fallback';
 import type { PrivacyPolicyListItemModel } from '@/models/privacyPolicyPage';
 
-// Matches the two real anchors this node's TOC (fallback.ts's
-// FALLBACK_TOC_ITEMS[0]/[1], or the CMS's own tocItems[0]/[1]) points at
-// — the only 2 of 12 TOC entries with body copy actually drawn beneath
-// them. Fixed regardless of CMS edits to the TOC labels, matching
-// exactly what node 1114:50556 draws.
+// The two TOC anchors that have body copy drawn beneath them.
 const QUALIFIES_ANCHOR = 'What-qualifies-as-Personal-Data';
 const LAWFUL_ANCHOR = 'What-Constitutes-the-Lawful-Collection-and-Use-of-Personal-Data';
 
-function Paragraphs({ text }: { text: string }) {
+/** Paragraphs with a blank 30.4px line between them, as Figma's text boxes draw them. */
+function Paragraphs({ text, className = '' }: { text: string; className?: string }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className={className}>
       {text.split('\n\n').map((p, i) => (
-        <p key={i} className="text-base leading-[1.9] text-heading opacity-80">
+        <p key={i} className={`${BODY} ${i === 0 ? '' : 'mt-[48px]'}`}>
           {p}
         </p>
       ))}
@@ -22,13 +20,12 @@ function Paragraphs({ text }: { text: string }) {
   );
 }
 
-/** Numbered list — Figma's own `list-decimal`, no custom marker graphic
- * (node 1114:50681 / 1114:50695). */
-function NumberedList({ items }: { items: PrivacyPolicyListItemModel[] }) {
+/** Numbered list at x236 (1114:50681 / 50695): marker outside, text at +24. `gap` is the space between items. */
+function NumberedList({ items, gap, leading, trimItems = true, className = '' }: { items: PrivacyPolicyListItemModel[]; gap: string; leading: string; trimItems?: boolean; className?: string }) {
   return (
-    <ol className="flex flex-col gap-[34px] pl-6 text-base leading-[1.9] text-heading opacity-80">
+    <ol className={`flex ml-6 list-decimal flex-col font-sans text-[16px] font-normal text-[#02060e] sm:ml-8 lg:ml-10 lg:mr-2 ${gap} ${className}`}>
       {items.map((item) => (
-        <li key={item.id} className="list-decimal pl-2">
+        <li key={item.id} className={`${leading} opacity-80 ${trimItems ? TRIM : ''}`}>
           {item.text}
         </li>
       ))}
@@ -36,83 +33,48 @@ function NumberedList({ items }: { items: PrivacyPolicyListItemModel[] }) {
   );
 }
 
-/** Bulleted list with the node's own custom red dot marker (`#B52C2C`,
- * Ellipse 25 — node 1114:50713's 3 items). */
-function DottedList({ items }: { items: PrivacyPolicyListItemModel[] }) {
-  return (
-    <ul className="flex flex-col gap-3">
-      {items.map((item) => (
-        <li key={item.id} className="flex items-start gap-3 text-base leading-[1.7] text-heading opacity-80">
-          <span className="mt-[9px] size-[10px] shrink-0 rounded-full bg-[#b52c2c]" aria-hidden="true" />
-          {item.text}
-        </li>
-      ))}
-    </ul>
-  );
+function SubHeading({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <h3 className={`font-sans text-[16px] font-bold leading-[1.9] text-[#02060e] opacity-80 ${TRIM} ${className}`}>{children}</h3>;
 }
 
-/**
- * Every clause the node draws body copy for, in the node's own
- * top-to-bottom sequence: What qualifies as Personal Data → Lawful
- * Collection and Use of Personal Data (with its 13-item purposes list,
- * 5-item legal-basis list, and 3 bold sub-headings — Registration of
- * data and direct communication / Participation in Panels, with its own
- * 3-item data-sources list / Legal obligations and legal defense).
- */
+/** Every clause the node draws copy for (y1902-4663), laid out as trimmed boxes with the gaps measured in the node. */
 export function BodySection({ content }: { content: ResolvedPrivacyPolicy }) {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
-      <Container>
-        <div className="flex flex-col gap-10">
-          <div id={QUALIFIES_ANCHOR} className="scroll-mt-28">
-            <h2 className="text-[28px] font-semibold capitalize leading-[1.2] tracking-[-1px] text-[#a72b31] sm:text-[32px] lg:text-4xl lg:tracking-[-2px]">
-              {content.qualifies.heading}
-            </h2>
-            <div className="mt-6">
-              <Paragraphs text={content.qualifies.body} />
-            </div>
-          </div>
+    <>
+      <h2 id={QUALIFIES_ANCHOR} className={`${H2} mt-12 scroll-mt-28 lg:mt-[66px]`}>
+        {content.qualifies.heading}
+      </h2>
+      <Paragraphs text={content.qualifies.body} className="mt-6 lg:mt-[33px]" />
 
-          <div id={LAWFUL_ANCHOR} className="scroll-mt-28">
-            <h2 className="text-[28px] font-semibold capitalize leading-[1.2] tracking-[-1px] text-[#a72b31] sm:text-[32px] lg:text-4xl lg:tracking-[-2px]">
-              {content.lawful.heading}
-            </h2>
+      <h2 id={LAWFUL_ANCHOR} className={`${H2} mt-12 scroll-mt-28 lg:mt-[69px]`}>
+        {content.lawful.heading}
+      </h2>
+      <Paragraphs text={content.lawful.intro} className="mt-6 lg:mt-[33px]" />
 
-            <div className="mt-6 flex flex-col gap-10">
-              <Paragraphs text={content.lawful.intro} />
+      <NumberedList items={content.lawful.purposesList} gap="gap-6 lg:gap-[33.6px]" leading="leading-[1.9]" className="mt-6 lg:mt-[32px]" />
 
-              <NumberedList items={content.lawful.purposesList} />
+      <p className={`mt-10 font-sans text-[16px] font-semibold leading-[1.9] text-[#02060e] opacity-80 lg:mt-[67px] ${TRIM}`}>{content.lawful.basisIntro}</p>
+      <NumberedList items={content.lawful.basisList} gap="gap-0" leading="leading-[2.6]" trimItems={false} className="mt-1 lg:mt-[17.1px] lg:-mb-[15px]" />
 
-              <p className="text-base font-semibold leading-[1.9] text-heading opacity-80">{content.lawful.basisIntro}</p>
+      <Paragraphs text={content.lawful.closing} className="mt-10 lg:mt-[59px]" />
 
-              <NumberedList items={content.lawful.basisList} />
+      <SubHeading className="mt-10 lg:mt-[50px]">{content.registration.heading}</SubHeading>
+      <p className={`${BODY} mt-4 lg:mt-[26px]`}>{content.registration.body}</p>
 
-              <Paragraphs text={content.lawful.closing} />
+      <SubHeading className="mt-10 lg:mt-[42px]">{content.panel.heading}</SubHeading>
+      <Paragraphs text={content.panel.intro} className="mt-4 lg:mt-[26px]" />
+      <ul className="mt-4 flex flex-col gap-[29.6px] lg:mt-[26px]">
+        {content.panel.dataSourcesList.map((item) => (
+          <li key={item.id} className={`relative pl-6 font-sans text-[16px] font-semibold leading-[1.7] text-[#02060e] ${TRIM}`}>
+            <span className="absolute left-[7px] top-px size-[10px] rounded-full bg-[#b52c2c]" aria-hidden="true" />
+            <span className="opacity-80">{item.text}</span>
+          </li>
+        ))}
+      </ul>
+      <p className={`${BODY} mt-10 lg:mt-[42px]`}>{content.panel.closing}</p>
 
-              <div>
-                <h3 className="text-base font-bold leading-[1.9] text-heading opacity-80">{content.registration.heading}</h3>
-                <p className="mt-1 text-base leading-[1.9] text-heading opacity-80">{content.registration.body}</p>
-              </div>
-
-              <div>
-                <h3 className="text-base font-bold leading-[1.9] text-heading opacity-80">{content.panel.heading}</h3>
-                <div className="mt-1">
-                  <Paragraphs text={content.panel.intro} />
-                </div>
-                <div className="mt-4">
-                  <DottedList items={content.panel.dataSourcesList} />
-                </div>
-                <p className="mt-4 text-base leading-[1.9] text-heading opacity-80">{content.panel.closing}</p>
-              </div>
-
-              <div>
-                <h3 className="text-base font-bold leading-[1.9] text-heading opacity-80">{content.legal.heading}</h3>
-                <p className="mt-1 text-base leading-[1.9] text-heading opacity-80">{content.legal.body}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
-    </section>
+      <SubHeading className="mt-10 lg:mt-[57px]">{content.legal.heading}</SubHeading>
+      <p className={`${BODY} mt-4 lg:mt-[26px]`}>{content.legal.body}</p>
+    </>
   );
 }

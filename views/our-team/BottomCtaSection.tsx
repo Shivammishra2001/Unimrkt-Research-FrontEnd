@@ -35,7 +35,12 @@ export function BottomCtaSection({ bottomCta }: { bottomCta: ResolvedOurTeam['bo
             {bodyLines.map((line, i) => (
               <span key={i}>
                 {line}
-                {i < bodyLines.length - 1 && <br />}
+                {i < bodyLines.length - 1 && (
+                  <>
+                    {' '}
+                    <br className="max-sm:hidden" />
+                  </>
+                )}
               </span>
             ))}
           </p>
