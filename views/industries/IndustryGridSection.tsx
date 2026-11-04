@@ -6,6 +6,7 @@ import { Pagination } from '@/views/blog/Pagination';
 import { SectionHeader } from './listing/shared';
 import type { IndustrySummary } from '@/models/industry';
 import type { IndustriesPageContent } from '@/models/industriesPage';
+import { cssImageUrl } from '@/views/ui/cssUrl';
 
 const PAGE_SIZE = 6; // Figma's 3x2 grid (nodes 1384:26881-26886)
 
@@ -26,7 +27,7 @@ export function IndustryGridSection({ industries, content }: { industries: Indus
     <section id="industries-grid" className="relative overflow-hidden bg-white pb-16 pt-16 lg:pb-[77.5px] lg:pt-[80px]">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[1388px] bg-[length:1900px_1411px] bg-[position:center_top] bg-repeat"
-        style={{ backgroundImage: `url('${content.backgroundImage?.src ?? '/images/industries/wave-pattern.png'}')` }}
+        style={{ backgroundImage: cssImageUrl(content.backgroundImage?.src ?? '/images/industries/wave-pattern.png') }}
         aria-hidden="true"
       />
       <div

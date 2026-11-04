@@ -7,6 +7,7 @@ import { SendArrowIcon } from '@/views/ui/icons/SendArrowIcon';
 import type { CSSProperties } from 'react';
 import { cq, geometry } from '@/views/ui/stage';
 import type { ServiceBandModel } from '@/models/domain';
+import { cssImageUrl } from '@/views/ui/cssUrl';
 
 /** Design canvas of Figma 267:3472 (Component 176): 1900 x 657. Text tops below are
  * line-box tops: Figma's trimmed cap-height tops minus the half-leading. */
@@ -39,7 +40,7 @@ export function ServiceBandView({ block }: { block: ServiceBandModel; index: num
       {block.background && (
         <div
           className="pointer-events-none absolute inset-0 bg-cover bg-center xl:[background-position:-5.42cqw_-6.68cqw] xl:[background-size:154.84cqw_auto]"
-          style={{ backgroundImage: `url(${block.background.src})` }}
+          style={{ backgroundImage: cssImageUrl(block.background.src) }}
           aria-hidden="true"
         />
       )}

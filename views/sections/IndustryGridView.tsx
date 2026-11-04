@@ -4,6 +4,7 @@ import { StrapiImage } from '@/views/ui/StrapiImage';
 import { ScrollArrows } from '@/views/ui/ScrollArrows';
 import { geometry } from '@/views/ui/stage';
 import type { IndustryGridModel } from '@/models/domain';
+import { cssImageUrl } from '@/views/ui/cssUrl';
 
 const TRACK_ID = 'industry-grid-track';
 
@@ -28,7 +29,7 @@ export function IndustryGridView({ block }: { block: IndustryGridModel; index: n
           {block.background && (
             <div
               className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 lg:[background-position:-2.5263cqw_-10.1053cqw] lg:[background-size:96.7437cqw_auto]"
-              style={{ backgroundImage: `url(${block.background.src})` }}
+              style={{ backgroundImage: cssImageUrl(block.background.src) }}
               aria-hidden="true"
             />
           )}

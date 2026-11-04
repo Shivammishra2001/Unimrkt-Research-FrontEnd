@@ -6,6 +6,7 @@ import { Button } from '@/views/ui/Button';
 import { LoopingVideo } from '@/views/ui/LoopingVideo';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import type { CtaModel } from '@/models/domain';
+import { cssImageUrl } from '@/views/ui/cssUrl';
 
 /** blocks.cta — centered heading/body/actions over an optional background
  * image. A dark CTA with a photo is Figma 267:1459 ("Global Research
@@ -72,7 +73,7 @@ export function CtaView({ block }: { block: CtaModel; index: number }) {
       {block.background && (
         <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(${block.background.src})` }}
+          style={{ backgroundImage: cssImageUrl(block.background.src) }}
           aria-hidden="true"
         />
       )}
