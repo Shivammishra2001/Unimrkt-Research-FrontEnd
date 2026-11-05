@@ -29,6 +29,7 @@ export function TeamMemberCard({ member, onViewProfile }: { member: TeamMemberMo
   return (
     <div className="flex w-full flex-col rounded-[24px] border border-[#e3eded] bg-white px-[7px] pb-[55.5px] pt-[7px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)]">
       <div className="relative aspect-[356/381.4] w-full overflow-hidden rounded-t-[19px] bg-[#f6f5f5]">
+        {/* The photo is Figma's own rendered panel (per-member tint, adjustments and crop baked in), so it simply fills the 356:381.4 box. */}
         {member.photo && <StrapiImage image={member.photo} sizes="(min-width: 1280px) 356px, (min-width: 640px) 50vw, 100vw" fill className="object-cover object-top" />}
       </div>
       <h3 className="mt-[25.3px] text-center font-nav text-[24px] font-semibold leading-[28px] text-[#1e1e1e]">{member.name}</h3>
