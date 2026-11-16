@@ -41,14 +41,14 @@ export function WhyResearchSection({ whyResearch }: { whyResearch: ResolvedIndus
               // Figma 363:3667: 509x430, r24, 1px #eee, 6/6/54 shadow; photo inset 20px (469x260, r20); title 20px at x=39.
               <div
                 key={card.id}
-                className="group flex min-h-[430px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#eee] bg-white shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none"
+                className="group flex min-h-[430px] transform-gpu cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#eee] bg-white shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform hover:scale-[1.05] hover:shadow-xl"
               >
                 <div className="relative m-5 aspect-[469/260] shrink-0 overflow-hidden rounded-[20px] bg-slate-100">
                   <StrapiImage
                     image={image}
                     sizes="(min-width: 1024px) 469px, 100vw"
                     fill
-                    className="object-cover object-center transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
+                    className="object-cover object-center transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-125"
                   />
                 </div>
                 <div className="flex flex-1 flex-col gap-[7px] px-[39px] pb-[15px] pt-[8px]">

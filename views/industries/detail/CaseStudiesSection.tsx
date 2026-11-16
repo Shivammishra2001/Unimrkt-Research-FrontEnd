@@ -68,7 +68,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
                 {/* Photo: full card width, 390px tall; on hover it shortens to 300px (bottom crop) while the image
                     zooms, the title rides up with it and the summary + EXPLORE open underneath. The card stays 510px. */}
                 <div
-                  className={`relative aspect-[420/390] w-full shrink-0 overflow-hidden rounded-[24px] bg-[#05101a] transition-[height] duration-300 ease-in-out motion-reduce:transition-none lg:aspect-auto lg:h-[390px] ${
+                  className={`relative aspect-[420/390] w-full shrink-0 overflow-hidden rounded-[24px] bg-[#05101a] transition-[height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:aspect-auto lg:h-[390px] ${
                     hasMore ? 'lg:group-hover:h-[300px] lg:group-focus-visible:h-[300px]' : ''
                   }`}
                 >
@@ -77,7 +77,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
                       image={study.image}
                       sizes="(min-width: 1024px) 420px, 90vw"
                       fill
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-focus-visible:scale-105 motion-reduce:transition-none"
+                      className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover:scale-105 group-focus-visible:scale-105"
                     />
                   )}
                 </div>
@@ -85,7 +85,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
                   {study.title}
                 </p>
                 {hasMore && (
-                  <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-in-out group-hover:grid-rows-[1fr] group-hover:opacity-100 group-focus-visible:grid-rows-[1fr] group-focus-visible:opacity-100 motion-reduce:transition-none max-lg:hidden">
+                  <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:grid-rows-[1fr] group-hover:opacity-100 group-focus-visible:grid-rows-[1fr] group-focus-visible:opacity-100 max-lg:hidden">
                     <div className="min-h-0 overflow-hidden px-4">
                       {summary && <p className="mt-[14px] line-clamp-2 font-sans text-[13px] leading-[1.6] text-[#6b7280]">{summary}</p>}
                       {study.href && (
@@ -100,7 +100,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
               </>
             );
             const cardClass =
-              'group flex min-h-[510px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#eee] bg-white px-[14px] pb-[35px] pt-4 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-shadow duration-300 ease-out hover:shadow-xl focus-visible:shadow-xl focus-visible:outline-none lg:h-[510px]';
+              'group flex min-h-[510px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#eee] bg-white px-[14px] pb-[35px] pt-4 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-shadow duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-xl focus-visible:shadow-xl focus-visible:outline-none lg:h-[510px]';
             return study.href ? (
               <Link key={study.id} href={study.href} className={cardClass}>
                 {body}

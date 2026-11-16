@@ -2,13 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* NOTE: the blanket reduced-motion transition kill was removed intentionally so
+   the Figma-style hover zoom plays regardless of the OS "reduce motion" setting.
+   Only in-page smooth scrolling is still reset for reduced-motion users. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  html {
     scroll-behavior: auto !important;
   }
 }
@@ -16,6 +14,9 @@
 html {
   max-width: 100vw;
   overflow-x: clip;
+  /* Smooth anchor/in-page scrolling; the prefers-reduced-motion block above
+     resets this to auto for users who ask for reduced motion. */
+  scroll-behavior: smooth;
 }
 
 /* /contact "Our Presence" map: only the active office's pin shows, dropping in on select (Leaflet owns the marker's own transform). */

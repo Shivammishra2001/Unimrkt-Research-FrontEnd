@@ -218,7 +218,7 @@ export function GalleryView({ data }: { data: GalleryData }) {
                   type="button"
                   onClick={() => handleCategoryChange(category.id)}
                   aria-pressed={isActive}
-                  className={`flex h-[56px] items-center justify-center rounded-[3px] pb-[10px] pt-[9px] font-sans font-semibold uppercase leading-[normal] transition-colors motion-reduce:transition-none ${
+                  className={`flex h-[56px] items-center justify-center rounded-[3px] pb-[10px] pt-[9px] font-sans font-semibold uppercase leading-[normal] transition-colors ${
                     isActive
                       ? 'bg-gradient-to-r from-gradient-from to-gradient-to px-[30px] text-[13.234px] text-white'
                       : 'border border-[#dedede] bg-white px-[29px] text-[13.125px] text-[#1e1e1e] hover:border-[#be2c28] hover:text-[#be2c28]'
@@ -247,7 +247,7 @@ export function GalleryView({ data }: { data: GalleryData }) {
                       alt={image.alt}
                       fill
                       sizes="(min-width: 1700px) 516px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
+                      className="object-cover transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
                       placeholder="blur"
                       blurDataURL={image.blurDataURL ?? shimmer(image.width, image.height)}
                       priority={i < 3}
@@ -267,7 +267,7 @@ export function GalleryView({ data }: { data: GalleryData }) {
                 type="button"
                 disabled={!hasMore}
                 onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                className="inline-flex h-[60px] items-center justify-center gap-2 rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-10 py-[23px] font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition enabled:hover:brightness-110 disabled:cursor-default motion-reduce:transition-none"
+                className="inline-flex h-[60px] items-center justify-center gap-2 rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-10 py-[23px] font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition enabled:hover:brightness-110 disabled:cursor-default"
               >
                 <RefreshIcon className="size-5 shrink-0" aria-hidden="true" />
                 Load More

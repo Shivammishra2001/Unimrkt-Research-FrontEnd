@@ -41,15 +41,15 @@ function OfficeCard({ office }: { office: OfficeLocationModel }) {
   const title = /office$/i.test(office.name.trim()) ? office.name : `${office.name} Office`;
   const phoneLabel = office.phoneLabel?.replace(/:\s*$/, '') || 'Queries';
   return (
-    <article className="group w-full transform-gpu cursor-pointer rounded-blog transition-[transform,box-shadow] duration-300 ease-out will-change-transform [backface-visibility:hidden] motion-reduce:transition-none [@media(hover:hover)]:hover:-translate-y-2 [@media(hover:hover)]:hover:scale-[1.02] [@media(hover:hover)]:hover:shadow-[6px_14px_60px_0px_rgba(0,0,0,0.16)] border border-card-border bg-white p-[10px] shadow-blog md:[&:last-child:nth-child(odd)]:col-span-2 md:[&:last-child:nth-child(odd)]:mx-auto md:[&:last-child:nth-child(odd)]:max-w-[calc(50%-12px)] lg:min-h-[583px] lg:[&:last-child:nth-child(odd)]:col-span-1 lg:[&:last-child:nth-child(odd)]:max-w-none">
+    <article className="group w-full transform-gpu cursor-pointer rounded-blog transition-[transform,box-shadow] duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform [backface-visibility:hidden] [@media(hover:hover)]:hover:-translate-y-2 [@media(hover:hover)]:hover:scale-[1.02] [@media(hover:hover)]:hover:shadow-[6px_14px_60px_0px_rgba(0,0,0,0.16)] border border-card-border bg-white p-[10px] shadow-blog md:[&:last-child:nth-child(odd)]:col-span-2 md:[&:last-child:nth-child(odd)]:mx-auto md:[&:last-child:nth-child(odd)]:max-w-[calc(50%-12px)] lg:min-h-[583px] lg:[&:last-child:nth-child(odd)]:col-span-1 lg:[&:last-child:nth-child(odd)]:max-w-none">
       <div className="relative aspect-[442/274] overflow-hidden rounded-[24px] bg-slate-100">
         {figma ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <div className="absolute inset-0 transform-gpu transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-105">
+          <div className="absolute inset-0 transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform [@media(hover:hover)]:group-hover:scale-110">
             <img src={figma.src} alt="" className={`absolute max-w-none ${figma.frame}`} />
           </div>
         ) : office.image ? (
-          <StrapiImage image={office.image} sizes="(min-width: 1024px) 33vw, 100vw" fill className="object-cover transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-105" />
+          <StrapiImage image={office.image} sizes="(min-width: 1024px) 33vw, 100vw" fill className="object-cover transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform [@media(hover:hover)]:group-hover:scale-110" />
         ) : null}
       </div>
       <div className="px-5 pb-6 pt-[18px] lg:px-[22px] lg:pt-5">

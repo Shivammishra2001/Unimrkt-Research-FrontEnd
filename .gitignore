@@ -26,3 +26,19 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# === Standardized deploy exclusions (see /DEPLOYMENT.md) ===
+# All env files (secrets) — keep only a committed example
+.env*
+!.env.example
+# Build / cache / temp artifacts
+.cache/
+.tmp/
+# Strapi artifacts (kept in sync across repos per DEPLOYMENT.md)
+.strapi/
+.strapi-updater.json
+public/uploads/
+# Crash dumps, logs, generated inventories
+*.stackdump
+*.log
+content-inventory.json

@@ -13,7 +13,7 @@ export function IndustryCard({ industry, priority, fallbackSrc }: { industry: In
   return (
     <Link
       href={`/industries/${industry.slug}`}
-      className="group flex h-full w-full flex-col rounded-[24px] border border-[#eee] bg-white p-[19px] pb-[43px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)]"
+      className="group flex h-full w-full transform-gpu flex-col rounded-[24px] border border-[#eee] bg-white p-[19px] pb-[43px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform hover:scale-[1.02] hover:shadow-xl"
     >
       <div className="relative aspect-[469/260] w-full shrink-0 overflow-hidden rounded-[20px] bg-[#d1d1d1]">
         {industry.icon ? (
@@ -22,7 +22,7 @@ export function IndustryCard({ industry, priority, fallbackSrc }: { industry: In
             sizes="(min-width: 1700px) 469px, (min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"
             priority={priority}
             fill
-            className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 motion-reduce:transition-none"
+            className="object-cover transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
           />
         ) : (
           // No photo uploaded in Strapi for this industry yet — brand placeholder instead of a blank box.
@@ -31,7 +31,7 @@ export function IndustryCard({ industry, priority, fallbackSrc }: { industry: In
             alt=""
             fill
             sizes="(min-width: 1700px) 469px, (min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 motion-reduce:transition-none"
+            className="object-cover transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
           />
         )}
       </div>
