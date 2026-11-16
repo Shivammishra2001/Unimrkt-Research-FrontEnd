@@ -73,7 +73,7 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
               return (
                 <li
                   key={item.id}
-                  className="shrink-0 transition-[width] duration-500 ease-in-out motion-reduce:transition-none"
+                  className="shrink-0 transition-[width] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[width]"
                   style={{ width: open && services.length > 4 ? 'min(560px, 88vw)' : open ? 'min(366px, 86vw)' : 'min(349px, 78vw)' }}
                   onMouseEnter={() => hasList && setActive(i)}
                   onMouseLeave={() => setActive(null)}
@@ -91,7 +91,7 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
                         setActive(active === i ? null : i);
                       }
                     }}
-                    className={`group relative flex h-[520px] cursor-pointer flex-col overflow-hidden border px-[31px] pb-[40px] pt-[36px] ${open ? '!px-9 !pb-10 !pt-10' : ''} transition-all duration-500 ease-in-out motion-reduce:transition-none ${
+                    className={`group relative flex h-[520px] transform-gpu cursor-pointer flex-col overflow-hidden border px-[31px] pb-[40px] pt-[36px] ${open ? '!px-9 !pb-10 !pt-10' : ''} transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
                       open
                         ? 'rounded-[32px] border-[#F7D8DC]/60 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8F8_60%,#FDF0F1_100%)] shadow-[0px_20px_45px_-10px_rgba(166,25,46,0.08),0px_8px_20px_-5px_rgba(0,0,0,0.04)]'
                         : 'rounded-[24px] border-[#e0e0df] bg-white shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] hover:-translate-y-2 hover:shadow-xl'
@@ -100,13 +100,15 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
                     <p className="font-sans text-[66px] font-semibold capitalize leading-[1.2] tracking-[-1px] text-[#02060e] opacity-15">
                       {String(i + 1).padStart(2, '0')}.
                     </p>
+                    {/* Spacer pushes the icon/title to the card bottom when collapsed and to the top when open; flex-grow tweens the rise smoothly. */}
                     <div
                       aria-hidden="true"
-                      className="shrink-0 transition-[flex-grow,height] duration-500 ease-in-out motion-reduce:transition-none"
+                      className="shrink-0 transition-[flex-grow,height] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[flex-grow,height]"
                       style={{ flexGrow: open ? 0 : 1, height: open ? 24 : 0 }}
                     />
                     <div className="flex flex-col">
-                      <div className={`flex ${open ? 'items-center gap-4' : 'flex-col gap-[18px]'}`}>
+                      {/* Icon stays stacked above the title in both states — no flex-direction swap, so nothing snaps horizontally. */}
+                      <div className="flex flex-col gap-[18px]">
                         {!item.icon && item.iconIdentifier && FIGMA_ICONS[item.iconIdentifier] ? (
                           // The exact pictograms drawn in Figma 384:6457 (exported SVGs); an uploaded icon always wins.
                           // eslint-disable-next-line @next/next/no-img-element
@@ -115,32 +117,41 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
                             alt=""
                             width={60}
                             height={60}
-                            className="size-[60px] shrink-0 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none"
+                            className="size-[60px] shrink-0 transform-gpu transition-transform duration-300 group-hover:scale-110"
                           />
                         ) : (
                           <DetailCardIcon
                             icon={item.icon}
                             iconIdentifier={item.iconIdentifier}
-                            className="size-[60px] shrink-0 text-[#02060e] transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none"
+                            className="size-[60px] shrink-0 transform-gpu text-[#02060e] transition-transform duration-300 group-hover:scale-110"
                           />
                         )}
                         <p className="font-sans text-[22px] font-semibold capitalize leading-[1.3] tracking-[-1px] text-[#02060e]">{item.title}</p>
                       </div>
                       {hasList && (
-                        <ul
-                          className={`grid gap-x-6 gap-y-4 overflow-hidden transition-all duration-500 ease-in-out motion-reduce:transition-none ${
-                            services.length > 4 ? 'grid-cols-2' : 'grid-cols-1'
-                          } ${
-                            open ? 'mt-5 max-h-[280px] opacity-100 delay-150' : 'mt-0 max-h-0 opacity-0'
+                        // grid-rows 0fr->1fr tweens to the list's exact height (no max-height overshoot); the inner wrapper keeps a
+                        // fixed width so the checklist is laid out once and never reflows/squishes while the card width animates.
+                        <div
+                          className={`grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                            open
+                              ? 'grid-rows-[1fr] translate-y-0 opacity-100 duration-500 delay-150'
+                              : 'grid-rows-[0fr] translate-y-2 opacity-0 duration-300'
                           }`}
                         >
-                          {services.map((s) => (
-                            <li key={s} className="flex items-center gap-3.5 font-sans text-[14px] font-semibold leading-snug tracking-tight text-[#02060e]">
-                              <CheckIcon />
-                              {s}
-                            </li>
-                          ))}
-                        </ul>
+                          <div className="overflow-hidden">
+                            <ul
+                              className={`grid gap-x-6 gap-y-4 pt-5 ${services.length > 4 ? 'grid-cols-2' : 'grid-cols-1'}`}
+                              style={{ width: services.length > 4 ? 'min(488px, calc(88vw - 72px))' : 'min(294px, calc(86vw - 72px))' }}
+                            >
+                              {services.map((s) => (
+                                <li key={s} className="flex items-center gap-3.5 font-sans text-[14px] font-semibold leading-snug tracking-tight text-[#02060e]">
+                                  <CheckIcon />
+                                  {s}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>

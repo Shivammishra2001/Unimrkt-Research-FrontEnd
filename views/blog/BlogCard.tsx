@@ -16,7 +16,7 @@ export function BlogCard({ post, priority = false, sizes }: { post: BlogSummary;
   return (
     <Link
       href={`/blogs/${post.slug}`}
-      className="group flex h-full w-full transform-gpu flex-col overflow-hidden rounded-blog border border-card-border bg-white shadow-blog transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform hover:scale-[1.02] hover:shadow-xl"
+      className="group flex h-full w-full transform-gpu flex-col overflow-hidden rounded-blog border border-card-border bg-white shadow-blog transition-all duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform hover:scale-[1.02] hover:shadow-xl"
     >
       <div className="relative m-4 aspect-[469/260] shrink-0 overflow-hidden rounded-2xl bg-slate-100 mb-0">
         {post.coverImage && (
@@ -25,7 +25,7 @@ export function BlogCard({ post, priority = false, sizes }: { post: BlogSummary;
             sizes={sizes}
             priority={priority}
             fill
-            className="object-cover transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
+            className="object-cover transform-gpu transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
           />
         )}
         {post.category && (

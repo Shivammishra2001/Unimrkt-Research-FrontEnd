@@ -247,7 +247,7 @@ export function GalleryView({ data }: { data: GalleryData }) {
                       alt={image.alt}
                       fill
                       sizes="(min-width: 1700px) 516px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
+                      className="object-cover transform-gpu transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
                       placeholder="blur"
                       blurDataURL={image.blurDataURL ?? shimmer(image.width, image.height)}
                       priority={i < 3}

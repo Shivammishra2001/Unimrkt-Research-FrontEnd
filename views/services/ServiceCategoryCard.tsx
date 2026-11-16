@@ -21,7 +21,7 @@ export function ServiceCategoryCard({ category, priority }: { category: ServiceT
   const hiddenCount = childCount - visibleChildren.length;
 
   return (
-    <article className="group flex h-full transform-gpu flex-col overflow-hidden rounded-industry border border-card-border bg-white shadow-card transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform hover:scale-[1.02] hover:shadow-xl">
+    <article className="group flex h-full transform-gpu flex-col overflow-hidden rounded-industry border border-card-border bg-white shadow-card transition-all duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform hover:scale-[1.02] hover:shadow-xl">
       <Link
         href={`/services/${category.slug}`}
         aria-label={`Explore ${category.title}`}
@@ -33,7 +33,7 @@ export function ServiceCategoryCard({ category, priority }: { category: ServiceT
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
             priority={priority}
             fill
-            className="object-cover opacity-80 transform-gpu transition-transform duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
+            className="object-cover opacity-80 transform-gpu transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-110"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" aria-hidden="true" />
