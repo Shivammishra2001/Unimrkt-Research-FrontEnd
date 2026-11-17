@@ -16,7 +16,7 @@ const ALL = 'All';
 /** Figma 924:23469: 260x64 r8 white box (1px #ededed) 4px below an 11px SemiBold uppercase #0e1b2e label, 12px #5e5e5e value, 20px chevron at the right. */
 function FilterSelect({ label, value, onChange, all, options }: { label: string; value: string; onChange: (v: string) => void; all: string; options: string[] }) {
   return (
-    <label className="relative block h-[68px] lg:w-[260px] lg:shrink-0">
+    <label className="relative block h-[68px] min-w-0">
       <span className="absolute left-4 top-0 z-10 font-nav text-[11px] font-semibold uppercase leading-[1.34] text-[#0e1b2e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">{label}</span>
       <select
         value={value}
@@ -50,12 +50,15 @@ function useButtonMotionProps() {
 function JobCard({ job, onViewDetails, onApply }: { job: JobListingModel; onViewDetails: () => void; onApply: () => void }) {
   const motionProps = useButtonMotionProps();
   return (
-    <div className="relative flex flex-col gap-6 rounded-[18px] border border-[#ebebe4] bg-white p-6 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.05)] sm:flex-row sm:items-center sm:gap-8 lg:h-[164px] lg:gap-[36px] lg:px-[36px] lg:py-0">
+    // Icon + details sit side by side from sm; the buttons drop below them until lg so the details column is never
+    // squeezed (and the buttons never push past the card) on tablets. min-h (not a fixed height) lets long titles wrap.
+    <div className="relative flex flex-col gap-6 rounded-[18px] border border-[#ebebe4] bg-white p-6 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.05)] lg:min-h-[164px] lg:flex-row lg:items-center lg:gap-[36px] lg:px-[36px]">
+      <div className="flex min-w-0 flex-1 flex-col gap-6 sm:flex-row sm:items-center sm:gap-8 lg:gap-[36px]">
       <span className="flex size-[74px] shrink-0 items-center justify-center rounded-full bg-brand-600/10 text-brand-600">
         <Briefcase className="size-11" strokeWidth={1.5} aria-hidden="true" />
       </span>
-      <div className="flex-1">
-        <p className="font-nav text-[20px] font-semibold leading-none text-[#04264e] lg:text-[22px]">{job.title}</p>
+      <div className="min-w-0 flex-1">
+        <p className="font-nav text-[20px] font-semibold leading-[1.2] text-[#04264e] lg:text-[22px]">{job.title}</p>
         <div className="mt-4 flex flex-wrap items-center gap-x-8 gap-y-2 lg:mt-[16px]">
           <span className="flex items-center gap-1.5 text-sm font-medium text-[#032246]">
             <LocationPinIcon className="size-5 text-brand-600" />
@@ -75,11 +78,12 @@ function JobCard({ job, onViewDetails, onApply }: { job: JobListingModel; onView
           </span>
         </div>
       </div>
-      <div className="flex shrink-0 gap-3 lg:ml-auto">
+      </div>
+      <div className="flex shrink-0 gap-3 sm:pl-[106px] lg:ml-auto lg:pl-0">
         <motion.button
           type="button"
           onClick={onViewDetails}
-          className="flex h-14 w-full items-center justify-center rounded-[4px] border border-[#962b39] px-6 font-sans sm:w-[190px] text-[13px] font-bold uppercase tracking-[0.06em] text-[#7e2a43] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:bg-[#962b39]/5"
+          className="flex h-14 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-[4px] border border-[#962b39] px-3 font-sans sm:w-[190px] sm:flex-none sm:px-6 text-[13px] font-bold uppercase tracking-[0.04em] sm:tracking-[0.06em] text-[#7e2a43] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:bg-[#962b39]/5"
           {...motionProps}
         >
           View Details
@@ -87,7 +91,7 @@ function JobCard({ job, onViewDetails, onApply }: { job: JobListingModel; onView
         <motion.button
           type="button"
           onClick={onApply}
-          className="flex h-14 w-full items-center justify-center rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-6 font-sans sm:w-[190px] text-[13px] font-bold uppercase tracking-[0.78px] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:brightness-110"
+          className="flex h-14 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-3 font-sans sm:w-[190px] sm:flex-none sm:px-6 text-[13px] font-bold uppercase tracking-[0.78px] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 hover:brightness-110"
           {...motionProps}
         >
           Apply Now
@@ -152,8 +156,10 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
           }}
           className="mx-auto mt-10 max-w-[1387px] rounded-[18px] border border-[#efefe9] bg-white/85 p-4 backdrop-blur-[12px] lg:mt-[48px] lg:px-[35px] lg:py-[33px]"
         >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:items-end lg:gap-x-[16px]">
-            <div className="relative flex h-16 items-center rounded-[8px] border border-[#ededed] bg-white px-[13px] transition-colors focus-within:border-[#a3282a] lg:mb-0 lg:w-[330px] lg:shrink-0">
+          {/* lg: search + department / job type + location + Search in a 3-column grid; xl: one row whose columns keep the
+              Figma 330 : 260 : 260 : 260 : 141 proportions but shrink to fit (the fixed widths overflowed below ~1460px). */}
+          <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-[16px] xl:grid-cols-[minmax(0,330fr)_repeat(3,minmax(0,260fr))_141px]">
+            <div className="relative flex h-16 min-w-0 items-center rounded-[8px] border border-[#ededed] bg-white px-[13px] transition-colors focus-within:border-[#a3282a] lg:col-span-2 xl:col-span-1">
               <Search className="size-6 shrink-0 text-[#02060e]" strokeWidth={1.5} aria-hidden="true" />
               <input
                 type="text"
@@ -169,7 +175,7 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
             <FilterSelect label="Location" value={location} onChange={setLocation} all="All Locations" options={locations} />
             <button
               type="submit"
-              className="flex h-[60px] items-center justify-center rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-10 font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.78px] text-white transition-[filter] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:col-span-2 lg:ml-[1px] lg:w-[141px] lg:shrink-0 lg:px-0"
+              className="flex h-[60px] items-center justify-center rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-10 font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.78px] text-white transition-[filter] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:col-span-2 lg:col-span-1 lg:px-0"
             >
               Search
             </button>

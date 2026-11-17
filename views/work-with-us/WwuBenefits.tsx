@@ -10,7 +10,8 @@ export function WwuBenefits({ benefits }: { benefits: ResolvedWorkWithUs['benefi
   return (
     <section className="bg-white px-4 py-14 sm:px-6 lg:pb-[106px] lg:pt-[95px]">
       <div className="mx-auto grid w-full max-w-[1600px] items-start gap-10 lg:grid-cols-[minmax(0,42%)_minmax(0,1fr)] lg:gap-x-10 min-[1536px]:grid-cols-[673px_minmax(0,1fr)] min-[1536px]:gap-x-[83px]">
-        <div className="relative aspect-[673/620] overflow-hidden rounded-[24px] bg-slate-100">
+        {/* Below lg the photo spans the full width, so a wider crop keeps it from towering over the copy on tablets. */}
+        <div className="relative aspect-[16/10] overflow-hidden lg:aspect-[673/620] rounded-[24px] bg-slate-100">
           {benefits.image && <StrapiImage image={benefits.image} sizes="(min-width: 1024px) 673px, 100vw" fill className="object-cover" />}
         </div>
         <div className="lg:pt-[30px]">
