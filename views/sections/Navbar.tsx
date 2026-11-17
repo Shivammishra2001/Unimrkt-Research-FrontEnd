@@ -125,7 +125,7 @@ export function Navbar({
   // and whose header CTA is the top-most gradient frame (827:8010, 1126:54673).
   // /industries/[slug] (Figma 384:6205) opens on the same full-bleed hero under a transparent header.
   const isIndustryDetail = pathname.startsWith('/industries/');
-  const isGradientCtaPage = isHomePage || pathname === '/gallery' || pathname === '/our-team' || pathname === '/industries' || pathname === '/blogs' || pathname === '/contact' || pathname === '/work-with-us' || pathname === '/privacy-policy' || isIndustryDetail;
+  const isGradientCtaPage = isHomePage || pathname === '/gallery' || pathname === '/our-team' || pathname === '/industries' || pathname === '/blogs' || pathname === '/contact' || pathname === '/work-with-us' || pathname === '/privacy-policy' || pathname === '/services' || isIndustryDetail;
   const hasHeroUnderHeader = isHomePage || isGradientCtaPage;
   // /blogs/[slug]: the hero is light, so the header uses the Home page's dark glass surface (white text, gradient CTA) at every scroll position.
   const isPostPage = pathname.startsWith('/blogs/');

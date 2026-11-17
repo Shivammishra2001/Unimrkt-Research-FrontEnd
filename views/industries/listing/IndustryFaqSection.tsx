@@ -15,7 +15,7 @@ import type { IndustriesPageContent } from '@/models/industriesPage';
  * 30px plus at the right. Single-open accordion; the faint world map
  * (5%) sits behind. The node repeats one placeholder question in rows
  * 2-6, so the real items keep the previously authored copy. */
-export function IndustryFaqSection({ content }: { content: IndustriesPageContent['faq'] }) {
+export function IndustryFaqSection({ content, titleClassName = 'mt-[43px]' }: { content: IndustriesPageContent['faq']; /** Gap from the button to the title (/services: Figma 1231:77262 cap-top is 159px under the button -> 86px). */ titleClassName?: string }) {
   const items = content.items;
   const [openId, setOpenId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
@@ -23,7 +23,8 @@ export function IndustryFaqSection({ content }: { content: IndustriesPageContent
   if (items.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden bg-white pb-16 pt-16 lg:h-[986px] lg:pb-0 lg:pt-[43px]">
+    // min-h, not h: the node's 986px fits /industries' rows; /services (Figma 1231:77069) has eight, ending 67px above the next section.
+    <section className="relative overflow-hidden bg-white pb-16 pt-16 lg:min-h-[986px] lg:pb-[67px] lg:pt-[43px]">
       {/* Figma 1384:27167: the same 1900x719 clip as the home FAQ (world map 1377x787 at -71px) @ 8%. */}
       <div className="pointer-events-none absolute inset-x-0 top-[93px] h-[719px] overflow-hidden" aria-hidden="true">
         <div className="absolute left-1/2 top-[-71px] h-[787px] w-[1377px] -translate-x-1/2 opacity-[0.08]">
@@ -37,7 +38,7 @@ export function IndustryFaqSection({ content }: { content: IndustriesPageContent
         >
           {content.cta.label}
         </Link>
-        <h2 className={`${H2_CLASS} mt-[43px] text-center text-[#02060e]`}>{content.heading}</h2>
+        <h2 className={`${H2_CLASS} ${titleClassName} text-center text-[#02060e]`}>{content.heading}</h2>
 
         <div className="mt-[44.9px] flex w-full max-w-[1160px] flex-col gap-4">
           {items.map((item) => {

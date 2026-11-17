@@ -18,12 +18,12 @@ const ICONS = ['process-clipboard.svg', 'process-brush.svg', 'process-presentati
  * a horizontal row that runs off the frame's right edge (the 4th card
  * starts at x=1614), y=8002; 78x15 dots at y=8568. Step number 66/79.2px
  * @ 15%, icon 70px at (48,155), title 22px, body 14/26.18px @ 70%. */
-export function ResearchProcessSection({ content }: { content: IndustriesPageContent['process'] }) {
+export function ResearchProcessSection({ content, texture = true, listClassName = 'mt-[15.5px]' }: { content: IndustriesPageContent['process']; /** /services (Figma 1231:77315) draws the plain #f9f9f7 band, without the 6% texture. */ texture?: boolean; /** Gap above the cards (/services: Figma 1231:81627 sits 10px lower). */ listClassName?: string }) {
   const { ref: trackRef, active, onScroll, goTo } = useSnapTrack<HTMLUListElement>();
 
   return (
     <section className="relative overflow-hidden bg-[#f9f9f7] py-16 lg:h-[964px] lg:pb-0 lg:pt-[80.6px]">
-      <Image src="/images/industries/process-bg.jpg" alt="" fill sizes="1900px" className="pointer-events-none object-cover object-top opacity-[0.06] mix-blend-luminosity" />
+      {texture && <Image src="/images/industries/process-bg.jpg" alt="" fill sizes="1900px" className="pointer-events-none object-cover object-top opacity-[0.06] mix-blend-luminosity" />}
       <div className="relative">
         <SectionHeader
           eyebrow={content.eyebrow}
@@ -36,7 +36,7 @@ export function ResearchProcessSection({ content }: { content: IndustriesPageCon
         <ul
           ref={trackRef}
           onScroll={onScroll}
-          className="mt-[15.5px] flex snap-x snap-mandatory scroll-px-4 gap-[28px] sm:scroll-px-6 overflow-x-auto scroll-smooth px-4 pb-6 pt-4 [scrollbar-width:none] sm:px-6 lg:scroll-pl-[max(32px,calc(50vw-800px))] lg:pl-[max(32px,calc(50vw-800px))] lg:pr-8 [&::-webkit-scrollbar]:hidden"
+          className={`${listClassName} flex snap-x snap-mandatory scroll-px-4 gap-[28px] sm:scroll-px-6 overflow-x-auto scroll-smooth px-4 pb-6 pt-4 [scrollbar-width:none] sm:px-6 lg:scroll-pl-[max(32px,calc(50vw-800px))] lg:pl-[max(32px,calc(50vw-800px))] lg:pr-8 [&::-webkit-scrollbar]:hidden`}
         >
           {content.steps.map((step, i) => (
             <li
