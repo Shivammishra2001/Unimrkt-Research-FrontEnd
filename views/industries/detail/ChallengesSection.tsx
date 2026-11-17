@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import { Container } from '@/views/ui/Container';
 import { DetailCardIcon } from '@/views/ui/detail/DetailCardIcon';
+import { ChallengesSlider } from './ChallengesSlider';
 import type { ResolvedIndustryDetail } from './fallback';
 
 /** "Key Challenges We Solve" — Figma node 384:6409-6428 (y3624-4441). Dark
  * glassmorphic cards (`backdrop-blur-[21px]`, `bg-white/8`, border
- * `white/10`, `rounded-[20px]`). CMS-first, template-fallback — always
- * renders 4 cards, never collapses. The dark photo band behind them is
- * decorative site chrome (not per-industry content). */
+ * `white/10`, `rounded-[20px]`). CMS-first, template-fallback — never
+ * collapses. Cards sit on a single-row slider (4/2/1 per view at lg/md/base);
+ * 5+ cards slide instead of wrapping, with the pager shown only on overflow.
+ * The dark photo band behind them is decorative site chrome. */
 // The exact vuesax icons drawn in Figma 363:4816-4843 (64px, #292D32 stroke); an uploaded icon always wins.
 const FIGMA_ICONS: Record<string, string> = {
   'profile-2user': '/icons/industries/challenges/profile-2user.svg',
@@ -28,7 +30,8 @@ export function ChallengesSection({ challenges }: { challenges: ResolvedIndustry
         </h2>
         <p className="mt-4 max-w-[833px] text-base leading-[1.9] text-white/80 lg:mt-[21px]">{challenges.body}</p>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-[50px] lg:grid-cols-4 lg:gap-[29px] min-[1700px]:grid-cols-[repeat(4,378px)]">
+        <div className="mt-12 lg:mt-[50px]">
+          <ChallengesSlider label="Key challenges">
           {challenges.cards.map((card) => (
             <div
               key={card.id}
@@ -54,6 +57,7 @@ export function ChallengesSection({ challenges }: { challenges: ResolvedIndustry
               </div>
             </div>
           ))}
+          </ChallengesSlider>
         </div>
       </Container>
     </section>
