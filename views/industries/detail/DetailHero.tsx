@@ -33,7 +33,8 @@ export function DetailHero({ hero, title }: { hero: ResolvedIndustryDetail['hero
         />
         </div>
         <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-16 lg:pt-[276px] min-[1500px]:px-0">
-          <p className="inline-flex h-10 items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
+          {/* Wraps (and tightens its tracking) on narrow phones instead of running past the viewport. */}
+          <p className="inline-flex min-h-10 max-w-full items-center gap-3 rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[2px] text-white backdrop-blur-[2px] sm:whitespace-nowrap sm:tracking-[3px]">
             <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
             {hero.eyebrow}
           </p>

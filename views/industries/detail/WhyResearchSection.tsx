@@ -51,7 +51,7 @@ export function WhyResearchSection({ whyResearch }: { whyResearch: ResolvedIndus
                     className="object-cover object-center transform-gpu transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform group-hover:scale-[1.10]"
                   />
                 </div>
-                <div className="flex flex-1 flex-col gap-[7px] px-[39px] pb-[15px] pt-[8px]">
+                <div className="flex flex-1 flex-col gap-[7px] px-6 pb-[15px] pt-[8px] xl:px-[39px]">
                   <h3 className="font-sans text-[20px] font-semibold leading-[1.34] text-[#04264e]">{card.title}</h3>
                   {card.description && <p className="font-sans text-[14px] leading-[1.73] text-black/70">{card.description}</p>}
                 </div>

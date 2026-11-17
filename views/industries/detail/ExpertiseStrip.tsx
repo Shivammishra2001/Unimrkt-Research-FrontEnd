@@ -8,7 +8,8 @@ import type { ResolvedIndustryDetail } from './fallback';
 
 /** "Our Expertise" — Figma node 384:6453-6473 (y2378-3316). A #f7f7f4 band with the wave
  * raster over it at 6% (luminosity); the five 349x520 cards (`border-[#e0e0df]`, r24, 6/6/54
- * shadow) slide off the right edge of the frame, with the 3-dot pager (#b63a40 pill) below.
+ * shadow) slide off the right edge of the frame at 1700px+; below that a whole number of cards fits
+ * the view (1/2/3/4 at base/md/lg/xl). The 3-dot pager (#b63a40 pill) sits below.
  * Each card's `description` is its sub-service list (one per line): hovering / focusing /
  * tapping a card with a list widens it to 540px and fades the list in; cards without a list
  * stay as drawn. CMS-first, template-fallback — always renders, never collapses. */
@@ -43,6 +44,27 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
   const [active, setActive] = useState<number | null>(null);
   const heading = expertise.heading;
 
+  // Opening a card near the right edge widens it past the view; slide the track just enough to keep the whole open
+  // card visible — once now (towards its predicted final width) and once after the 700ms width tween settles.
+  function openCard(i: number, li: HTMLElement, wide: boolean) {
+    setActive(i);
+    const track = li.parentElement;
+    if (!track) return;
+    const reveal = (finalWidth?: number) => {
+      const t = track.getBoundingClientRect();
+      const cs = getComputedStyle(track);
+      const contentLeft = t.left + parseFloat(cs.paddingLeft);
+      const contentRight = t.right - parseFloat(cs.paddingRight);
+      const r = li.getBoundingClientRect();
+      const right = r.left + (finalWidth ?? r.width);
+      const delta = right > contentRight ? right - contentRight : r.left < contentLeft ? r.left - contentLeft : 0;
+      if (Math.abs(delta) > 1) track.scrollBy({ left: delta, behavior: 'smooth' });
+    };
+    const contentWidth = track.clientWidth - parseFloat(getComputedStyle(track).paddingLeft) - parseFloat(getComputedStyle(track).paddingRight);
+    reveal(Math.max(li.getBoundingClientRect().width, Math.min(wide ? 560 : 366, contentWidth)));
+    window.setTimeout(() => reveal(), 720);
+  }
+
   return (
     <section className="relative overflow-hidden bg-[#f7f7f4] py-16 sm:py-20 lg:min-h-[938px] lg:pb-[74px] lg:pt-[91px]">
       <Image
@@ -69,30 +91,40 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
             {expertise.items.map((item, i) => {
               const services = parseSubServices(item.description);
               const hasList = services.length > 0;
-              const open = hasList && active === i;
+              const isOpen = hasList && active === i;
+              const wide = services.length > 4;
               return (
                 <li
                   key={item.id}
-                  className="shrink-0 transition-[width] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[width]"
-                  style={{ width: open && services.length > 4 ? 'min(560px, 88vw)' : open ? 'min(366px, 86vw)' : 'min(349px, 78vw)' }}
-                  onMouseEnter={() => hasList && setActive(i)}
+                  // --card-w: a whole number of cards per view (1 base / 2 md / 3 lg / 4 xl, 32px gaps), sized from the
+                  // track's own content box (not vw, which counts the scrollbar) so no card is cut at the right edge.
+                  // At 1700px+ the Figma 349px cards bleed off the frame again. An open card never shrinks below it.
+                  className="shrink-0 transition-[width] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[width] [--card-w:100%] md:[--card-w:calc((100%_-_32px)/2)] lg:[--card-w:calc((100%_-_64px)/3)] xl:[--card-w:calc((100%_-_96px)/4)] min-[1700px]:[--card-w:349px]"
+                  style={{ width: isOpen && wide ? 'max(var(--card-w), min(560px, 100%))' : isOpen ? 'max(var(--card-w), min(366px, 100%))' : 'var(--card-w)' }}
+                  onMouseEnter={(e) => hasList && active !== i && openCard(i, e.currentTarget, wide)}
                   onMouseLeave={() => setActive(null)}
                 >
                   <div
                     role={hasList ? 'button' : undefined}
                     tabIndex={hasList ? 0 : undefined}
-                    aria-expanded={hasList ? open : undefined}
-                    onFocus={() => hasList && setActive(i)}
+                    aria-expanded={hasList ? isOpen : undefined}
+                    onFocus={(e) => hasList && active !== i && e.currentTarget.parentElement && openCard(i, e.currentTarget.parentElement, wide)}
                     onBlur={() => setActive(null)}
-                    onClick={() => hasList && setActive(active === i ? null : i)}
+                    onClick={(e) => {
+                      if (!hasList) return;
+                      if (active === i) setActive(null);
+                      else if (e.currentTarget.parentElement) openCard(i, e.currentTarget.parentElement, wide);
+                    }}
                     onKeyDown={(e) => {
                       if (hasList && (e.key === 'Enter' || e.key === ' ')) {
                         e.preventDefault();
-                        setActive(active === i ? null : i);
+                        if (active === i) setActive(null);
+                        else if (e.currentTarget.parentElement) openCard(i, e.currentTarget.parentElement, wide);
                       }
                     }}
-                    className={`group relative flex h-[520px] transform-gpu cursor-pointer flex-col overflow-hidden border px-[31px] pb-[40px] pt-[36px] ${open ? '!px-9 !pb-10 !pt-10' : ''} transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                      open
+                    // Phones: the card may grow past 520px so a long single-column checklist is never cut off.
+                    className={`group relative flex min-h-[520px] transform-gpu sm:h-[520px] cursor-pointer flex-col overflow-hidden border px-[31px] pb-[40px] pt-[36px] ${isOpen ? '!px-9 !pb-10 !pt-10' : ''} transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                      isOpen
                         ? 'rounded-[32px] border-[#F7D8DC]/60 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8F8_60%,#FDF0F1_100%)] shadow-[0px_20px_45px_-10px_rgba(166,25,46,0.08),0px_8px_20px_-5px_rgba(0,0,0,0.04)]'
                         : 'rounded-[24px] border-[#e0e0df] bg-white shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] hover:-translate-y-2 hover:shadow-xl'
                     }`}
@@ -104,7 +136,7 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
                     <div
                       aria-hidden="true"
                       className="shrink-0 transition-[flex-grow,height] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[flex-grow,height]"
-                      style={{ flexGrow: open ? 0 : 1, height: open ? 24 : 0 }}
+                      style={{ flexGrow: isOpen ? 0 : 1, height: isOpen ? 24 : 0 }}
                     />
                     <div className="flex flex-col">
                       {/* Icon stays stacked above the title in both states — no flex-direction swap, so nothing snaps horizontally. */}
@@ -133,15 +165,15 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
                         // fixed width so the checklist is laid out once and never reflows/squishes while the card width animates.
                         <div
                           className={`grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                            open
+                            isOpen
                               ? 'grid-rows-[1fr] translate-y-0 opacity-100 duration-500 delay-150'
                               : 'grid-rows-[0fr] translate-y-2 opacity-0 duration-300'
                           }`}
                         >
                           <div className="overflow-hidden">
                             <ul
-                              className={`grid gap-x-6 gap-y-4 pt-5 ${services.length > 4 ? 'grid-cols-2' : 'grid-cols-1'}`}
-                              style={{ width: services.length > 4 ? 'min(488px, calc(88vw - 72px))' : 'min(294px, calc(86vw - 72px))' }}
+                              className={`grid gap-x-6 gap-y-4 pt-5 ${services.length > 4 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}
+                              style={{ width: services.length > 4 ? 'min(488px, calc(100vw - 32px - 72px))' : 'min(294px, calc(100vw - 32px - 72px))' }}
                             >
                               {services.map((s) => (
                                 <li key={s} className="flex items-center gap-3.5 font-sans text-[14px] font-semibold leading-snug tracking-tight text-[#02060e]">

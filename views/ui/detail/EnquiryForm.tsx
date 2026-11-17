@@ -61,7 +61,7 @@ export function EnquiryForm({
         aria-hidden="true"
       />
       <div className="relative mx-auto w-full max-w-[1374px] px-4 sm:px-6 lg:px-8 min-[1440px]:px-0">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_540px] lg:items-start lg:gap-x-8">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-12 lg:grid-cols-[minmax(0,1fr)_540px] lg:items-start lg:gap-x-8">
           <div className="lg:pt-[183px]">
             <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
               {eyebrow}

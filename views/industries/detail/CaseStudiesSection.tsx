@@ -68,8 +68,8 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
                 {/* Photo: full card width, 390px tall; on hover it shortens to 300px (bottom crop) while the image
                     zooms, the title rides up with it and the summary + EXPLORE open underneath. The card stays 510px. */}
                 <div
-                  className={`relative aspect-[420/390] w-full shrink-0 overflow-hidden rounded-[24px] bg-[#05101a] transition-[height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:aspect-auto lg:h-[390px] ${
-                    hasMore ? 'lg:group-hover:h-[300px] lg:group-focus-visible:h-[300px]' : ''
+                  className={`relative aspect-[420/390] w-full shrink-0 overflow-hidden rounded-[24px] bg-[#05101a] transition-[height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:aspect-auto lg:h-[330px] xl:h-[390px] ${
+                    hasMore ? 'lg:group-hover:h-[240px] lg:group-focus-visible:h-[240px] xl:group-hover:h-[300px] xl:group-focus-visible:h-[300px]' : ''
                   }`}
                 >
                   {study.image && (

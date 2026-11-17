@@ -110,9 +110,11 @@ export function BlogTeaserView({ block, variant = 'home' }: { block: BlogTeaserM
                   )}
                 </div>
                 <div className="mt-5 lg:mt-[1.2cqw] lg:px-[0.2cqw] lg:text-[length:var(--fs)]" style={geometry({ fs: 16, minFs: 14 })}>
-                  <h3 className="text-[20px] lg:text-[1.25em] font-semibold leading-[1.34] text-ink2 lg:pr-[0.5cqw]">{post.title}</h3>
+                  {/* From lg the card is a fixed-aspect box scaled with the band, while the text keeps a 14px floor —
+                      clamp it so it ends on a whole line (with an ellipsis) instead of being sliced by the card edge. */}
+                  <h3 className="text-[20px] lg:text-[1.25em] font-semibold leading-[1.34] text-ink2 lg:line-clamp-3 lg:pr-[0.5cqw] xl:line-clamp-2 min-[1700px]:line-clamp-3">{post.title}</h3>
                   {post.excerpt && (
-                    <p className="mt-4 text-[14px] leading-[1.43] text-black opacity-70 lg:mt-[0.9cqw] lg:text-[0.875em]">{post.excerpt}</p>
+                    <p className="mt-4 text-[14px] leading-[1.43] text-black opacity-70 lg:mt-[0.9cqw] lg:line-clamp-2 lg:text-[0.875em] lg:max-xl:hidden">{post.excerpt}</p>
                   )}
                 </div>
               </a>

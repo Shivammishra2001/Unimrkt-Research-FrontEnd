@@ -76,12 +76,12 @@ export function MethodologiesSection({ methodologies }: { methodologies: Resolve
                         <div className="absolute inset-0 bg-black/20" aria-hidden="true" />
                         {/* Figma 363:6477-6482 hover state: white panel with the logo watermark (#521e4f @ 10%) and centred copy; fades in over the photo. */}
                         {(item.description || HOVER_COPY[item.title.trim().toLowerCase()]) && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-white px-[40px] py-[23px] opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
+                          <div className="absolute inset-0 flex items-center justify-center bg-white px-4 py-3 opacity-0 xl:px-[40px] xl:py-[23px] transition-opacity duration-300 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
                             <span
                               aria-hidden="true"
                               className="absolute left-[23.9%] top-[29.4%] h-[43.6%] w-[55%] bg-[#521e4f] opacity-10 [mask-image:url(/figma-industries/methodology-watermark-mask.png)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                             />
-                            <p className="relative max-w-[279px] text-center font-sans text-[16px] font-medium leading-[1.9] text-[#0b042a] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                            <p className="relative max-w-[279px] text-center font-sans text-[14px] font-medium leading-[1.6] text-[#0b042a] lg:max-xl:text-[13px] xl:text-[16px] xl:leading-[1.9] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                               {item.description || HOVER_COPY[item.title.trim().toLowerCase()]}
                             </p>
                           </div>
