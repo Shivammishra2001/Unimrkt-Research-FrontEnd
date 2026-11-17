@@ -58,7 +58,7 @@ function OfficeCard({ office, active, onActivate }: { office: Office; active: bo
           onActivate();
         }
       }}
-      className="relative cursor-pointer overflow-hidden rounded-[24px] border border-[#e0e0df] bg-white px-5 py-8 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:px-[37px] lg:min-h-[223px] lg:px-6 lg:py-[36px] xl:px-[37px]"
+      className="relative cursor-pointer overflow-hidden rounded-[24px] border border-[#e0e0df] bg-white p-5 shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] outline-none focus-visible:ring-2 focus-visible:ring-brand-600 lg:p-6"
     >
       <div
         className={`pointer-events-none absolute inset-0 bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${active ? 'opacity-100' : 'opacity-0'}`}
@@ -86,17 +86,17 @@ function OfficeCard({ office, active, onActivate }: { office: Office; active: bo
           <div className="flex items-start gap-[14px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={icon('loc')} alt="" width={24} height={24} className="size-6 shrink-0" />
-            <p className={`max-w-[533px] font-sans text-[16px] font-normal leading-[1.4] transition-colors duration-300 motion-reduce:transition-none ${text} [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]`}>{office.address}</p>
+            <p className={`min-w-0 max-w-[533px] break-words font-sans text-[16px] font-normal leading-[1.4] transition-colors duration-300 motion-reduce:transition-none ${text} [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]`}>{office.address}</p>
           </div>
           <div className="flex items-center gap-[14px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={icon('sms')} alt="" width={24} height={24} className="size-6 shrink-0" />
-            <p className={`font-sans text-[16px] font-normal leading-[1.4] transition-colors duration-300 motion-reduce:transition-none ${text} [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]`}>{office.email}</p>
+            <p className={`min-w-0 font-sans text-[16px] font-normal leading-[1.4] transition-colors duration-300 [overflow-wrap:anywhere] motion-reduce:transition-none ${text} [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]`}>{office.email}</p>
           </div>
           <div className="flex items-center gap-[14px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={icon('call')} alt="" width={24} height={24} className="size-6 shrink-0" />
-            <p className={`font-sans text-[16px] font-normal leading-[1.4] transition-colors duration-300 motion-reduce:transition-none ${text} [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]`}>
+            <p className={`min-w-0 break-words font-sans text-[16px] font-normal leading-[1.4] transition-colors duration-300 motion-reduce:transition-none ${text} [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]`}>
               {office.phoneLabel && <span className="font-semibold">{office.phoneLabel} </span>}
               {office.phone}
             </p>
@@ -118,7 +118,7 @@ export function ContactPresence({ office }: { office: ResolvedContact['office'] 
   const [activeId, setActiveId] = useState<string | undefined>(initial);
 
   return (
-    <section className="relative overflow-hidden bg-white px-4 pb-14 pt-14 sm:px-6 lg:pb-[64px] lg:pt-[73px]">
+    <section className="relative overflow-hidden bg-white px-4 py-12 sm:px-6 lg:py-16">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[999px] bg-[length:1900px_1411px] bg-[position:center_top] bg-repeat"
         style={{ backgroundImage: "url('/images/gallery/wave-pattern.png')" }}
@@ -135,14 +135,14 @@ export function ContactPresence({ office }: { office: ResolvedContact['office'] 
         </h2>
       </div>
 
-      <div className="relative mx-auto mt-10 max-w-[1740px] overflow-hidden rounded-[24px] border border-[#e5e5e5] bg-[#d9d9d9] p-4 sm:p-6 lg:mt-[49px] lg:min-h-[868px] lg:rounded-[40px] lg:p-0">
-        <div className="relative z-10 flex flex-col gap-[21px] lg:my-[74px] lg:ml-[5.17%] lg:w-[645px] lg:max-w-[37.07%]">
+      <div className="relative mx-auto mt-10 max-w-[1740px] overflow-hidden rounded-[24px] border border-[#e5e5e5] bg-[#d9d9d9] p-4 sm:p-6 lg:mt-[49px] lg:rounded-[40px] lg:p-0">
+        <div className="relative z-10 flex flex-col gap-[21px] lg:my-12 lg:ml-[5.17%] lg:w-[645px] lg:max-w-[37.07%]">
           {office.items.map((item) => (
             <OfficeCard key={item.id} office={item} active={item.id === activeId} onActivate={() => setActiveId(item.id)} />
           ))}
         </div>
         {/* A real map (Leaflet) that flies to the active office: a compact one under the cards on small screens, the full panel behind them on desktop. */}
-        <div className="mt-4 h-[320px] overflow-hidden rounded-[18px] lg:absolute lg:inset-0 lg:z-0 lg:mt-0 lg:h-auto lg:rounded-none">
+        <div className="mt-4 h-[280px] overflow-hidden rounded-[18px] lg:absolute lg:inset-0 lg:z-0 lg:mt-0 lg:h-auto lg:rounded-none">
           <OfficeMap offices={office.items} activeId={activeId} offsetRatio={0.21} />
         </div>
       </div>

@@ -12,18 +12,30 @@ const DOT_COUNT = 3;
 export function ScrollCards({ children, label, tight = false }: { children: React.ReactNode; label: string; /** Figma 384:6214: pager sits 37px under the cards. */ tight?: boolean }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
+  const [scrollable, setScrollable] = useState(true);
 
   const sync = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
     const max = el.scrollWidth - el.clientWidth;
+    setScrollable(max > 1);
     setActive(max <= 0 ? 0 : Math.round((el.scrollLeft / max) * (DOT_COUNT - 1)));
   }, []);
 
   useEffect(() => {
     sync();
+    // Cards can change width without a window resize (e.g. an Expertise card opening), so watch the track itself.
+    const el = trackRef.current;
+    const ro = el ? new ResizeObserver(sync) : null;
+    if (el && ro) {
+      ro.observe(el);
+      for (const child of Array.from(el.children)) ro.observe(child);
+    }
     window.addEventListener('resize', sync);
-    return () => window.removeEventListener('resize', sync);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', sync);
+    };
   }, [sync]);
 
   function goTo(i: number) {
@@ -42,7 +54,8 @@ export function ScrollCards({ children, label, tight = false }: { children: Reac
       >
         {children}
       </ul>
-      <div className={`flex items-center justify-center gap-2 ${tight ? '-mt-[3px]' : 'mt-2'}`} role="tablist" aria-label={`${label} pages`}>
+      {/* Hidden (but still holding its height, so the section doesn't jump) when every card already fits. */}
+      <div className={`flex items-center justify-center gap-2 ${tight ? '-mt-[3px]' : 'mt-2'} ${scrollable ? '' : 'invisible'}`} role="tablist" aria-label={`${label} pages`} aria-hidden={!scrollable || undefined}>
         {Array.from({ length: DOT_COUNT }).map((_, i) => (
           <button
             key={i}

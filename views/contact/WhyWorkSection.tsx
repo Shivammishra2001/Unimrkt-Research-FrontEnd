@@ -47,7 +47,8 @@ export function WhyWorkSection() {
         {CARDS.map((card) => (
           <div
             key={card.icon}
-            className="flex min-h-[354px] flex-col items-center rounded-[24px] border border-[#e0e0df] bg-white px-6 pt-[57px] text-center shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)]"
+            // pb keeps the last line of copy off the card edge when the card grows past 354px (narrow lg columns).
+            className="flex min-h-[354px] flex-col items-center rounded-[24px] border border-[#e0e0df] bg-white px-6 pb-10 pt-[57px] text-center shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] lg:max-xl:px-4"
           >
             <CardIcon name={card.icon} />
             <h3 className="mt-[30px] font-sans text-[24px] font-semibold leading-[1.34] text-[#04264e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
@@ -58,9 +59,8 @@ export function WhyWorkSection() {
               ))}
             </h3>
             <p
-              className={`max-w-[292px] font-sans text-[14px] font-normal leading-[1.6] text-black/70 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] ${
-                card.title.length > 1 ? 'mt-[29px]' : 'mt-[35px]'
-              }`}
+              className={`max-w-[292px] font-sans text-[14px] font-normal leading-[1.6] text-black/70 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] ${card.title.length > 1 ? 'mt-[29px]' : 'mt-[35px]'
+                }`}
             >
               {card.copy}
             </p>

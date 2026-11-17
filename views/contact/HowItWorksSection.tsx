@@ -13,7 +13,7 @@ const STEPS = [
 
 export function HowItWorksSection() {
   return (
-    <section className="bg-[#f9f9f7] py-16 lg:pb-[181px] lg:pt-[83px]">
+    <section className="bg-[#f9f9f7] py-16 lg:pb-[50px] lg:pt-[50px]">
       <div className="px-4 text-center sm:px-6">
         <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-[#cc1f1f] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
           How it works
@@ -29,15 +29,21 @@ export function HowItWorksSection() {
       <div className="mt-8 lg:mt-[47px] lg:[&_[role=tablist]]:!-mt-4">
         <ScrollCards label="How it works">
           {STEPS.map((step) => (
-            <li key={step.n} className="w-[min(460px,86vw)] shrink-0">
-              <div className="relative h-[282px] rounded-[24px] border border-[#e0e0df] bg-white shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)]">
-                <span className="absolute left-[10.43%] top-[44.5px] flex size-[70px] items-center justify-center rounded-full bg-[#a3282a] font-sans text-[32px] font-semibold leading-[1.2] text-white">
+            // A whole number of cards per view (1 base / 2 md / 3 lg / 4 xl, 32px gaps) sized from the track's content box;
+            // at 1700px+ the Figma 460px cards bleed off the frame again.
+            <li
+              key={step.n}
+              className="flex shrink-0 w-full md:w-[calc((100%_-_32px)/2)] lg:w-[calc((100%_-_64px)/3)] xl:w-[calc((100%_-_96px)/4)] min-[1700px]:w-[460px]"
+            >
+              {/* Flow layout (same Figma offsets: disc at 44.5px, title cap-top 151, copy 188) so long titles wrap and the card grows instead of overlapping. */}
+              <div className="flex min-h-[282px] w-full flex-col rounded-[24px] border border-[#e0e0df] bg-white px-6 pb-10 pt-[44.5px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.08)] sm:px-[10.43%] sm:pr-[11.3%]">
+                <span className="flex size-[70px] shrink-0 items-center justify-center rounded-full bg-[#a3282a] font-sans text-[32px] font-semibold leading-[1.2] text-white">
                   {step.n}
                 </span>
-                <h3 className="absolute left-[10.43%] top-[151px] font-sans text-[22px] font-semibold leading-[1.34] text-[#04264e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <h3 className="mt-[36.5px] font-sans text-[22px] font-semibold leading-[1.34] text-[#04264e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   {step.title}
                 </h3>
-                <p className="absolute left-[10.43%] right-[11.3%] top-[188px] font-sans text-[14px] font-normal leading-[1.87] text-black/70 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <p className="mt-[21px] font-sans text-[14px] font-normal leading-[1.87] text-black/70 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   {step.copy}
                 </p>
               </div>
