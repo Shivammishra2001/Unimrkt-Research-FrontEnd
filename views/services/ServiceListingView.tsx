@@ -6,14 +6,13 @@ import { ServicesQuestionBand } from './listing/ServicesQuestionBand';
 import { CoverageSection } from './listing/CoverageSection';
 import { IndustriesSlider } from './listing/IndustriesSlider';
 import { CaseStudiesBand } from './listing/CaseStudiesBand';
-import { resolveServicesListing } from './listing/content';
+import type { ServicesListingContent } from './listing/content';
 import { ResearchProcessSection } from '@/views/industries/listing/ResearchProcessSection';
 import { ClientSuccessStories } from '@/views/industries/ClientSuccessStories';
 import { IndustryFaqSection } from '@/views/industries/listing/IndustryFaqSection';
 import { AboutServicesCta } from '@/views/industries/listing/AboutServicesCta';
 import { BlogTeaserView } from '@/views/sections/BlogTeaserView';
 import type { ServiceTreeItemModel } from '@/models/service';
-import type { ServicesPageSettings } from '@/models/servicesPage';
 import type { IndustrySummary } from '@/models/industry';
 import type { BlogSummary } from '@/models/blog';
 import type { IndustriesPageContent } from '@/models/industriesPage';
@@ -35,23 +34,22 @@ function leadWith<T>(items: T[], key: (item: T) => string, lead: string[]): T[] 
  * blogs, FAQ, about/CTA) reuse those components — Figma draws them identically on both pages.
  *
  * Live Strapi data: service categories (`service` hierarchy), industries, blog posts and the client testimonials
- * (Pages > Industries). The page's own copy is the services-page snapshot (views/services/content.ts) with Figma's copy
- * filling every empty field — see listing/content.ts.
+ * (Pages > Industries). The page's own copy is Pages > Services (controllers/servicesListingPage.ts), with the Figma
+ * copy in listing/content.ts filling every empty field.
  */
 export function ServiceListingView({
   categories,
-  settings,
+  content,
   industries,
   blogPosts,
   testimonials,
 }: {
   categories: ServiceTreeItemModel[];
-  settings: ServicesPageSettings;
+  content: ServicesListingContent;
   industries: IndustrySummary[];
   blogPosts: BlogSummary[];
   testimonials: IndustriesPageContent['testimonials']['items'];
 }) {
-  const content = resolveServicesListing(settings);
   const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
   // Lead with the entries Figma draws, in its order; everything else follows in CMS order.
   const panelCategories = leadWith(categories, (c) => c.slug, ['primary-research', 'qualitative-research', 'quantitative-research', 'business-research', 'research-support-functions']);

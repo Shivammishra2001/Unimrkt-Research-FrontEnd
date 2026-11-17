@@ -49,7 +49,7 @@ export function ServicesQuestionBand({ content }: { content: ServicesListingCont
           className="pointer-events-none relative mx-auto mt-6 aspect-[653/593] w-[min(100%,400px)] overflow-hidden lg:absolute lg:bottom-0 lg:right-[6.625cqw] lg:mx-0 lg:mt-0 lg:w-[40.8125cqw]"
           aria-hidden="true"
         >
-          <Image src="/images/services/listing/question-couple.webp" alt="" width={1400} height={788} sizes="(min-width: 1024px) 1060px, 650px" className="absolute left-[-2.34%] top-0 h-full w-[161.29%] max-w-none" />
+          <Image src={content.personImage?.src ?? '/images/services/listing/question-couple.webp'} alt={content.personImage?.alt ?? ''} width={1400} height={788} sizes="(min-width: 1024px) 1060px, 650px" className="absolute left-[-2.34%] top-0 h-full w-[161.29%] max-w-none" />
         </div>
       </div>
     </section>

@@ -36,7 +36,7 @@ export function WhyChooseBand({ content }: { content: ServicesListingContent['wh
               className="flex min-h-[230px] flex-col items-center rounded-[20px] border border-[#ba4551] bg-[rgba(36,5,5,0.18)] px-3 pb-8 pt-8 text-center backdrop-blur-[21px] transition-colors duration-300 ease-out hover:bg-[rgba(36,5,5,0.32)] motion-reduce:transition-none sm:min-h-[280px] sm:pt-[51px] min-[1440px]:px-1"
             >
               <span className="flex size-[84px] shrink-0 items-center justify-center rounded-full bg-[rgba(36,5,5,0.18)] backdrop-blur-[21px] sm:size-[100px]">
-                <Image src={`/icons/services/${WHY_ICONS[stat.iconIdentifier ?? ''] ?? 'why-cube.svg'}`} alt="" width={56} height={56} className="size-12 sm:size-14" />
+                <Image src={stat.icon?.src ?? `/icons/services/${WHY_ICONS[stat.iconIdentifier ?? ''] ?? 'why-cube.svg'}`} alt="" width={56} height={56} className="size-12 sm:size-14" />
               </span>
               <p className="mt-[22px] font-sans text-[18px] font-semibold leading-[1.34] sm:text-[20px]">{stat.value}</p>
               <p className="mt-[5px] font-sans text-[14px] font-normal leading-[1.34] opacity-80 sm:text-[16px]">{stat.label}</p>

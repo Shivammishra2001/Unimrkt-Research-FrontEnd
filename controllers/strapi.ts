@@ -40,6 +40,7 @@ import type { StrapiPrivacyPolicyPageResponse } from '@/models/privacyPolicyPage
 import type { StrapiTeamMemberListResponse } from '@/models/teamMember';
 import type { StrapiOurTeamPageResponse } from '@/models/ourTeamPage';
 import type { StrapiIndustriesPageResponse } from '@/models/industriesPage';
+import type { StrapiServicesListingPageResponse } from '@/models/servicesListingPage';
 export { StrapiError, isBackendUnreachable };
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
@@ -373,6 +374,19 @@ export async function getIndustriesPageSettings(): Promise<StrapiIndustriesPageR
   const blocks = res.data.blocks ?? [];
   if (!blocks.some((b) => b.__component.startsWith('industries-page.'))) {
     throw new StrapiError('Not found', 404, 'pages/slug/industries');
+  }
+  return { data: { seo: res.data.seo ?? null, blocks } };
+}
+
+/** Pages > Services (slug `services`) — same sectioned shape as Industries. A missing entry, or one without any
+ * `services-page.*` block yet, is a 404 so the page ships its built-in copy. */
+export async function getServicesListingPageSettings(): Promise<StrapiServicesListingPageResponse> {
+  const res = (await getPageBySlug('services')) as unknown as {
+    data: { seo?: StrapiSeo | null; blocks?: Array<{ __component: string }> };
+  };
+  const blocks = res.data.blocks ?? [];
+  if (!blocks.some((b) => b.__component.startsWith('services-page.'))) {
+    throw new StrapiError('Not found', 404, 'pages/slug/services');
   }
   return { data: { seo: res.data.seo ?? null, blocks } };
 }

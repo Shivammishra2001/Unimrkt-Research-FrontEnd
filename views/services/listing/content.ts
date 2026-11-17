@@ -1,13 +1,13 @@
-import type { ImageModel, LinkModel } from '@/models/domain';
-import type { ServicesPageSettings } from '@/models/servicesPage';
+import type { ImageModel, LinkModel, SeoModel } from '@/models/domain';
 import type { IndustriesPageContent } from '@/models/industriesPage';
 
 /**
- * /services listing copy — Figma 1231:77069 ("Services", 1900x11803). The page's own copy lives in
- * views/services/content.ts (the `services-page` snapshot normalised into ServicesPageSettings); every
- * field read from there wins, and the Figma node's copy below fills in anything empty or any section that
- * snapshot never had (intro, coverage, industries, case-study band). The service categories, industries,
- * testimonials and blog posts are live Strapi data passed in separately.
+ * /services listing copy — Figma 1231:77069 ("Services", 1900x11803). The live copy is the Strapi entry Pages >
+ * Services (one `services-page.*` block per section, normalised in controllers/servicesListingPage.ts); every field
+ * left empty there — or the whole page, before the entry exists — falls back to the Figma copy below. The backend
+ * seed (backend/scripts/seed-data/services-page.json) is generated from this same object. Image fields are optional:
+ * unset, each section draws the Figma asset that ships in /public. The service categories, industries, testimonials
+ * and blog posts are separate Strapi collections.
  */
 
 const link = (id: string, label: string, href: string, variant: LinkModel['variant']): LinkModel => ({ id, label, href, isExternal: false, variant });
@@ -16,18 +16,28 @@ export interface ServicesStat {
   id: string;
   value: string;
   label: string;
-  /** Key into WHY_ICONS (views/services/listing/WhyChooseBand.tsx). */
+  /** Key into WHY_ICONS (views/services/listing/WhyChooseBand.tsx) — the built-in icon when no `icon` is uploaded. */
   iconIdentifier?: string;
+  icon?: ImageModel;
+}
+
+export interface ServicesCoverageCard {
+  title: string;
+  body: string;
+  /** Built-in icon file in /public/icons/services (by card position). */
+  icon: string;
+  /** Uploaded icon; replaces the built-in one. */
+  iconImage?: ImageModel;
 }
 
 export interface ServicesListingContent {
   hero: { eyebrow: string; heading: string; subheading: string; image?: ImageModel; actions: LinkModel[] };
-  intro: { eyebrow: string; heading: string; paragraphs: string[] };
+  intro: { eyebrow: string; heading: string; paragraphs: string[]; image?: ImageModel };
   showcase: { eyebrow: string; heading: string; body: string };
   why: { heading: string; body: string; stats: ServicesStat[] };
   process: IndustriesPageContent['process'];
-  band: { heading: string; body: string; cta: LinkModel };
-  coverage: { eyebrow: string; heading: string; body: string; cards: { title: string; body: string; icon: string }[] };
+  band: { heading: string; body: string; cta: LinkModel; personImage?: ImageModel };
+  coverage: { eyebrow: string; heading: string; body: string; cards: ServicesCoverageCard[] };
   industries: { eyebrow: string; heading: string; body: string };
   caseBand: {
     eyebrow: string;
@@ -35,14 +45,17 @@ export interface ServicesListingContent {
     body: string;
     cta: LinkModel;
     stats: { value: string; label: string; caption?: string }[];
+    personImage?: ImageModel;
+    chartImage?: ImageModel;
   };
   testimonials: { eyebrow: string; heading: string };
   faq: IndustriesPageContent['faq'];
   about: IndustriesPageContent['about'];
   finalCta: IndustriesPageContent['finalCta'];
+  seo?: SeoModel;
 }
 
-const FIGMA: ServicesListingContent = {
+export const SERVICES_LISTING_FALLBACK: ServicesListingContent = {
   hero: {
     eyebrow: 'Our Services',
     heading: 'Research Solutions That Drive Business Growth',
@@ -146,55 +159,3 @@ const FIGMA: ServicesListingContent = {
     action: link('svc-final-cta', 'Talk to Our Experts', '/contact', 'secondary'),
   },
 };
-
-const pick = (value: string | undefined | null, fallback: string) => (value && value.trim() ? value : fallback);
-
-/** Merge the CMS snapshot over the Figma copy, field by field. */
-export function resolveServicesListing(settings: ServicesPageSettings): ServicesListingContent {
-  const { hero, workflow, faq, cta } = settings;
-  // Figma's step copy is the full paragraph the 460x540 cards are sized for; the snapshot only carries one-line
-  // summaries, so its titles are kept (they match the node) and the node's paragraphs fill the bodies.
-  const steps = FIGMA.process.steps.map((step, i) => {
-    const cms = workflow?.steps.length ? [...workflow.steps].sort((a, b) => a.order - b.order)[i] : undefined;
-    return { title: pick(cms?.title, step.title), body: step.body };
-  });
-  const stats = settings.valueProps.length
-    ? [...settings.valueProps]
-        .sort((a, b) => a.order - b.order)
-        .map((p) => ({ id: p.id, value: pick(p.statValue, p.title), label: p.statLabel ?? '', iconIdentifier: p.iconIdentifier }))
-    : FIGMA.why.stats;
-  const heroActions = hero?.actions.length
-    ? hero.actions.map((a, i) => (i === 0 ? a : { ...a, variant: 'ghost' as const }))
-    : FIGMA.hero.actions;
-  const ctaAction = cta?.actions[0];
-
-  return {
-    ...FIGMA,
-    hero: {
-      eyebrow: pick(hero?.eyebrow, FIGMA.hero.eyebrow),
-      heading: pick(hero?.heading, FIGMA.hero.heading),
-      subheading: pick(hero?.subheading, FIGMA.hero.subheading),
-      actions: heroActions,
-    },
-    why: { heading: pick(settings.valuePropsHeading, FIGMA.why.heading), body: pick(settings.valuePropsBody, FIGMA.why.body), stats },
-    process: {
-      eyebrow: pick(workflow?.eyebrow, FIGMA.process.eyebrow),
-      heading: pick(workflow?.heading, FIGMA.process.heading),
-      body: pick(workflow?.subheading, FIGMA.process.body),
-      steps,
-    },
-    faq: { ...FIGMA.faq, heading: pick(faq?.heading, FIGMA.faq.heading) },
-    about: {
-      eyebrow: pick(settings.introEyebrow, FIGMA.about.eyebrow),
-      heading: pick(settings.introHeading, FIGMA.about.heading),
-      paragraphs: [settings.introParagraph1, settings.introParagraph2].filter((p): p is string => !!p?.trim()).length
-        ? [settings.introParagraph1, settings.introParagraph2].filter((p): p is string => !!p?.trim())
-        : FIGMA.about.paragraphs,
-    },
-    finalCta: {
-      heading: pick(cta?.heading, FIGMA.finalCta.heading),
-      body: pick(cta?.body, FIGMA.finalCta.body),
-      action: ctaAction ? { ...ctaAction, href: ctaAction.href === '/contact-us' ? '/contact' : ctaAction.href, variant: 'secondary' } : FIGMA.finalCta.action,
-    },
-  };
-}

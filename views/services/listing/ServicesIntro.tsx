@@ -14,6 +14,7 @@ const u = (px: number) => `${((px / 603.23) * 100).toFixed(4)}cqw`;
  * 34.63/71.29) are the same rings as /industries; the colleagues photo (587.84x610.88, mirrored) is clipped to the disc,
  * and its top 306px is repeated unclipped so the two heads rise above the ring. */
 export function ServicesIntro({ content }: { content: ServicesListingContent['intro'] }) {
+  const photo = content.image?.src ?? PHOTO;
   return (
     <section className="bg-[#f9f9f7] py-16 lg:min-h-[758px] lg:pb-12 lg:pt-0">
       <div className="mx-auto flex w-full max-w-[1540px] flex-col gap-10 px-4 sm:px-6 lg:flex-row lg:items-start lg:gap-0 lg:px-8 lg:pt-[117px] min-[1580px]:px-0">
@@ -53,10 +54,10 @@ export function ServicesIntro({ content }: { content: ServicesListingContent['in
               WebkitMaskSize: `${u(539.627)} ${u(539.627)}`,
             }}
           >
-            <Image src={PHOTO} alt="" width={1600} height={1067} sizes="(min-width: 1024px) 940px, 660px" className="absolute left-[-25.88%] top-0 h-full w-[155.86%] max-w-none -scale-x-100" />
+            <Image src={photo} alt="" width={1600} height={1067} sizes="(min-width: 1024px) 940px, 660px" className="absolute left-[-25.88%] top-0 h-full w-[155.86%] max-w-none -scale-x-100" />
           </div>
           <div className="absolute overflow-hidden" style={{ left: u(0.45), top: 0, width: u(587.387), height: u(306.191) }}>
-            <Image src={PHOTO} alt="" width={1600} height={1067} sizes="(min-width: 1024px) 940px, 660px" className="absolute left-[-25.88%] top-0 h-[199.66%] w-[155.86%] max-w-none -scale-x-100" />
+            <Image src={photo} alt="" width={1600} height={1067} sizes="(min-width: 1024px) 940px, 660px" className="absolute left-[-25.88%] top-0 h-[199.66%] w-[155.86%] max-w-none -scale-x-100" />
           </div>
         </div>
       </div>

@@ -78,9 +78,9 @@ export function CaseStudiesBand({ content }: { content: ServicesListingContent['
             )}
 
             <div className="pointer-events-none absolute overflow-hidden" style={{ left: u(115), top: 0, width: u(456), height: u(593) }} aria-hidden="true">
-              <Image src="/images/services/listing/case-person.webp" alt="" width={1400} height={933} sizes="(min-width: 1024px) 900px, 760px" className="absolute left-[-83.79%] top-0 h-full w-[195.31%] max-w-none" />
+              <Image src={content.personImage?.src ?? '/images/services/listing/case-person.webp'} alt="" width={1400} height={933} sizes="(min-width: 1024px) 900px, 760px" className="absolute left-[-83.79%] top-0 h-full w-[195.31%] max-w-none" />
             </div>
-            <Image src="/images/services/listing/case-analysis.png" alt="" width={284} height={303} className="absolute" style={{ left: u(459), top: u(411), width: u(142), height: u(151.43) }} />
+            <Image src={content.chartImage?.src ?? '/images/services/listing/case-analysis.png'} alt="" width={284} height={303} className="absolute" style={{ left: u(459), top: u(411), width: u(142), height: u(151.43) }} />
           </div>
         </div>
       </div>

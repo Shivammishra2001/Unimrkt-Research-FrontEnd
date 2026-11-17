@@ -20,7 +20,7 @@ export function CoverageSection({ content }: { content: ServicesListingContent['
             >
               <span className="relative flex size-[90px] shrink-0 items-center justify-center">
                 <Image src="/icons/services/coverage-disc.svg" alt="" width={90} height={90} className="absolute inset-0 size-full" />
-                <Image src={`/icons/services/${card.icon}`} alt="" width={44} height={44} className="relative size-11" />
+                <Image src={card.iconImage?.src ?? `/icons/services/${card.icon}`} alt="" width={44} height={44} className="relative size-11" />
               </span>
               <div className="min-w-0 xl:pt-[1.8px]">
                 <h3 className="font-sans text-[22px] font-semibold leading-[1.34] text-[#04264e]">{card.title}</h3>
