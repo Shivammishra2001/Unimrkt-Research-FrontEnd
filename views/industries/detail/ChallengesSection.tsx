@@ -7,7 +7,7 @@ import type { ResolvedIndustryDetail } from './fallback';
 /** "Key Challenges We Solve" — Figma node 384:6409-6428 (y3624-4441). Dark
  * glassmorphic cards (`backdrop-blur-[21px]`, `bg-white/8`, border
  * `white/10`, `rounded-[20px]`). CMS-first, template-fallback — never
- * collapses. Cards sit on a single-row slider (4/2/1 per view at lg/md/base);
+ * collapses. Cards sit on a single-row slider (4/3/2/1 per view at xl/lg/md/base);
  * 5+ cards slide instead of wrapping, with the pager shown only on overflow.
  * The dark photo band behind them is decorative site chrome. */
 // The exact vuesax icons drawn in Figma 363:4816-4843 (64px, #292D32 stroke); an uploaded icon always wins.
@@ -20,7 +20,7 @@ const FIGMA_ICONS: Record<string, string> = {
 
 export function ChallengesSection({ challenges }: { challenges: ResolvedIndustryDetail['challenges'] }) {
   return (
-    <section className="relative overflow-hidden bg-[#0f1825] py-16 text-white sm:py-20 lg:min-h-[817px] lg:pb-12 lg:pt-[97px]">
+    <section className="relative overflow-hidden bg-[#0f1825] scroll-mt-[120px] py-16 text-white lg:min-h-[817px] lg:py-24">
       {/* Figma 384:6409-6413: a solid #0f1825 base with the photo laid over it at 30% — no heavy overlay. */}
       <Image src="/images/industries/detail/challenges-bg.jpg" alt="" fill sizes="100vw" className="object-cover object-[50%_43.3%] opacity-30" />
       <Container className="relative max-w-[1600px] min-[1700px]:px-0">
@@ -35,7 +35,7 @@ export function ChallengesSection({ challenges }: { challenges: ResolvedIndustry
           {challenges.cards.map((card) => (
             <div
               key={card.id}
-              className="group cursor-pointer transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none flex min-h-[390px] flex-col items-center gap-[31px] rounded-[20px] border border-white/10 bg-white/[0.08] px-8 pb-10 pt-12 text-center lg:h-[390px] lg:pb-0 backdrop-blur-[21px] hover:border-white/20 hover:bg-white/[0.12] lg:px-[50px] lg:pt-[67px]"
+              className="group cursor-pointer transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none flex h-auto min-h-[340px] flex-col items-center gap-[31px] rounded-[20px] border border-white/10 bg-white/[0.08] px-6 pb-8 pt-12 text-center backdrop-blur-[21px] hover:border-white/20 hover:bg-white/[0.12] lg:min-h-[390px] lg:pb-10 lg:pt-[67px] xl:px-8 min-[1700px]:px-[50px]"
             >
               <span className="flex size-[124px] shrink-0 items-center justify-center rounded-full bg-white">
                 {!card.icon && card.iconIdentifier && FIGMA_ICONS[card.iconIdentifier] ? (
@@ -52,7 +52,7 @@ export function ChallengesSection({ challenges }: { challenges: ResolvedIndustry
                 )}
               </span>
               <div className="flex w-full flex-col gap-6">
-                <p className="font-sans text-[18px] font-semibold leading-[1.34] text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] lg:whitespace-nowrap">{card.title}</p>
+                <p className="font-sans text-[18px] font-semibold leading-[1.34] text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] [text-wrap:balance]">{card.title}</p>
                 {card.description && <p className="font-sans text-[14px] leading-[1.87] text-white/70 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">{card.description}</p>}
               </div>
             </div>

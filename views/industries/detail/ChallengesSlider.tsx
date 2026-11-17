@@ -2,8 +2,8 @@
 
 import { Children, useCallback, useEffect, useRef, useState } from 'react';
 
-/** Single-row slider for the "Key Challenges We Solve" cards. 4 per view at lg+,
- * 2 at md, 1 below md (slide widths are pure CSS, so SSR/first paint is already
+/** Single-row slider for the "Key Challenges We Solve" cards. 4 per view at xl+,
+ * 3 at lg, 2 at md, 1 below md (slide widths are pure CSS, so SSR/first paint is already
  * correct). The track moves with translateX on the same 700ms
  * cubic-bezier(0.22,1,0.36,1) curve ExpertiseStrip uses, supports mouse/touch
  * drag, and shows the ScrollCards pager (red 32px pill + 15px dots) only when
@@ -11,7 +11,8 @@ import { Children, useCallback, useEffect, useRef, useState } from 'react';
 const EASE = 'cubic-bezier(0.22,1,0.36,1)';
 
 function perViewFor(width: number) {
-  if (width >= 1024) return 4;
+  if (width >= 1280) return 4;
+  if (width >= 1024) return 3;
   if (width >= 768) return 2;
   return 1;
 }
@@ -94,11 +95,10 @@ export function ChallengesSlider({ children, label }: { children: React.ReactNod
 
   return (
     <>
-      {/* -mx/-my + matching padding give the hover lift/scale (and, at lg, the nowrap titles that run a few px past
-       * their card) room inside the clipping box without shifting the layout. Side room stays below the card gap
-       * (24px base/md, 29px lg) so off-screen neighbours never peek in. */}
+      {/* -mx/-my + matching padding give the hover lift/scale room inside the clipping box without shifting the
+       * layout. Side room stays below the card gap (24px base/md, 29px lg) so off-screen neighbours never peek in. */}
       <div
-        className={`-mx-2 -my-6 overflow-hidden px-2 py-6 lg:-mx-6 lg:px-6 ${showPager ? 'cursor-grab touch-pan-y select-none active:cursor-grabbing' : ''}`}
+        className={`-mx-2 -my-6 overflow-hidden px-2 py-6 ${showPager ? 'cursor-grab touch-pan-y select-none active:cursor-grabbing' : ''}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
@@ -108,7 +108,7 @@ export function ChallengesSlider({ children, label }: { children: React.ReactNod
         <ul
           ref={trackRef}
           aria-label={label}
-          className="flex gap-6 lg:gap-[29px]"
+          className="flex items-stretch gap-6 lg:gap-[29px]"
           style={{
             transform: `translate3d(${offset}px,0,0)`,
             transition: dragging ? 'none' : `transform 700ms ${EASE}`,
@@ -118,7 +118,7 @@ export function ChallengesSlider({ children, label }: { children: React.ReactNod
             <li
               key={i}
               aria-hidden={i < index || i >= index + perView ? true : undefined}
-              className="flex min-w-0 shrink-0 basis-full md:basis-[calc((100%_-_24px)/2)] lg:basis-[calc((100%_-_87px)/4)] min-[1700px]:basis-[378px] [&>*]:w-full"
+              className="flex min-w-0 shrink-0 basis-full md:basis-[calc((100%_-_24px)/2)] lg:basis-[calc((100%_-_58px)/3)] xl:basis-[calc((100%_-_87px)/4)] min-[1700px]:basis-[378px] [&>*]:w-full"
             >
               {slide}
             </li>
