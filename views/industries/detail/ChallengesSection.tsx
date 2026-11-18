@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Container } from '@/views/ui/Container';
 import { DetailCardIcon } from '@/views/ui/detail/DetailCardIcon';
 import { ChallengesSlider } from './ChallengesSlider';
+import { ExpandableBody } from './ExpandableBody';
 import type { ResolvedIndustryDetail } from './fallback';
 
 /** "Key Challenges We Solve" — Figma node 384:6409-6428 (y3624-4441). Dark
@@ -28,7 +29,11 @@ export function ChallengesSection({ challenges }: { challenges: ResolvedIndustry
         <h2 className="mt-3 max-w-2xl lg:mt-[13.5px] font-sans text-3xl font-semibold capitalize leading-[1.2] text-white sm:text-4xl lg:text-[50px] lg:leading-[1.2] lg:tracking-[-1px]">
           {challenges.heading}
         </h2>
-        <p className="mt-4 max-w-[833px] text-base leading-[1.9] text-white/80 lg:mt-[21px]">{challenges.body}</p>
+        <ExpandableBody
+          tone="dark"
+          paragraphs={challenges.body.split(/\r?\n/).map((p) => p.trim()).filter(Boolean)}
+          className="mt-4 max-w-[833px] text-base leading-[1.9] text-white/80 lg:mt-[21px]"
+        />
 
         <div className="mt-12 lg:mt-[50px]">
           <ChallengesSlider label="Key challenges">
