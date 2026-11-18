@@ -30,12 +30,18 @@ interface ContactFormBody {
   phone?: unknown;
   company?: unknown;
   message?: unknown;
+  service?: unknown;
   source?: unknown;
+  /** Honeypot: hidden from people, so anything typed here came from a bot. */
+  website?: unknown;
 }
 
 /** Forms allowed to post here. The /contact form sends no `source` and keeps its required Company field; the blog's
- * Quick Enquiry card (Name / Phone / Email / Message) has no company field and requires a phone instead. */
-const SOURCES = new Set(['contact-page', 'blog-quick-enquiry']);
+ * Quick Enquiry card (Name / Phone / Email / Message) has no company field and requires a phone instead; the chat
+ * widget's inline form (Name / Email / Phone required; Company, Service, Brief optional) is stored as "Chat Widget". */
+const SOURCES = new Set(['contact-page', 'blog-quick-enquiry', 'Chat Widget']);
+/** Optional +country code, then 6–15 digits with the usual separators. */
+const PHONE_RE = /^\+?[0-9][0-9 ()-]{5,20}$/;
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as ContactFormBody | null;
@@ -48,9 +54,23 @@ export async function POST(request: NextRequest) {
   const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
   const company = typeof body.company === 'string' ? body.company.trim() : '';
   const message = typeof body.message === 'string' ? body.message.trim().slice(0, 2000) : '';
+  const service = typeof body.service === 'string' ? body.service.trim().slice(0, 120) : '';
   const source = typeof body.source === 'string' && SOURCES.has(body.source) ? body.source : 'contact-page';
 
-  if (source === 'blog-quick-enquiry') {
+  // A filled honeypot is a bot: answer as if it worked, store nothing.
+  if (typeof body.website === 'string' && body.website.trim()) {
+    return NextResponse.json({ success: true });
+  }
+
+  if (source === 'Chat Widget') {
+    if (!name || !email || !phone) {
+      return NextResponse.json({ error: 'Name, Email and Phone are required.' }, { status: 400 });
+    }
+    const digits = phone.replace(/\D/g, '').length;
+    if (!PHONE_RE.test(phone) || digits < 6 || digits > 15) {
+      return NextResponse.json({ error: 'Please enter a valid phone number.' }, { status: 400 });
+    }
+  } else if (source === 'blog-quick-enquiry') {
     if (!name || !email || !phone) {
       return NextResponse.json({ error: 'Name, Phone and Email are required.' }, { status: 400 });
     }
@@ -65,7 +85,7 @@ export async function POST(request: NextRequest) {
     const res = await fetch(`${API_BASE_URL}/contact-submissions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: { name, email, phone: phone || undefined, company: company || undefined, message: message || undefined, source } }),
+      body: JSON.stringify({ data: { name, email, phone: phone || undefined, company: company || undefined, service: service || undefined, message: message || undefined, source } }),
     });
 
     if (!res.ok) {

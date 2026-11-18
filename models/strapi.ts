@@ -367,9 +367,33 @@ export interface StrapiGlobal extends StrapiClosingBands {
     title: string | null;
     status: string | null;
     greeting: string | null;
-    quickActions: Array<{ id: number; label: string; reply: string }> | null;
+    quickActions: Array<{
+      id: number;
+      label: string;
+      action?: 'reply' | 'lead_form' | null;
+      reply: string;
+      highlights?: string | null;
+      stats?: string | null;
+      linkLabel?: string | null;
+      linkHref?: string | null;
+      showFormButton?: boolean | null;
+    }> | null;
+    keywordReplies?: Array<{
+      id: number;
+      keywords: string;
+      reply: string;
+      highlights?: string | null;
+      linkLabel?: string | null;
+      linkHref?: string | null;
+      opensForm?: boolean | null;
+    }> | null;
     placeholder: string | null;
     acknowledgement: string | null;
+    formButtonLabel?: string | null;
+    proposalButtonLabel?: string | null;
+    formIntro?: string | null;
+    serviceOptions?: string | null;
+    formSuccess?: string | null;
   } | null;
   servicesMenu?: StrapiServicesMenu | null;
   industriesMenu?: StrapiIndustriesMenu | null;

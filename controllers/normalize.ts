@@ -19,6 +19,7 @@ import type {
 } from '@/models/strapi';
 import type {
   BlockModel,
+  ChatWidgetModel,
   FeatureModel,
   FooterModel,
   GlobalModel,
@@ -887,16 +888,49 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
     // Non-null assertion — defaultSeo is a required field on the schema.
     defaultSeo: normalizeSeo(data.defaultSeo, data.siteName)!,
     closingBands: normalizeClosingBands(data),
-    chatWidget: data.chatWidget
-      ? {
-          title: data.chatWidget.title || undefined,
-          status: data.chatWidget.status || undefined,
-          greeting: data.chatWidget.greeting || undefined,
-          quickActions: (data.chatWidget.quickActions ?? []).map((a) => ({ id: `chat-action-${a.id}`, label: a.label, reply: a.reply })),
-          placeholder: data.chatWidget.placeholder || undefined,
-          acknowledgement: data.chatWidget.acknowledgement || undefined,
-        }
-      : undefined,
+    chatWidget: data.chatWidget ? normalizeChatWidget(data.chatWidget) : undefined,
+  };
+}
+
+/** Strapi text fields edited "one per line" → trimmed, non-empty lines. */
+function lines(value: string | null | undefined): string[] {
+  return (value ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
+}
+
+function chatLink(label: string | null | undefined, href: string | null | undefined) {
+  return label && href ? { label, href } : undefined;
+}
+
+function normalizeChatWidget(c: NonNullable<StrapiGlobal['chatWidget']>): ChatWidgetModel {
+  return {
+    title: c.title || undefined,
+    status: c.status || undefined,
+    greeting: c.greeting || undefined,
+    quickActions: (c.quickActions ?? []).map((a) => ({
+      id: `chat-action-${a.id}`,
+      label: a.label,
+      action: a.action === 'lead_form' ? 'lead_form' : 'reply',
+      reply: a.reply,
+      highlights: lines(a.highlights),
+      stats: lines(a.stats),
+      link: chatLink(a.linkLabel, a.linkHref),
+      showFormButton: a.showFormButton !== false,
+    })),
+    keywordReplies: (c.keywordReplies ?? []).map((k) => ({
+      id: `chat-keyword-${k.id}`,
+      keywords: k.keywords.split(',').map((w) => w.trim()).filter(Boolean),
+      reply: k.reply,
+      highlights: lines(k.highlights),
+      link: chatLink(k.linkLabel, k.linkHref),
+      opensForm: k.opensForm === true,
+    })),
+    placeholder: c.placeholder || undefined,
+    acknowledgement: c.acknowledgement || undefined,
+    formButtonLabel: c.formButtonLabel || undefined,
+    proposalButtonLabel: c.proposalButtonLabel || undefined,
+    formIntro: c.formIntro || undefined,
+    serviceOptions: lines(c.serviceOptions),
+    formSuccess: c.formSuccess || undefined,
   };
 }
 

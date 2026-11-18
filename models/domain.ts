@@ -366,9 +366,37 @@ export interface ChatWidgetModel {
   title?: string;
   status?: string;
   greeting?: string;
-  quickActions: Array<{ id: string; label: string; reply: string }>;
+  quickActions: ChatQuickActionModel[];
+  keywordReplies: ChatKeywordReplyModel[];
   placeholder?: string;
   acknowledgement?: string;
+  formButtonLabel?: string;
+  proposalButtonLabel?: string;
+  formIntro?: string;
+  serviceOptions: string[];
+  /** {name} and {contact} are filled in after a submit. */
+  formSuccess?: string;
+}
+
+export interface ChatQuickActionModel {
+  id: string;
+  label: string;
+  /** 'lead_form' shows `reply` and opens the inline callback form. */
+  action: 'reply' | 'lead_form';
+  reply: string;
+  highlights: string[];
+  stats: string[];
+  link?: { label: string; href: string };
+  showFormButton: boolean;
+}
+
+export interface ChatKeywordReplyModel {
+  id: string;
+  keywords: string[];
+  reply: string;
+  highlights: string[];
+  link?: { label: string; href: string };
+  opensForm: boolean;
 }
 
 /** The three bands most pages close with, as stored in Strapi: every field optional (empty = inherit). Global holds the
