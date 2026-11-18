@@ -38,7 +38,7 @@ export function BlogFaqAccordion({
   if (items.length === 0) return null;
 
   return (
-    <section className={`relative overflow-hidden bg-white py-16 sm:py-20 lg:py-24 ${className}`}>
+    <section className={`relative overflow-hidden bg-white py-16 sm:py-20 lg:py-10 ${className}`}>
       <Image
         src="/mock/faq-worldmap-bg.svg"
         alt=""

@@ -19,7 +19,7 @@ import type { ResolvedCaseStudy } from './fallback';
  * fallback.ts's header comment. */
 export function ApproachSection({ approach }: { approach: ResolvedCaseStudy['approach'] }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to py-16 text-white sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to py-16 text-white sm:py-20 lg:py-12">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-white">{approach.eyebrow}</p>

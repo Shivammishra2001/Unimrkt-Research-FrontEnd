@@ -33,7 +33,7 @@ export function MethodologiesSection({ methodologies }: { methodologies: Resolve
   const stops = Math.max(1, items.length - perView + 1);
 
   return (
-    <section className="overflow-hidden bg-[#f9f9f7] py-16 lg:pb-[70.5px] lg:pt-[84.6px]">
+    <section className="overflow-hidden bg-[#f9f9f7] py-16 lg:py-10">
       <SectionHeader eyebrow={methodologies.eyebrow} title={methodologies.heading} titleMaxWidth="1100px" bodyMaxWidth="1090px" className="px-4 sm:px-6" body={methodologies.body} />
       {/* Vertical padding (cancelled by the negative margin) keeps the shadows and the hover growth unclipped. */}
       <ul

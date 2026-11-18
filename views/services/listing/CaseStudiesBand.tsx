@@ -16,7 +16,7 @@ const u = (px: number) => `${((px / 671) * 100).toFixed(4)}cqw`;
 export function CaseStudiesBand({ content }: { content: ServicesListingContent['caseBand'] }) {
   const [projects, clients] = content.stats;
   return (
-    <section className="bg-white px-4 pt-16 sm:px-6 lg:px-8 lg:pt-[67px] min-[1700px]:px-0">
+    <section className="bg-white px-4 pt-16 sm:px-6 lg:px-8 lg:pt-10 min-[1700px]:px-0">
       <div className="relative mx-auto w-full max-w-[1600px] overflow-hidden rounded-[30px] bg-gradient-to-r from-gradient-from to-gradient-to [container-type:inline-size] lg:rounded-[50px]">
         {/* Figma 1231:77412 is the plain #6c2a4a -> #be2c28 left-to-right gradient. Its wallpaper/texture group (1231:77413, 20%
             luminosity) sits at x=1750, outside the 1900px frame, so Figma never shows it — no overlay here either. */}

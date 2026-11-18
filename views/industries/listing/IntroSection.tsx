@@ -14,7 +14,7 @@ const u = (px: number) => `${((px / 602) * 100).toFixed(4)}cqw`;
 export function IntroSection({ content }: { content: IndustriesPageContent['intro'] }) {
   const workerSrc = content.image?.src ?? '/images/industries/worker-cutout.webp';
   return (
-    <section className="bg-[#f9f9f7] py-16 lg:min-h-[758px] lg:pb-12 lg:pt-0">
+    <section className="bg-[#f9f9f7] py-16 lg:pb-10 lg:pt-0">
       <div className="mx-auto flex w-full max-w-[1540px] flex-col gap-10 px-4 sm:px-6 lg:flex-row lg:items-start lg:gap-0 lg:px-8 lg:pt-[92px] min-[1580px]:px-0">
         <div className="min-w-0 lg:max-w-[849px] lg:flex-1">
           <p className={`${EYEBROW_CLASS} text-[#cc1f1f]`}>{content.eyebrow}</p>

@@ -19,7 +19,7 @@ export function FaqView({ block, variant = 'home' }: { block: FaqModel; index: n
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <Section theme={block.theme} anchorId={block.anchorId} className={`relative ${variant === 'blog' ? 'lg:!pb-[91px] lg:!pt-[96.5px]' : variant === 'contact' ? 'lg:!pb-[70px] lg:!pt-[96.5px]' : variant === 'careers' ? 'lg:!pb-[79px] lg:!pt-[96.5px]' : 'lg:!pb-[92px] lg:!pt-[114.5px]'}`}>
+    <Section theme={block.theme} anchorId={block.anchorId} className="relative lg:!py-10">
       {block.background && (
         // Figma 267:1240/1241: a 1900x719 clip with the world map (1377x787 at -71px) @ 8% opacity.
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[719px] overflow-hidden" aria-hidden="true">

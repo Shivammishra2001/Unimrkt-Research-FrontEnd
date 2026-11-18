@@ -22,7 +22,7 @@ export function ResearchProcessSection({ content, texture = true, listClassName 
   const { ref: trackRef, active, onScroll, goTo } = useSnapTrack<HTMLUListElement>();
 
   return (
-    <section className="relative overflow-hidden bg-[#f9f9f7] py-16 lg:h-[964px] lg:pb-0 lg:pt-[80.6px]">
+    <section className="relative overflow-hidden bg-[#f9f9f7] py-16 lg:py-10">
       {texture && <Image src="/images/industries/process-bg.jpg" alt="" fill sizes="1900px" className="pointer-events-none object-cover object-top opacity-[0.06] mix-blend-luminosity" />}
       <div className="relative">
         <SectionHeader

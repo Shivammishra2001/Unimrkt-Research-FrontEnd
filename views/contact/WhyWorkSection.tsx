@@ -46,7 +46,7 @@ function CardIcon({ icon, name }: { icon?: ImageModel; name?: string }) {
 export function WhyWorkSection({ content = WHY_WORK_DEFAULT }: { content?: WhyWorkContent }) {
   const headingLines = content.heading.split('\n');
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-4 py-16 text-white sm:px-6 lg:pb-[98px] lg:pt-[85px]">
+    <section className="relative overflow-hidden bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-4 py-16 text-white sm:px-6 lg:py-12">
       <div
         className="pointer-events-none absolute -left-[15.6%] -top-[38.2%] h-[176.1%] w-[131.2%] -scale-x-100 bg-[url('/images/industries/case-studies-wallpaper.jpg')] bg-[length:100%_100%] opacity-[0.12] mix-blend-luminosity"
         aria-hidden="true"

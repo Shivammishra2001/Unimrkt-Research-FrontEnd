@@ -33,7 +33,7 @@ export function ProcessSection({ process }: { process: SubServiceContent['proces
   const stops = Math.max(1, steps.length - perView + 1);
 
   return (
-    <section className="overflow-hidden bg-[#f9f9f7] py-16 lg:pb-[60px] lg:pt-[83px]">
+    <section className="overflow-hidden bg-[#f9f9f7] py-16 lg:py-10">
       <SectionHeader eyebrow={process.eyebrow} title={process.heading} titleMaxWidth="1100px" className="px-4 sm:px-6" />
       <ul
         ref={ref}

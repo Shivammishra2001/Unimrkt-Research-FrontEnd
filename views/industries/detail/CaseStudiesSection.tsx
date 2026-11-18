@@ -21,7 +21,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: ResolvedIndus
   if (!caseStudies) return null;
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] py-16 text-white sm:py-20 lg:min-h-[750px] lg:pb-[118px] lg:pt-[122px]">
+    <section className="relative overflow-hidden bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] py-16 text-white sm:py-20 lg:py-12">
       {/* Figma 579:6251 — greyscale wallpaper 2419x1361 at (-259, -306), mirrored, 20% luminosity. */}
       <div
         className="pointer-events-none absolute -left-[13.63%] top-[-40.9%] h-[181.9%] w-[127.3%] -scale-x-100 bg-[url('/images/industries/case-studies-wallpaper.jpg')] bg-[length:100%_100%] opacity-[0.12] mix-blend-luminosity"

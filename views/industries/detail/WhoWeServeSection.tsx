@@ -17,7 +17,7 @@ const FIGMA_ICONS: Record<string, string> = {
 
 export function WhoWeServeSection({ whoWeServe }: { whoWeServe: ResolvedIndustryDetail['whoWeServe'] }) {
   return (
-    <section className="relative [overflow-x:clip] bg-[#f9f9f7] py-16 sm:py-20 lg:min-h-[984px] lg:pb-[54px] lg:pt-[102px]">
+    <section className="relative [overflow-x:clip] bg-[#f9f9f7] py-16 sm:py-20 lg:py-10">
       {/* Figma 384:6211 "image 75" — contour wave flowing behind the heading and the upper half of the cards. Clipped to the section by its own wrapper so the cards can lift freely. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 hidden select-none overflow-hidden lg:block">
         {/* eslint-disable-next-line @next/next/no-img-element */}

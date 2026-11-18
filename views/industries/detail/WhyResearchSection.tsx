@@ -15,7 +15,7 @@ const FALLBACK_PHOTOS = [
 
 export function WhyResearchSection({ whyResearch }: { whyResearch: ResolvedIndustryDetail['whyResearch'] }) {
   return (
-    <section className="relative overflow-hidden border-y border-[#d9d9d9]/50 bg-white py-16 sm:py-20 lg:min-h-[773px] lg:pt-[77px] lg:pb-[85px]">
+    <section className="relative overflow-hidden border-y border-[#d9d9d9]/50 bg-white py-16 sm:py-20 lg:py-10">
       {/* Figma 384:6401 — the topographic wave raster at 50%, drawn 3222x1411 and cropped to the 1900x771 band
           (650px in, 92px down). */}
       {/* eslint-disable-next-line @next/next/no-img-element */}

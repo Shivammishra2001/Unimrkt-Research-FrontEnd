@@ -10,7 +10,7 @@ import type { ResolvedOurCompany } from './fallback';
  * template-fallback — always renders. */
 export function ValuesSection({ values }: { values: ResolvedOurCompany['values'] }) {
   return (
-    <section className="relative overflow-hidden bg-[#040e1f] py-16 text-white sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-[#040e1f] py-16 text-white sm:py-20 lg:py-12">
       <Container className="relative">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-600">{values.eyebrow}</p>

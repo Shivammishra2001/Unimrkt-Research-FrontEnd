@@ -12,7 +12,7 @@ import type { ResolvedOurCompany } from './fallback';
  * renders. */
 export function StatsBandSection({ stats }: { stats: ResolvedOurCompany['stats'] }) {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-10">
       <Container>
         <h2 className="text-center text-2xl font-semibold leading-[1.2] text-heading sm:text-3xl lg:text-[36px]">{stats.heading}</h2>
         <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-4">

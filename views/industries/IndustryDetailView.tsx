@@ -83,7 +83,6 @@ export function IndustryDetailView({
         image={content.whatWeDo.image}
         frame="rounded"
         imageSide="right"
-        minHeightClass="lg:min-h-[777px]"
         expandable
       />
 
@@ -101,7 +100,6 @@ export function IndustryDetailView({
         image={content.empower.image}
         frame="circle"
         imageSide="right"
-        minHeightClass="lg:min-h-[892px]"
         expandable
       />
 

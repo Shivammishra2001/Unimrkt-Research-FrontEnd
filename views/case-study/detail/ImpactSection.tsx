@@ -10,7 +10,7 @@ import type { ResolvedCaseStudyDetail } from './fallback';
  * — always renders. */
 export function ImpactSection({ impact }: { impact: ResolvedCaseStudyDetail['impact'] }) {
   return (
-    <section className="relative overflow-hidden rounded-[40px] py-16 text-white sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden rounded-[40px] py-16 text-white sm:py-20 lg:py-12">
       {impact.image && <StrapiImage image={impact.image} sizes="100vw" fill className="object-cover" />}
       <div className="absolute inset-0 bg-[#070d16]/70" aria-hidden="true" />
       <Container className="relative">

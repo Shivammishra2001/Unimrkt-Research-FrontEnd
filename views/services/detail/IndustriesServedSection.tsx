@@ -13,7 +13,7 @@ const INDUSTRY_ICONS = new Set(['car', 'heart-pulse', 'landmark', 'shopping-bag'
  * label white, and it grows ~4%. */
 export function IndustriesServedSection({ industries }: { industries: ResolvedServiceDetail['industries'] }) {
   return (
-    <section className="relative overflow-hidden bg-white py-16 lg:pb-[119px] lg:pt-[99.6px]">
+    <section className="relative overflow-hidden bg-white py-16 lg:py-10">
       <div className="pointer-events-none absolute left-1/2 top-[-150px] h-[1590px] w-[3632px] -translate-x-1/2 opacity-50" aria-hidden="true">
         <Image src="/images/services/listing/showcase-waves.webp" alt="" fill sizes="3632px" className="object-cover" />
       </div>

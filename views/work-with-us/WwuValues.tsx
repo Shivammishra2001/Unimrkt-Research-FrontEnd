@@ -19,7 +19,7 @@ const VALUE_ICONS: Record<string, string> = {
  * (cap-top 160). Figma defines no hover variant; on request the card only lifts 4px with a soft shadow and the icon disc zooms slightly — colours stay static. */
 export function WwuValues({ values }: { values: ResolvedWorkWithUs['values'] }) {
   return (
-    <section className="relative overflow-hidden border-b border-[#e6e6e2] bg-white px-4 pb-14 pt-14 sm:px-6 lg:pb-[94px] lg:pt-[87px]">
+    <section className="relative overflow-hidden border-b border-[#e6e6e2] bg-white px-4 pb-14 pt-14 sm:px-6 lg:py-10">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[832px] bg-[length:1900px_1411px] bg-[position:center_top] bg-repeat"
         style={{ backgroundImage: "url('/images/gallery/wave-pattern.png')" }}

@@ -24,7 +24,7 @@ export function QuestionsInsightsSection({ content }: { content: IndustriesPageC
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="bg-white pb-16 pt-16 lg:min-h-[1206px] lg:pb-0 lg:pt-[93.6px]">
+    <section className="bg-white pb-16 pt-16 lg:pb-0 lg:pt-10">
       <SectionHeader
         eyebrow={content.eyebrow}
         title={content.heading}

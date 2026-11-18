@@ -24,7 +24,7 @@ export function IndustryGridSection({ industries, content }: { industries: Indus
   const pageItems = industries.slice(start, start + PAGE_SIZE);
 
   return (
-    <section id="industries-grid" className="relative overflow-hidden bg-white pb-16 pt-16 lg:pb-[77.5px] lg:pt-[80px]">
+    <section id="industries-grid" className="relative overflow-hidden bg-white pb-16 pt-16 lg:py-10">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[1388px] bg-[length:1900px_1411px] bg-[position:center_top] bg-repeat"
         style={{ backgroundImage: cssImageUrl(content.backgroundImage?.src ?? '/images/industries/wave-pattern.png') }}

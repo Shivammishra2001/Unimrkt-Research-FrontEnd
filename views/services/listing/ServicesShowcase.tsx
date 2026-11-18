@@ -229,7 +229,7 @@ function TouchTrack({ categories, ctaLabel }: { categories: ServiceTreeItemModel
  * data (the five Figma draws first). */
 export function ServicesShowcase({ content, categories }: { content: ServicesListingContent['showcase']; categories: ServiceTreeItemModel[] }) {
   return (
-    <section className="relative overflow-hidden bg-white pb-16 pt-16 lg:pb-[80px] lg:pt-[93.6px]">
+    <section className="relative overflow-hidden bg-white pb-16 pt-16 lg:py-10">
       {/* Figma 1231:77243 "image 94": the wave artwork at 3544x1552, centred, 162px above the section, 50%, clipped to 1170px. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[1170px] overflow-hidden" aria-hidden="true">
         <div className="absolute left-1/2 top-[-162px] h-[1551.784px] w-[3544.175px] -translate-x-1/2 opacity-50">

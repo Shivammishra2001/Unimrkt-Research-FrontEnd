@@ -86,7 +86,7 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#f7f7f4] py-16 sm:py-20 lg:min-h-[938px] lg:pb-[74px] lg:pt-[91px]">
+    <section className="relative overflow-hidden bg-[#f7f7f4] py-16 sm:py-20 lg:py-10">
       <Image
         src="/images/industries/detail/expertise-wave-bg.jpg"
         alt=""

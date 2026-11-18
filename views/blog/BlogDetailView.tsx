@@ -126,7 +126,7 @@ export function BlogDetailView({
       </section>
 
       {/* Body — Figma: text column 1023px at x150, sidebar 512px at x1239; first line's cap-top at y980. */}
-      <section className="bg-white pb-12 pt-10 lg:pb-[65px] lg:pt-[202px]">
+      <section className="bg-white pb-12 pt-10 lg:py-10">
         <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1023px)_512px] lg:justify-between lg:gap-x-8">
             <div className="min-w-0">

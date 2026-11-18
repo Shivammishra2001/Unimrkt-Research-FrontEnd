@@ -66,7 +66,7 @@ export function CaseStudiesSection({ content }: { content: IndustriesPageContent
   };
 
   return (
-    <section className="relative bg-[#f9f9f7] py-16 lg:h-[851px] lg:pb-0 lg:pt-[77.6px]">
+    <section className="relative bg-[#f9f9f7] py-16 lg:py-10">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[168px]"
         style={{ backgroundImage: 'linear-gradient(to top, rgba(255,255,255,0) 0%, #fff 86.538%)' }}

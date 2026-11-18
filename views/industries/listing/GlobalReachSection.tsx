@@ -15,7 +15,7 @@ const ICONS = ['stat-global-network.svg', 'stat-communications.svg', 'stat-world
  * a 34/45.6px semibold value (white) and a 16/29.9px label @ 70%. */
 export function GlobalReachSection({ content }: { content: IndustriesPageContent['reach'] }) {
   return (
-    <section className="relative overflow-hidden bg-[#020a13] py-16 lg:h-[778px] lg:pb-0 lg:pt-[80.6px]">
+    <section className="relative overflow-hidden bg-[#020a13] py-16 lg:py-12">
       <Image src="/images/industries/texture.jpg" alt="" fill sizes="1900px" className="pointer-events-none object-cover opacity-[0.08] mix-blend-luminosity" />
       <div className="relative">
         <SectionHeader

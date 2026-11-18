@@ -37,7 +37,7 @@ export function RelatedCaseStudySection({
   const visible = items.slice(currentPage * PAGE_SIZE, currentPage * PAGE_SIZE + PAGE_SIZE);
 
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-10">
       <div className="mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col overflow-hidden rounded-[24px] lg:flex-row">
           <div className="flex shrink-0 flex-col justify-center gap-6 bg-gradient-to-br from-gradient-from to-gradient-to p-10 text-white lg:w-[420px] lg:rounded-l-[24px]">

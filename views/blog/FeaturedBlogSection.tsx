@@ -33,7 +33,7 @@ export function FeaturedBlogSection({ posts, heading = 'Latest Blogs', className
   if (!featured) return null;
 
   return (
-    <section className={`bg-white py-16 sm:py-20 lg:py-24 ${className}`}>
+    <section className={`bg-white py-16 sm:py-20 lg:py-10 ${className}`}>
       <Container>
         <div className="mb-8 flex items-center justify-between">
           <p className="font-nav text-[13px] font-semibold uppercase tracking-wider text-heading">{heading}</p>

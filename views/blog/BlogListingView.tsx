@@ -89,7 +89,7 @@ export function BlogListingView({
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Blog' }]} />
 
       {/* Filter tabs + 3x3 grid + pagination — wave pattern bg as on /gallery (Figma 522:4832). */}
-      <section className="relative overflow-hidden bg-white pb-16 pt-14 sm:pb-20 lg:pb-[110.6px] lg:pt-[70px]">
+      <section className="relative overflow-hidden bg-white pb-16 pt-14 sm:pb-20 lg:py-10">
         <div
           className="pointer-events-none absolute inset-0 bg-[length:1900px_1411px] bg-[position:center_top] bg-repeat"
           style={{ backgroundImage: "url('/images/gallery/wave-pattern.png')" }}

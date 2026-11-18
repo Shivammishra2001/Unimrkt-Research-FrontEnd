@@ -139,7 +139,7 @@ export function JobsSection({ jobs }: { jobs: ResolvedWorkWithUs['jobs'] }) {
 
   return (
     <>
-      <section id="open-positions" className="bg-[#f9f9f7] py-16 sm:py-20 lg:pb-[76px] lg:pt-[88px]">
+      <section id="open-positions" className="bg-[#f9f9f7] py-16 sm:py-20 lg:py-10">
       <Container>
         <div className="mx-auto text-center">
           <p className="font-sans text-[13px] font-bold uppercase leading-[1.2] tracking-[3px] text-[#cc1f1f] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">{jobs.eyebrow}</p>

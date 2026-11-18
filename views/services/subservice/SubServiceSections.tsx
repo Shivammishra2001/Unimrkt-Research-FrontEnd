@@ -72,7 +72,7 @@ export function IntroSection({ intro }: { intro: SubServiceContent['intro'] }) {
  * title, 14/26.2 description @ 70%. Hover: the card grows ~3.5%. */
 export function WhySection({ why }: { why: SubServiceContent['why'] }) {
   return (
-    <section className="px-4 py-16 sm:px-6 lg:px-8 lg:pb-[94px] lg:pt-[77px]" style={{ backgroundImage: 'linear-gradient(105deg, #6c2a4a 0%, #be2c28 100%)' }}>
+    <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-12" style={{ backgroundImage: 'linear-gradient(105deg, #6c2a4a 0%, #be2c28 100%)' }}>
       <SectionHeader eyebrow={why.eyebrow} title={why.heading} body={why.body} tone="dark" titleMaxWidth="680px" bodyMaxWidth="900px" />
       <ul className="mx-auto mt-10 grid w-full max-w-[1560px] grid-cols-1 gap-6 md:grid-cols-2 lg:mt-[29px] lg:grid-cols-3 lg:gap-[30px]">
         {why.items.map((item) => (
@@ -96,7 +96,7 @@ export function WhySection({ why }: { why: SubServiceContent['why'] }) {
  * description is always shown. */
 export function MeasureSection({ measure }: { measure: SubServiceContent['measure'] }) {
   return (
-    <section className="relative overflow-hidden bg-white px-4 py-16 sm:px-6 lg:px-8 lg:pb-[99px] lg:pt-[79px]">
+    <section className="relative overflow-hidden bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-10">
       <div className="pointer-events-none absolute left-1/2 top-[-150px] h-[1590px] w-[3632px] -translate-x-1/2 opacity-50" aria-hidden="true">
         <Image src="/images/services/listing/showcase-waves.webp" alt="" fill sizes="3632px" className="object-cover" />
       </div>
@@ -138,7 +138,7 @@ export function MeasureSection({ measure }: { measure: SubServiceContent['measur
  * 14/21.7 description. Hover: the card grows ~3.4%. */
 export function QualitySection({ quality }: { quality: SubServiceContent['quality'] }) {
   return (
-    <section className="relative overflow-hidden bg-[#070d16] px-4 py-16 text-white sm:px-6 lg:px-8 lg:pb-[129px] lg:pt-[119px]">
+    <section className="relative overflow-hidden bg-[#070d16] px-4 py-16 text-white sm:px-6 lg:px-8 lg:py-12">
       <Image src={quality.image.src} alt="" fill sizes="100vw" className="pointer-events-none object-cover object-[70%_50%] opacity-40" />
       <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: 'linear-gradient(to right, rgba(6,7,13,0.8) 0%, rgba(6,7,13,0.55) 45%, rgba(6,7,13,0) 80%)' }} aria-hidden="true" />
       <div className="relative mx-auto w-full max-w-[1540px]">
@@ -171,7 +171,7 @@ export function QualitySection({ quality }: { quality: SubServiceContent['qualit
  * 300ms -> 500ms ease here). Below lg the panels stack as cards with the title and description always shown. */
 export function TechnologySection({ technology }: { technology: SubServiceContent['technology'] }) {
   return (
-    <section className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:pb-[175px] lg:pt-[74px]">
+    <section className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-10">
       <div className="[&_h2]:whitespace-pre-line">
         <SectionHeader eyebrow={technology.eyebrow} title={technology.heading} body={technology.body} titleMaxWidth="1100px" bodyMaxWidth="969px" />
       </div>

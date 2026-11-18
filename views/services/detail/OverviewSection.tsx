@@ -16,7 +16,7 @@ export function OverviewSection({ overview }: { overview: ResolvedServiceDetail[
   const photo = overview.image ?? { ...FIGMA_PHOTO, alt: overview.heading };
 
   return (
-    <section className="bg-white py-16 lg:pb-[114px] lg:pt-[109px]">
+    <section className="bg-white py-16 lg:py-10">
       <div className="mx-auto grid w-full max-w-[1664px] items-start gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,833fr)_minmax(0,673fr)] lg:gap-x-[clamp(32px,4.95vw,94px)] lg:px-8 min-[1700px]:max-w-[1600px] min-[1700px]:px-0">
         <div className="min-w-0 lg:pt-[16.6px]">
           <p className={`${EYEBROW_CLASS} text-[#cc1f1f]`}>{overview.eyebrow}</p>

@@ -8,7 +8,7 @@ import type { ResolvedOurCompany } from './fallback';
  * opposite side). CMS-first, template-fallback — always renders. */
 export function AboutFoundingSection({ about }: { about: ResolvedOurCompany['about'] }) {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-10">
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>

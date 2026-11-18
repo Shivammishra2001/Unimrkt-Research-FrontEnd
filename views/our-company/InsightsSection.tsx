@@ -12,7 +12,7 @@ import type { ResolvedOurCompany } from './fallback';
  * template-fallback — always renders. */
 export function InsightsSection({ insights }: { insights: ResolvedOurCompany['insights'] }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to py-16 text-white sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to py-16 text-white sm:py-20 lg:py-12">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-white">{insights.eyebrow}</p>

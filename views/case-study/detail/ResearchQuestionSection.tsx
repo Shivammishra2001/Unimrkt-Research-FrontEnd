@@ -10,7 +10,7 @@ import type { ResolvedCaseStudyDetail } from './fallback';
  * template-fallback — always renders. */
 export function ResearchQuestionSection({ researchQuestion }: { researchQuestion: ResolvedCaseStudyDetail['researchQuestion'] }) {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-10">
       <Container>
         <div className="rounded-[24px] bg-[#f9f9f7] px-6 py-16 sm:px-12 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">

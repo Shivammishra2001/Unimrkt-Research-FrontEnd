@@ -7,7 +7,7 @@ import type { ResolvedOurCompany } from './fallback';
  * template-fallback — always renders. */
 export function AboutCompanySection({ aboutCompany }: { aboutCompany: ResolvedOurCompany['aboutCompany'] }) {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-10">
       <Container>
         <div className="mx-auto max-w-[850px] text-center">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-600">{aboutCompany.eyebrow}</p>

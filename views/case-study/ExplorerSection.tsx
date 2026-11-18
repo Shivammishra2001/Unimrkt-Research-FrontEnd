@@ -61,7 +61,7 @@ export function ExplorerSection({ explorer }: { explorer: ResolvedCaseStudy['exp
   }
 
   return (
-    <section id="case-studies" className="bg-white py-16 sm:py-20 lg:py-24">
+    <section id="case-studies" className="bg-white py-16 sm:py-20 lg:py-10">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-600">{explorer.eyebrow}</p>

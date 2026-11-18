@@ -19,7 +19,7 @@ export function ClientSuccessStories({ content }: { content: IndustriesPageConte
   const { ref: trackRef, active: activeIndex, onScroll, goTo } = useSnapTrack<HTMLUListElement>();
 
   return (
-    <section className="relative bg-white py-16 lg:h-[821px] lg:pb-0 lg:pt-[99.6px]">
+    <section className="relative bg-white py-16 lg:py-10">
       {/* Figma 1384:27212 "image 74": 1900x697 wave artwork at 6% opacity, mix-blend darken, starting 696px into the section and
           straddling its lower edge into the blogs band below. The page's "Background waves image" from Strapi when set
           (seed:approved-media replaced the wrong placeholder with this PNG), else the local copy. */}

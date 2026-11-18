@@ -50,7 +50,7 @@ export function EnquiryForm({
   return (
     // Figma 483:7166 (1900x717): #0f1825 base, photo at 30%, a 478px #06070d vignette at 50%; text column
     // at x264 and the 540x590 glass card at x1098 → a 1374px content box.
-    <section className="relative overflow-hidden bg-[#0f1825] py-16 text-white sm:py-20 lg:min-h-[717px] lg:pb-[64px] lg:pt-[63px]">
+    <section className="relative overflow-hidden bg-[#0f1825] py-16 text-white sm:py-20 lg:py-12">
       {image && (
         <div className="absolute -left-[11.05%] -top-[2.4%] h-[104.6%] w-[118.4%] opacity-30" aria-hidden="true">
           <StrapiImage image={image} sizes="100vw" fill className="object-cover" />

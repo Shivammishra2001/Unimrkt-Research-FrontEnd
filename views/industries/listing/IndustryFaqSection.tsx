@@ -24,7 +24,7 @@ export function IndustryFaqSection({ content, titleClassName = 'mt-[43px]' }: { 
 
   return (
     // min-h, not h: the node's 986px fits /industries' rows; /services (Figma 1231:77069) has eight, ending 67px above the next section.
-    <section className="relative overflow-hidden bg-white pb-16 pt-16 lg:min-h-[986px] lg:pb-[67px] lg:pt-[43px]">
+    <section className="relative overflow-hidden bg-white pb-16 pt-16 lg:py-10">
       {/* Figma 1384:27167: the same 1900x719 clip as the home FAQ (world map 1377x787 at -71px) @ 8%. */}
       <div className="pointer-events-none absolute inset-x-0 top-[93px] h-[719px] overflow-hidden" aria-hidden="true">
         <div className="absolute left-1/2 top-[-71px] h-[787px] w-[1377px] -translate-x-1/2 opacity-[0.08]">

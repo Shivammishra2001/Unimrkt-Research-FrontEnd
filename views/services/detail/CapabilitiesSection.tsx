@@ -66,7 +66,7 @@ function CapabilityCard({ item, priority }: { item: ResolvedCapability; priority
  * Cards: the service's CMS features (photo + title), the hover copy, and an arrow to the matching sub-service. */
 export function CapabilitiesSection({ capabilities }: { capabilities: ResolvedServiceDetail['capabilities'] }) {
   return (
-    <section className="bg-[#f9f9f7] py-16 lg:pb-[95px] lg:pt-[75.6px]">
+    <section className="bg-[#f9f9f7] py-16 lg:py-10">
       <SectionHeader
         eyebrow={capabilities.eyebrow}
         title={capabilities.heading}

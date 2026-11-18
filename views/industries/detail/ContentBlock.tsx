@@ -14,8 +14,6 @@ interface ContentBlockProps {
    * 'circle' = node 384:6475 (circular frame, translucent ring). */
   frame: 'rounded' | 'circle';
   imageSide: 'left' | 'right';
-  /** Desktop section height from the Figma frame, e.g. 'lg:min-h-[777px]'. */
-  minHeightClass?: string;
   /** Long body copy starts collapsed with a Read More / Read Less toggle ("What We Do", "{Title} Research"). */
   expandable?: boolean;
 }
@@ -24,7 +22,7 @@ interface ContentBlockProps {
  * 384:6360-6366, 579:8010) and the mirrored "{Title} Research" block
  * (384:6361-6364, 384:6475). Every field is CMS-driven
  * (`whatWeDo*`/`empower*`); renders nothing without a `heading`. */
-export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageSide, minHeightClass, expandable = false }: ContentBlockProps) {
+export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageSide, expandable = false }: ContentBlockProps) {
   if (!heading) return null;
 
   const imageBlock = image && (
@@ -60,7 +58,7 @@ export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageS
   const bodyClass = `${frame === 'circle' ? 'max-w-[808px]' : 'max-w-[833px]'} font-sans text-[16px] leading-[1.9] text-[#02060e]/80`;
 
   return (
-    <section className={`flex items-center bg-white py-16 sm:py-20 lg:items-start ${frame === 'circle' ? 'lg:pb-[97px]' : 'lg:pb-[103px]'} lg:pt-[72px] ${minHeightClass ?? ''}`}>
+    <section className="flex items-center bg-white py-16 sm:py-20 lg:items-start lg:py-10">
       <Container className="w-full max-w-[1600px] min-[1700px]:px-0">
         <div className={`grid gap-12 ${frame === 'circle' ? 'lg:items-start' : 'items-center'} ${frame === 'circle' ? 'lg:grid-cols-[minmax(0,884px)_minmax(0,660px)] lg:gap-x-0' : 'lg:grid-cols-[minmax(0,833px)_minmax(0,686px)] lg:gap-x-16'}`}>
           <div className={`${imageSide === 'right' ? 'lg:order-1' : 'lg:order-2'} ${frame === 'circle' ? 'lg:pt-[96px]' : ''}`}>

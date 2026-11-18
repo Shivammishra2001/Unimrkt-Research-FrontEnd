@@ -27,7 +27,7 @@ export function PrivacyPolicyView({ settings }: { settings: PrivacyPolicyPageSet
   return (
     <>
       <HeroSection hero={content.hero} />
-      <section className="overflow-x-clip bg-white px-4 pb-16 sm:px-6 lg:pb-[117px] min-[1500px]:px-0">
+      <section className="overflow-x-clip bg-white px-4 pb-16 sm:px-6 lg:pb-10 min-[1500px]:px-0">
         <div className="mx-auto w-full max-w-[1461px]">
           <IntroSection introBody={content.introBody} />
           <TocSection toc={content.toc} anchors={anchors} />

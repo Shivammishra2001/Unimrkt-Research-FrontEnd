@@ -46,7 +46,7 @@ export function IndustriesSlider({ content, industries }: { content: ServicesLis
   if (industries.length === 0) return null;
 
   return (
-    <section className="relative bg-white pb-12 pt-12 lg:pb-[65.5px] lg:pt-[77.6px]">
+    <section className="relative bg-white pb-12 pt-12 lg:py-10">
       <SectionHeader eyebrow={content.eyebrow} title={content.heading} titleMaxWidth="1100px" bodyMaxWidth="1252px" className="px-4 sm:px-6" body={<div className="lg:mt-[6px]">{content.body}</div>} />
       <div className="mx-auto mt-[45px] w-full max-w-[1624px] min-[1700px]:max-w-[1560px]">
         {/* Vertical padding (cancelled by the negative margin) keeps the card shadows and hover lift unclipped by the scroller. */}

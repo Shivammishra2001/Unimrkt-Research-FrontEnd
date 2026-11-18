@@ -21,7 +21,7 @@ const WHY_ICONS: Record<string, string> = {
  * @ 80% beneath. Six across from 1440px, three below that, two on phones. */
 export function WhyChooseBand({ content }: { content: ServicesListingContent['why'] }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to px-4 pb-16 pt-14 text-white sm:px-6 lg:px-8 lg:pb-[101px] lg:pt-[66.6px]">
+    <section className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to px-4 pb-16 pt-14 text-white sm:px-6 lg:px-8 lg:py-12">
       {/* Figma 1231:77275 is the plain #6c2a4a -> #be2c28 gradient; its wallpaper group (1231:77279) sits at x=1900, outside the
           frame, so it never renders — no overlay. */}
       <div className="relative mx-auto w-full max-w-[1600px]">

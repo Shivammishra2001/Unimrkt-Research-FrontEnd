@@ -25,7 +25,7 @@ const ICONS = [
  * title 22/29.5px #04264e; body 14/26.18px @ 70%. */
 export function BeyondIndustriesSection({ content }: { content: IndustriesPageContent['beyond'] }) {
   return (
-    <section className="relative bg-[#f9f9f7] pb-16 pt-16 lg:h-[1728px] lg:pb-0 lg:pt-[96px]">
+    <section className="relative bg-[#f9f9f7] pb-16 pt-16 lg:py-10">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[250px]"
         style={{ backgroundImage: 'linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%)' }}

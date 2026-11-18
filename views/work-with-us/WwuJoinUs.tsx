@@ -48,7 +48,7 @@ export function WwuJoinUs({ joinUs, disclaimer }: { joinUs: ResolvedWorkWithUs['
   const tail = split >= 0 ? disclaimer.heading.slice(split + 1).trim() : disclaimer.heading;
 
   return (
-    <section className="overflow-x-hidden bg-white px-4 py-14 sm:px-6 lg:pb-[39px] lg:pt-[65px]">
+    <section className="overflow-x-hidden bg-white px-4 py-14 sm:px-6 lg:py-10">
       <div className="mx-auto w-full max-w-[1401px]">
         <h2 className={heading}>{joinUs.heading}</h2>
         <p className={`${body} mt-5 lg:mt-[34px]`}>{linkEmail(withParagraphs(joinUs.body))}</p>

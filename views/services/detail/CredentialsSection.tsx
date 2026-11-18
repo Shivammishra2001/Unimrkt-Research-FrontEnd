@@ -15,7 +15,7 @@ export const CRED_ICONS = new Set([
  * label (cap +189). Five across from 1280px, three on laptops/tablets, two on phones. */
 export function CredentialsSection({ credentials }: { credentials: ResolvedServiceDetail['credentials'] }) {
   return (
-    <section className="relative overflow-hidden bg-[#070d16] px-4 pb-16 pt-14 text-white sm:px-6 lg:px-8 lg:pb-[90px] lg:pt-[64px]">
+    <section className="relative overflow-hidden bg-[#070d16] px-4 pb-16 pt-14 text-white sm:px-6 lg:px-8 lg:py-12">
       <div className="pointer-events-none absolute left-[-20.58%] top-[-3.84%] h-[117.4%] w-[141.2%] opacity-20" aria-hidden="true">
         <Image src="/images/services/detail/why-unimrkt-bg.webp" alt="" fill sizes="141vw" className="object-cover" />
       </div>

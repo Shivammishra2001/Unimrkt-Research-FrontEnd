@@ -12,7 +12,7 @@ export function BottomCtaSection({ bottomCta }: { bottomCta: ResolvedOurTeam['bo
   const bodyLines = bottomCta.body.split('\n');
 
   return (
-    <section className="bg-white px-4 pb-10 pt-16 sm:px-6 lg:px-10 lg:pt-[97px]">
+    <section className="bg-white px-4 pb-10 pt-16 sm:px-6 lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[1740px]">
         <div className="relative flex min-h-[455px] flex-col items-center overflow-hidden rounded-[40px] bg-[#101723] px-6 pb-16 pt-16 text-center lg:pb-[106px] lg:pt-[108px]">
           <Image

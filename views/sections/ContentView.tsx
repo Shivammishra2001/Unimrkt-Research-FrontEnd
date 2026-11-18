@@ -170,7 +170,7 @@ export function ContentView({
       <Section
         theme={block.theme}
         anchorId={block.anchorId}
-        className="!bg-[#f7f7f4] lg:min-h-[550px] lg:!pb-0 lg:!pt-[65.5px]"
+        className="!bg-[#f7f7f4] lg:!py-10"
       >
         <Container className="text-center">
           <Heading as="h2" size="h2">

@@ -33,14 +33,14 @@ export function MethodologiesSection({ methodologies }: { methodologies: Resolve
   }
 
   return (
-    <section className="relative bg-white pb-16 pt-4 text-white sm:pb-20 lg:min-h-[783px] lg:bg-[linear-gradient(180deg,#f9f9f7_173px,#fff_304px)] lg:pb-0 lg:pt-0">
+    <section className="relative bg-white pb-16 pt-4 text-white sm:pb-20 lg:bg-[linear-gradient(180deg,#f9f9f7_173px,#fff_304px)] lg:pb-0 lg:pt-0">
       {/* Figma 384:6430: an inset 1742x557 rounded card (not full-bleed); the cards below hang 199px past its bottom edge. */}
       <div className="relative mx-auto w-full max-w-[1742px] px-4 sm:px-6 lg:px-0">
         <div className="absolute inset-x-4 inset-y-0 overflow-hidden rounded-3xl sm:inset-x-6 lg:inset-x-0 lg:bottom-auto lg:h-[557px] lg:rounded-[40px]" aria-hidden="true">
           <Image src="/images/industries/detail/methodology-bg.jpg" alt="" fill sizes="1742px" className="object-cover" />
           <div className="absolute inset-0 bg-[#05101a]/85" />
         </div>
-        <div className="relative px-6 pt-14 sm:px-10 lg:px-[72px] lg:pt-[105px]">
+        <div className="relative px-6 pt-14 sm:px-10 lg:px-[72px] lg:pt-10">
           <div className="mx-auto max-w-[923px] text-center">
             <p className="font-sans text-[13px] font-bold uppercase tracking-[0.2em] text-white">{methodologies.eyebrow}</p>
             <h2 className="mt-3 text-3xl font-semibold leading-[1.2] text-white sm:text-4xl lg:text-[44px] lg:leading-[1.2] lg:tracking-[-1px]">

@@ -9,7 +9,7 @@ import type { ServicesListingContent } from './content';
  * the 14/26.2px body @ 70% (cap +91, 580px). Cards grow with their copy instead of clipping it. */
 export function CoverageSection({ content }: { content: ServicesListingContent['coverage'] }) {
   return (
-    <section className="relative bg-white pb-12 pt-16 lg:pb-[60px] lg:pt-[81.6px]">
+    <section className="relative bg-white pb-12 pt-16 lg:py-10">
       <div className="relative">
         <SectionHeader eyebrow={content.eyebrow} title={content.heading} titleMaxWidth="1100px" bodyMaxWidth="1354px" className="px-4 sm:px-6" body={<div className="lg:mt-[10px]">{content.body}</div>} />
         <ul className="mx-auto mt-10 grid w-full max-w-[1664px] grid-cols-1 items-stretch gap-[26px] px-4 sm:px-6 md:grid-cols-2 lg:mt-[50px] lg:px-8 min-[1700px]:max-w-[1600px] min-[1700px]:px-0">

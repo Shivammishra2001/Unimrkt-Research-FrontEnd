@@ -8,7 +8,7 @@ import type { ResolvedCaseStudyDetail } from './fallback';
  * paragraph. CMS-first, template-fallback — always renders. */
 export function ChallengeSection({ challenge, photoAlt }: { challenge: ResolvedCaseStudyDetail['challenge']; photoAlt: string }) {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-10">
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="relative mx-auto aspect-square w-full max-w-[524px] shrink-0 rounded-full bg-[#fbeae9]">
