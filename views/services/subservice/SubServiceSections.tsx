@@ -73,7 +73,7 @@ export function IntroSection({ intro }: { intro: SubServiceContent['intro'] }) {
 export function WhySection({ why }: { why: SubServiceContent['why'] }) {
   return (
     <section className="px-4 py-16 sm:px-6 lg:px-8 lg:pb-[94px] lg:pt-[77px]" style={{ backgroundImage: 'linear-gradient(105deg, #6c2a4a 0%, #be2c28 100%)' }}>
-      <SectionHeader eyebrow={why.eyebrow} title={why.heading} tone="dark" titleMaxWidth="680px" />
+      <SectionHeader eyebrow={why.eyebrow} title={why.heading} body={why.body} tone="dark" titleMaxWidth="680px" bodyMaxWidth="900px" />
       <ul className="mx-auto mt-10 grid w-full max-w-[1560px] grid-cols-1 gap-6 md:grid-cols-2 lg:mt-[29px] lg:grid-cols-3 lg:gap-[30px]">
         {why.items.map((item) => (
           <li

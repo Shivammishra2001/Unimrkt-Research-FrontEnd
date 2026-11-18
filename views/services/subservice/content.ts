@@ -1,5 +1,6 @@
 import type { ImageModel, LinkModel, FaqItemModel } from '@/models/domain';
 import type { ServiceDetail } from '@/models/service';
+import type { IndustryDetailCardModel } from '@/models/industry';
 
 /**
  * Level-3 sub-service template (a service with a parent, e.g. Services > Primary Research > Telephonic Surveys) —
@@ -25,7 +26,7 @@ export interface SubServiceContent {
   /** `icon` = a template SVG path; `iconIdentifier` = a CMS credential icon key (rendered like the Level-2 credentials). */
   stats: { heading: string; items: Array<{ value: string; label: string; icon?: string; iconIdentifier?: string }> };
   intro: { eyebrow: string; heading: string; body: string; image: ImageModel };
-  why: { eyebrow: string; heading: string; items: SubCard[] };
+  why: { eyebrow: string; heading: string; body?: string; items: SubCard[] };
   process: { eyebrow: string; heading: string; steps: SubCard[] };
   measure: { eyebrow: string; heading: string; body: string; items: SubCard[] };
   quality: { eyebrow: string; heading: string; body: string; image: ImageModel; items: SubCard[] };
@@ -40,6 +41,15 @@ const PROCESS_ICONS = ['process-understand', 'process-design', 'process-recruit'
 /** CMS iconIdentifier keys that name the Level-3 Figma pictograms (public/icons/services/telephonic-surveys/{key}.svg). */
 const STAT_KEYS = new Set(['stat-interviews', 'stat-markets', 'stat-languages', 'stat-quality']);
 const PROCESS_KEYS = new Set(['process-understand', 'process-design', 'process-recruit', 'process-interview']);
+const WHY_KEYS = new Set(['why-reach', 'why-speed', 'why-human', 'why-language', 'why-engagement', 'why-scalable']);
+const QUALITY_KEYS = new Set(['quality-training', 'quality-sample', 'quality-monitoring', 'quality-responses', 'quality-checks', 'quality-security']);
+
+/** Card icon: an uploaded icon wins, then a CMS key naming a Figma pictogram, then the template icon for its position. */
+function iconFor(card: IndustryDetailCardModel, keys: Set<string>, fallback: string[], i: number): string {
+  if (card.icon?.src) return card.icon.src;
+  if (card.iconIdentifier && keys.has(card.iconIdentifier)) return `${ICON}/${card.iconIdentifier}.svg`;
+  return fallback[i % fallback.length];
+}
 const QUALITY_ICONS =['quality-training', 'quality-sample', 'quality-monitoring', 'quality-responses', 'quality-checks', 'quality-security'].map((n) => `${ICON}/${n}.svg`);
 
 /** Research areas, photos and copy are generic to every sub-service (Figma 859:14429-14507). Figma's own copy repeats
@@ -253,9 +263,13 @@ const paragraphsOf = (text: string) =>
  *   stats       <- credentialsHeading + credentials (value, label, iconIdentifier)
  *   intro       <- overviewEyebrow / overviewHeading / overviewBody / overviewImage
  *   process     <- methodologiesEyebrow / methodologiesHeading + methodologies (title, description, icon)
+ *   why         <- whyEyebrow / whyHeading / whyBody + whyItems (title, description, icon | why-* key)
+ *   measure     <- measureEyebrow / measureHeading / measureBody + measureItems (title, description, image)
+ *   quality     <- qualityEyebrow / qualityHeading / qualityBody / qualityImage + qualityItems (icon | quality-* key)
+ *   technology  <- techEyebrow / techHeading / techBody + techPanels (title, description, image)
  *   faq         <- faqItems
  *   about       <- aboutEyebrow / aboutHeading / aboutBody
- *   why, measure, quality, technology have no Service fields yet, so they always use the template copy.
+ * A card without its own image / icon keeps the template's one for its position, so the layout never breaks.
  */
 export function resolveSubService(service: ServiceDetail): SubServiceContent {
   const telephonic = service.slug === 'telephonic-surveys';
@@ -304,6 +318,43 @@ export function resolveSubService(service: ServiceDetail): SubServiceContent {
                 (m.iconIdentifier && PROCESS_KEYS.has(m.iconIdentifier) ? `${ICON}/${m.iconIdentifier}.svg` : PROCESS_ICONS[i % PROCESS_ICONS.length]),
             }))
           : c.process.steps,
+    },
+    why: {
+      eyebrow: service.whyEyebrow || c.why.eyebrow,
+      heading: service.whyHeading || c.why.heading,
+      body: service.whyBody || c.why.body,
+      items:
+        service.whyItems.length > 0
+          ? service.whyItems.map((m, i) => ({ title: m.title, body: m.description ?? '', icon: iconFor(m, WHY_KEYS, WHY_ICONS, i) }))
+          : c.why.items,
+    },
+    measure: {
+      eyebrow: service.measureEyebrow || c.measure.eyebrow,
+      heading: service.measureHeading || c.measure.heading,
+      body: service.measureBody || c.measure.body,
+      items:
+        service.measureItems.length > 0
+          ? service.measureItems.map((m, i) => ({ title: m.title, body: m.description ?? '', image: m.image ?? MEASURE[i % MEASURE.length].image }))
+          : c.measure.items,
+    },
+    quality: {
+      eyebrow: service.qualityEyebrow || c.quality.eyebrow,
+      heading: service.qualityHeading || c.quality.heading,
+      body: service.qualityBody || c.quality.body,
+      image: service.qualityImage ?? c.quality.image,
+      items:
+        service.qualityItems.length > 0
+          ? service.qualityItems.map((m, i) => ({ title: m.title, body: m.description ?? '', icon: iconFor(m, QUALITY_KEYS, QUALITY_ICONS, i) }))
+          : c.quality.items,
+    },
+    technology: {
+      eyebrow: service.techEyebrow || c.technology.eyebrow,
+      heading: service.techHeading || c.technology.heading,
+      body: service.techBody || c.technology.body,
+      panels:
+        service.techPanels.length > 0
+          ? service.techPanels.map((m, i) => ({ title: m.title, body: m.description ?? '', image: m.image ?? TECH_PANELS[i % TECH_PANELS.length].image }))
+          : c.technology.panels,
     },
     faq: { heading: c.faq.heading, items: service.faqItems.length > 0 ? service.faqItems : c.faq.items },
     about: {

@@ -94,6 +94,25 @@ export interface StrapiServiceDetail extends StrapiServiceSummary {
   aboutEyebrow: string | null;
   aboutHeading: string | null;
   aboutBody: string | null;
+
+  // Level-3 sub-service sections (Figma 859:15301). Optional so an older backend without them still type-checks.
+  whyEyebrow?: string | null;
+  whyHeading?: string | null;
+  whyBody?: string | null;
+  whyItems?: StrapiIndustryDetailCard[];
+  measureEyebrow?: string | null;
+  measureHeading?: string | null;
+  measureBody?: string | null;
+  measureItems?: StrapiIndustryDetailCard[];
+  qualityEyebrow?: string | null;
+  qualityHeading?: string | null;
+  qualityBody?: string | null;
+  qualityImage?: StrapiMedia | null;
+  qualityItems?: StrapiIndustryDetailCard[];
+  techEyebrow?: string | null;
+  techHeading?: string | null;
+  techBody?: string | null;
+  techPanels?: StrapiIndustryDetailCard[];
 }
 
 export interface StrapiServiceSlug {
@@ -195,6 +214,25 @@ export interface ServiceDetail extends ServiceSummary {
   aboutEyebrow?: string;
   aboutHeading?: string;
   aboutBody?: string;
+
+  // Level-3 sub-service sections (Figma 859:15301).
+  whyEyebrow?: string;
+  whyHeading?: string;
+  whyBody?: string;
+  whyItems: IndustryDetailCardModel[];
+  measureEyebrow?: string;
+  measureHeading?: string;
+  measureBody?: string;
+  measureItems: IndustryDetailCardModel[];
+  qualityEyebrow?: string;
+  qualityHeading?: string;
+  qualityBody?: string;
+  qualityImage?: ImageModel;
+  qualityItems: IndustryDetailCardModel[];
+  techEyebrow?: string;
+  techHeading?: string;
+  techBody?: string;
+  techPanels: IndustryDetailCardModel[];
 }
 
 export interface ServiceSlugModel {

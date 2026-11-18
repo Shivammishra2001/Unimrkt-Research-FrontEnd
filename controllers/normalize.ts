@@ -559,6 +559,24 @@ export function normalizeServiceDetail(res: StrapiServiceDetailResponse): Servic
     aboutEyebrow: data.aboutEyebrow ?? undefined,
     aboutHeading: data.aboutHeading ?? undefined,
     aboutBody: data.aboutBody ?? undefined,
+
+    whyEyebrow: data.whyEyebrow ?? undefined,
+    whyHeading: data.whyHeading ?? undefined,
+    whyBody: data.whyBody ?? undefined,
+    whyItems: (data.whyItems ?? []).map(normalizeIndustryDetailCard),
+    measureEyebrow: data.measureEyebrow ?? undefined,
+    measureHeading: data.measureHeading ?? undefined,
+    measureBody: data.measureBody ?? undefined,
+    measureItems: (data.measureItems ?? []).map(normalizeIndustryDetailCard),
+    qualityEyebrow: data.qualityEyebrow ?? undefined,
+    qualityHeading: data.qualityHeading ?? undefined,
+    qualityBody: data.qualityBody ?? undefined,
+    qualityImage: toImageModel(data.qualityImage ?? null, data.qualityHeading ?? data.title),
+    qualityItems: (data.qualityItems ?? []).map(normalizeIndustryDetailCard),
+    techEyebrow: data.techEyebrow ?? undefined,
+    techHeading: data.techHeading ?? undefined,
+    techBody: data.techBody ?? undefined,
+    techPanels: (data.techPanels ?? []).map(normalizeIndustryDetailCard),
   };
 }
 
