@@ -9,7 +9,19 @@ const DOT_COUNT = 3;
  * and the last one is cropped by the frame), followed by the 3-dot pager
  * (a 32x15 pill + two 15px circles). The row's left edge lines up with the
  * 1600px content column. */
-export function ScrollCards({ children, label, tight = false }: { children: React.ReactNode; label: string; /** Figma 384:6214: pager sits 37px under the cards. */ tight?: boolean }) {
+export function ScrollCards({
+  children,
+  label,
+  tight = false,
+  onPage,
+}: {
+  children: React.ReactNode;
+  label: string;
+  /** Figma 384:6214: pager sits 37px under the cards. */
+  tight?: boolean;
+  /** Called once a pager-dot scroll has settled, with the page and the track (Expertise opens that page's first card). */
+  onPage?: (page: number, track: HTMLUListElement) => void;
+}) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
   const [scrollable, setScrollable] = useState(true);
@@ -42,6 +54,7 @@ export function ScrollCards({ children, label, tight = false }: { children: Reac
     const el = trackRef.current;
     if (!el) return;
     el.scrollTo({ left: ((el.scrollWidth - el.clientWidth) * i) / (DOT_COUNT - 1), behavior: 'smooth' });
+    if (onPage) window.setTimeout(() => onPage(i, el), 650);
   }
 
   return (

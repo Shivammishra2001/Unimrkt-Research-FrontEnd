@@ -10,9 +10,10 @@ import type { ResolvedIndustryDetail } from './fallback';
  * raster over it at 6% (luminosity); the five 349x520 cards (`border-[#e0e0df]`, r24, 6/6/54
  * shadow) slide off the right edge of the frame at 1700px+; below that a whole number of cards fits
  * the view (1/2/3/4 at base/md/lg/xl). The 3-dot pager (#b63a40 pill) sits below.
- * Each card's `description` is its sub-service list (one per line): hovering / focusing /
- * tapping a card with a list widens it to 540px and fades the list in; cards without a list
- * stay as drawn. CMS-first, template-fallback — always renders, never collapses. */
+ * Each card's `description` is its sub-service list (one per line). Card 01 opens by default; hovering / focusing /
+ * tapping another card with a list switches to it (widens to 366/560px, fades the list in). Leaving the strip with a
+ * mouse returns to card 01 (or the first visible card of the current page); touch keeps the last tapped card. Cards
+ * without a list stay as drawn. CMS-first, template-fallback — always renders, never collapses. */
 function parseSubServices(text?: string): string[] {
   return (text ?? '')
     .split('\n')
@@ -39,10 +40,29 @@ function CheckIcon() {
   );
 }
 
+/** Desktop pointer (hover-capable, lg+): leaving the strip returns to the default card. Touch keeps the last tapped one. */
+const canHover = () => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
+
 export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetail['expertise'] }) {
-  // Closed by default: every card starts collapsed and only the hovered / focused / tapped one opens.
-  const [active, setActive] = useState<number | null>(null);
+  // Card 01 (the first card that has a checklist) starts open, so visitors see the expanded state straight away.
+  const defaultIndex = expertise.items.findIndex((item) => parseSubServices(item.description).length > 0);
+  const [active, setActive] = useState<number | null>(defaultIndex >= 0 ? defaultIndex : null);
   const heading = expertise.heading;
+
+  /** The first card (with a checklist) whose left edge is inside the track's view — the "default" card for the page
+   * the row is currently scrolled to. On the first page that is card 01, and the row is put back at its start. */
+  function openFirstVisible(track: HTMLUListElement) {
+    const max = track.scrollWidth - track.clientWidth;
+    if (max <= 1 || track.scrollLeft <= max / 4) {
+      if (track.scrollLeft > 1) track.scrollTo({ left: 0, behavior: 'smooth' });
+      setActive(defaultIndex >= 0 ? defaultIndex : null);
+      return;
+    }
+    const left = track.getBoundingClientRect().left + parseFloat(getComputedStyle(track).paddingLeft);
+    const cards = Array.from(track.children) as HTMLElement[];
+    const i = cards.findIndex((li, idx) => li.getBoundingClientRect().left >= left - 4 && parseSubServices(expertise.items[idx]?.description).length > 0);
+    if (i >= 0) setActive(i);
+  }
 
   // Opening a card near the right edge widens it past the view; slide the track just enough to keep the whole open
   // card visible — once now (towards its predicted final width) and once after the 700ms width tween settles.
@@ -86,8 +106,14 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
           </h2>
         </header>
 
-        <div className="mt-10 lg:mt-9">
-          <ScrollCards label="Expertise areas">
+        <div
+          className="mt-10 lg:mt-9"
+          onMouseLeave={(e) => {
+            const track = e.currentTarget.querySelector('ul');
+            if (track && canHover()) openFirstVisible(track);
+          }}
+        >
+          <ScrollCards label="Expertise areas" onPage={(_, track) => openFirstVisible(track)}>
             {expertise.items.map((item, i) => {
               const services = parseSubServices(item.description);
               const hasList = services.length > 0;
@@ -102,24 +128,20 @@ export function ExpertiseStrip({ expertise }: { expertise: ResolvedIndustryDetai
                   className="shrink-0 transition-[width] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[width] [--card-w:100%] md:[--card-w:calc((100%_-_32px)/2)] lg:[--card-w:calc((100%_-_64px)/3)] xl:[--card-w:calc((100%_-_96px)/4)] min-[1700px]:[--card-w:349px]"
                   style={{ width: isOpen && wide ? 'max(var(--card-w), min(560px, 100%))' : isOpen ? 'max(var(--card-w), min(366px, 100%))' : 'var(--card-w)' }}
                   onMouseEnter={(e) => hasList && active !== i && openCard(i, e.currentTarget, wide)}
-                  onMouseLeave={() => setActive(null)}
                 >
                   <div
                     role={hasList ? 'button' : undefined}
                     tabIndex={hasList ? 0 : undefined}
                     aria-expanded={hasList ? isOpen : undefined}
                     onFocus={(e) => hasList && active !== i && e.currentTarget.parentElement && openCard(i, e.currentTarget.parentElement, wide)}
-                    onBlur={() => setActive(null)}
+                    // One card is always open: tapping / pressing a closed card switches to it; the open card stays open.
                     onClick={(e) => {
-                      if (!hasList) return;
-                      if (active === i) setActive(null);
-                      else if (e.currentTarget.parentElement) openCard(i, e.currentTarget.parentElement, wide);
+                      if (hasList && active !== i && e.currentTarget.parentElement) openCard(i, e.currentTarget.parentElement, wide);
                     }}
                     onKeyDown={(e) => {
                       if (hasList && (e.key === 'Enter' || e.key === ' ')) {
                         e.preventDefault();
-                        if (active === i) setActive(null);
-                        else if (e.currentTarget.parentElement) openCard(i, e.currentTarget.parentElement, wide);
+                        if (active !== i && e.currentTarget.parentElement) openCard(i, e.currentTarget.parentElement, wide);
                       }
                     }}
                     // Phones: the card may grow past 520px so a long single-column checklist is never cut off.
