@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { EYEBROW_CLASS, H2_CLASS, BODY_CLASS, SectionHeader } from '@/views/industries/listing/shared';
 import { lato } from '@/views/services/fonts';
+import { CRED_ICONS } from '@/views/services/detail/CredentialsSection';
+import { DetailCardIcon } from '@/views/ui/detail/DetailCardIcon';
 import type { SubServiceContent } from './content';
 
 const EASE = 'ease-[cubic-bezier(0.22,1,0.36,1)]';
@@ -13,13 +15,21 @@ export function StatsSection({ stats }: { stats: SubServiceContent['stats'] }) {
     <section className="bg-[#f9f9f7] px-4 py-12 sm:px-6 lg:px-8 lg:pb-[59px] lg:pt-[42px]">
       <h2 className="text-center font-sans text-[22px] font-semibold capitalize leading-[1.2] text-[#02060e] sm:text-[24px]">{stats.heading}</h2>
       <ul className="mx-auto mt-8 grid w-full max-w-[1370px] grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:mt-[25px] lg:grid-cols-4 lg:gap-[30px]">
-        {stats.items.map((item) => (
+        {stats.items.map((item, i) => (
           <li
-            key={item.label}
+            key={`${item.label}-${i}`}
             className="flex min-h-[220px] flex-col items-center rounded-[19px] border border-[#e2e2e0] bg-white/65 px-4 pb-8 pt-[30px] text-center backdrop-blur-[24px] lg:min-h-[248px]"
           >
             <span className="flex size-[80px] shrink-0 items-center justify-center rounded-full border border-[#a3282a]/10 bg-white/80">
-              <Image src={item.icon} alt="" width={44} height={44} className="size-[44px]" />
+              {item.icon ? (
+                <Image src={item.icon} alt="" width={44} height={44} className="size-[44px]" />
+              ) : item.iconIdentifier === 'rupee' ? (
+                <span className="font-sans text-[34px] font-medium leading-none text-[#292d32]">₹</span>
+              ) : item.iconIdentifier && CRED_ICONS.has(item.iconIdentifier) ? (
+                <Image src={`/icons/services/detail/cred-${item.iconIdentifier}.svg`} alt="" width={44} height={44} className="size-[44px]" />
+              ) : (
+                <DetailCardIcon iconIdentifier={item.iconIdentifier} className="size-[44px] text-[#a3282a]" />
+              )}
             </span>
             <p className="mt-[13px] font-sans text-[22px] font-bold leading-[1.2] text-[#04264e] sm:text-[25px]">{item.value}</p>
             <p className="mt-[6px] font-sans text-[16px] font-normal leading-[1.4] text-[#02060e]">{item.label}</p>

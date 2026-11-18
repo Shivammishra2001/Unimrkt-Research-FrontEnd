@@ -4,7 +4,7 @@ import type { ResolvedServiceDetail } from './fallback';
 
 /** iconIdentifier -> the vuesax icon Figma draws on that card (505:9013-9198), 44px #292d32. 'rupee' is a ₹ glyph in
  * the node (505:9073), so it is set as text. */
-const CRED_ICONS = new Set([
+export const CRED_ICONS = new Set([
   'profile-2user', 'clock', 'clipboard-tick', 'note', 'call', 'shield-tick', 'medal-star', 'archive-book', 'people', 'headphone', 'user-tag', 'global', 'security-user', 'star',
 ]);
 

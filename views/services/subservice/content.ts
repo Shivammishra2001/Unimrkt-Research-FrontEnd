@@ -3,10 +3,9 @@ import type { ServiceDetail } from '@/models/service';
 
 /**
  * Level-3 sub-service template (a service with a parent, e.g. Services > Primary Research > Telephonic Surveys) —
- * Figma node 859:15301. Telephonic Surveys gets the node's exact copy and media; any other sub-service gets the same
- * structure with title-interpolated copy. From the CMS it takes only what is genuinely the page's own: title, parent
- * (breadcrumb) and the hero / intro photos when set. The other Service fields hold the Level-2 template's seeded
- * boilerplate (e.g. the 15 Primary Research credentials), which mean something different here, so they are not used.
+ * Figma node 859:15301. Strapi content wins wherever the Service has it (see resolveSubService); the copy below is only
+ * the fallback for empty fields — Figma's exact copy for Telephonic Surveys, title-interpolated copy for every other
+ * sub-service.
  */
 
 const IMG = '/images/services/telephonic-surveys';
@@ -23,7 +22,8 @@ export interface SubCard {
 
 export interface SubServiceContent {
   hero: { eyebrow: string; heading: string; subheading: string; image: ImageModel; actions: LinkModel[] };
-  stats: { heading: string; items: Array<{ value: string; label: string; icon: string }> };
+  /** `icon` = a template SVG path; `iconIdentifier` = a CMS credential icon key (rendered like the Level-2 credentials). */
+  stats: { heading: string; items: Array<{ value: string; label: string; icon?: string; iconIdentifier?: string }> };
   intro: { eyebrow: string; heading: string; body: string; image: ImageModel };
   why: { eyebrow: string; heading: string; items: SubCard[] };
   process: { eyebrow: string; heading: string; steps: SubCard[] };
@@ -37,7 +37,10 @@ export interface SubServiceContent {
 const STAT_ICONS = [`${ICON}/stat-interviews.svg`, `${ICON}/stat-markets.svg`, `${ICON}/stat-languages.svg`, `${ICON}/stat-quality.svg`];
 const WHY_ICONS = ['why-reach', 'why-speed', 'why-human', 'why-language', 'why-engagement', 'why-scalable'].map((n) => `${ICON}/${n}.svg`);
 const PROCESS_ICONS = ['process-understand', 'process-design', 'process-recruit', 'process-interview'].map((n) => `${ICON}/${n}.svg`);
-const QUALITY_ICONS = ['quality-training', 'quality-sample', 'quality-monitoring', 'quality-responses', 'quality-checks', 'quality-security'].map((n) => `${ICON}/${n}.svg`);
+/** CMS iconIdentifier keys that name the Level-3 Figma pictograms (public/icons/services/telephonic-surveys/{key}.svg). */
+const STAT_KEYS = new Set(['stat-interviews', 'stat-markets', 'stat-languages', 'stat-quality']);
+const PROCESS_KEYS = new Set(['process-understand', 'process-design', 'process-recruit', 'process-interview']);
+const QUALITY_ICONS =['quality-training', 'quality-sample', 'quality-monitoring', 'quality-responses', 'quality-checks', 'quality-security'].map((n) => `${ICON}/${n}.svg`);
 
 /** Research areas, photos and copy are generic to every sub-service (Figma 859:14429-14507). Figma's own copy repeats
  * one description on four cards and titles two cards "Brand Research"; those slips are corrected here. */
@@ -234,12 +237,79 @@ function generic(title: string): typeof TELEPHONIC {
   };
 }
 
+/** Blank-line separated paragraphs (a single newline stays inside its paragraph). */
+const paragraphsOf = (text: string) =>
+  text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+/**
+ * Strapi first, field by field: every section that has a matching Service field renders that field whenever it is
+ * filled, and only an empty field falls back to the template copy (Figma copy for telephonic-surveys, title-interpolated
+ * copy for every other sub-service — Telephonic text is never shown on another service).
+ *
+ *   hero        <- heroEyebrow / heroHeading / heroSubheading / heroImage / heroActions
+ *   stats       <- credentialsHeading + credentials (value, label, iconIdentifier)
+ *   intro       <- overviewEyebrow / overviewHeading / overviewBody / overviewImage
+ *   process     <- methodologiesEyebrow / methodologiesHeading + methodologies (title, description, icon)
+ *   faq         <- faqItems
+ *   about       <- aboutEyebrow / aboutHeading / aboutBody
+ *   why, measure, quality, technology have no Service fields yet, so they always use the template copy.
+ */
 export function resolveSubService(service: ServiceDetail): SubServiceContent {
   const telephonic = service.slug === 'telephonic-surveys';
   const c = telephonic ? TELEPHONIC : generic(service.title);
+  const aboutParagraphs = service.aboutBody ? paragraphsOf(service.aboutBody) : [];
+
   return {
     ...c,
-    hero: { ...c.hero, image: service.heroImage ?? (telephonic ? img(`${IMG}/hero.webp`, '', 1900, 783) : img('/images/services/detail/primary-research-hero.jpg', '', 1920, 1344)) },
-    intro: { ...c.intro, image: service.overviewImage ?? (telephonic ? img(`${IMG}/intro.webp`, 'Telephonic survey interviewer', 1400, 976) : img('/images/services/detail/primary-research-overview.jpg', '', 1200, 840)) },
+    hero: {
+      eyebrow: service.heroEyebrow || c.hero.eyebrow,
+      heading: service.heroHeading || c.hero.heading,
+      subheading: service.heroSubheading || c.hero.subheading,
+      image: service.heroImage ?? (telephonic ? img(`${IMG}/hero.webp`, '', 1900, 783) : img('/images/services/detail/primary-research-hero.jpg', '', 1920, 1344)),
+      actions: service.heroActions.length > 0 ? service.heroActions : c.hero.actions,
+    },
+    stats:
+      service.credentials.length > 0
+        ? {
+            heading: service.credentialsHeading || c.stats.heading,
+            items: service.credentials.map((s) => ({
+              value: s.value,
+              label: s.label,
+              // A `stat-*` key names one of the Figma stat pictograms; any other key renders like a Level-2 credential.
+              ...(s.iconIdentifier && STAT_KEYS.has(s.iconIdentifier) ? { icon: `${ICON}/${s.iconIdentifier}.svg` } : { iconIdentifier: s.iconIdentifier }),
+            })),
+          }
+        : { ...c.stats, heading: service.credentialsHeading || c.stats.heading },
+    intro: {
+      eyebrow: service.overviewEyebrow || c.intro.eyebrow,
+      heading: service.overviewHeading || c.intro.heading,
+      body: service.overviewBody || c.intro.body,
+      image: service.overviewImage ?? (telephonic ? img(`${IMG}/intro.webp`, 'Telephonic survey interviewer', 1400, 976) : img('/images/services/detail/primary-research-overview.jpg', '', 1200, 840)),
+    },
+    process: {
+      eyebrow: service.methodologiesEyebrow || c.process.eyebrow,
+      heading: service.methodologiesHeading || c.process.heading,
+      steps:
+        service.methodologies.length > 0
+          ? service.methodologies.map((m, i) => ({
+              title: m.title,
+              body: m.description ?? '',
+              // An uploaded icon wins, then a `process-*` key naming one of the Figma pictograms, then the template's icon
+              // for the step's position.
+              icon:
+                m.icon?.src ??
+                (m.iconIdentifier && PROCESS_KEYS.has(m.iconIdentifier) ? `${ICON}/${m.iconIdentifier}.svg` : PROCESS_ICONS[i % PROCESS_ICONS.length]),
+            }))
+          : c.process.steps,
+    },
+    faq: { heading: c.faq.heading, items: service.faqItems.length > 0 ? service.faqItems : c.faq.items },
+    about: {
+      eyebrow: service.aboutEyebrow || c.about.eyebrow,
+      heading: service.aboutHeading || c.about.heading,
+      paragraphs: aboutParagraphs.length > 0 ? aboutParagraphs : c.about.paragraphs,
+    },
   };
 }
