@@ -47,10 +47,18 @@ export function LoopingVideo({ sources, poster, fallback, className, preload = '
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+  // The footage is not in the server HTML: its <source> is attached right after hydration (the poster / LCP still has
+  // already painted by then), so the video never competes with first paint. Measured with Lighthouse, waiting longer
+  // (load + idle) only stretched the trace and worsened Speed Index. Reduced-motion visitors never download it.
+  const [attached, setAttached] = useState(false);
+
+  useEffect(() => {
+    if (!reduceMotion) setAttached(true);
+  }, [reduceMotion]);
 
   useEffect(() => {
     const video = ref.current;
-    if (!video) return;
+    if (!video || !attached) return;
     if (reduceMotion) {
       video.pause();
       setPlaying(false);
@@ -58,6 +66,8 @@ export function LoopingVideo({ sources, poster, fallback, className, preload = '
     }
     video.muted = true;
     video.defaultMuted = true;
+    // Sources were just added: run the media selection now rather than waiting for the browser to notice.
+    video.load();
     const start = () => {
       const attempt = video.play();
       // A blocked autoplay just leaves the poster frame showing.
@@ -76,7 +86,7 @@ export function LoopingVideo({ sources, poster, fallback, className, preload = '
     );
     observer.observe(video);
     return () => observer.disconnect();
-  }, [reduceMotion, sources]);
+  }, [reduceMotion, sources, attached]);
 
   return (
     <>
@@ -97,9 +107,10 @@ export function LoopingVideo({ sources, poster, fallback, className, preload = '
         style={fallback && !playing ? { visibility: 'hidden' } : undefined}
         onPlaying={() => setPlaying(true)}
       >
-        {sources.map((source) => (
-          <source key={source.src} src={source.src} type={source.type} />
-        ))}
+        {attached &&
+          sources.map((source) => (
+            <source key={source.src} src={source.src} type={source.type} />
+          ))}
       </video>
       {fallback && (
         <div

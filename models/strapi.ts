@@ -13,11 +13,6 @@ export interface StrapiResponse<T> {
   meta: Record<string, unknown>;
 }
 
-export interface StrapiErrorResponse {
-  data: null;
-  error: { status: number; name: string; message: string; details: Record<string, unknown> };
-}
-
 export interface StrapiMediaFormat {
   url: string;
   width: number;

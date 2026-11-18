@@ -96,7 +96,9 @@ export function BlogTeaserView({ block, variant = 'home', compact = false }: { b
 
         <ul
           ref={trackRef}
-          className="relative flex snap-x snap-mandatory gap-[34px] overflow-x-auto scroll-smooth px-4 pb-2 [scrollbar-width:none] sm:px-6 lg:absolute lg:left-[var(--l)] lg:right-0 lg:top-[var(--t)] lg:gap-[1.7895cqw] lg:p-0 [&::-webkit-scrollbar]:hidden"
+          // scroll-px matches px so the resting position is already a valid snap point: without it the browser snaps the
+          // first card on load (a programmatic scroll before first paint), which stops Chrome recording LCP (NO_LCP).
+          className="relative flex snap-x snap-mandatory scroll-px-4 gap-[34px] overflow-x-auto scroll-smooth px-4 pb-2 [scrollbar-width:none] sm:scroll-px-6 sm:px-6 lg:absolute lg:scroll-px-0 lg:left-[var(--l)] lg:right-0 lg:top-[var(--t)] lg:gap-[1.7895cqw] lg:p-0 [&::-webkit-scrollbar]:hidden"
           style={geometry({ l: 563, t: 120 })}
         >
           {block.posts.map((post) => (

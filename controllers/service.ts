@@ -4,15 +4,9 @@
  * same name (`getServiceBySlug`) for the orchestrated version.
  */
 import { cache } from 'react';
-import { getServices, getServiceBySlug as fetchServiceBySlug, getServiceSlugs, getServiceTree, StrapiError } from './strapi';
-import { normalizeServiceDetail, normalizeServiceList, normalizeServiceSlugs, normalizeServiceTree } from './normalize';
-import type { ServiceDetail, ServiceSlugModel, ServiceSummary, ServiceTreeItemModel } from '@/models/service';
-
-/** Thin pass-through — populate + default sort are forced server-side by
- * the backend's `find` override. */
-export async function getAllServices(params: { page?: number; pageSize?: number } = {}): Promise<ServiceSummary[]> {
-  return normalizeServiceList(await getServices(params));
-}
+import { getServiceBySlug as fetchServiceBySlug, getServiceSlugs, getServiceTree, StrapiError } from './strapi';
+import { normalizeServiceDetail, normalizeServiceSlugs, normalizeServiceTree } from './normalize';
+import type { ServiceDetail, ServiceSlugModel, ServiceTreeItemModel } from '@/models/service';
 
 /** react `cache()`-wrapped, shared by generateMetadata and the page body.
  * Returns `null` on a StrapiError 404; rethrows everything else. */

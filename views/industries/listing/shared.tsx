@@ -13,9 +13,6 @@ export const H2_DETAIL_CLASS =
   'font-sans text-[32px] font-semibold capitalize leading-[38px] tracking-[-1.5px] sm:text-[40px] sm:leading-[48px] lg:text-[52px] lg:leading-[1.2] lg:tracking-[-3px]';
 export const BODY_CLASS = 'font-sans text-[16px] font-normal leading-[30.4px]';
 
-/** Frame-width container used by the card rows (150px side margins at 1900). */
-export const ROW_CONTAINER = 'mx-auto w-full px-4 sm:px-6 lg:px-8 min-[1700px]:px-0';
-
 /** Eyebrow (13/15.6 bold, 3px tracking) + 50/60 title (-3px) + 16/30.4
  * body (80% opacity), centered. `tone="dark"` flips the three colors to
  * the white used on the dark global-reach band. */

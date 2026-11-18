@@ -67,8 +67,25 @@ export function RecaptchaBox({ onChange, invalid = false }: { onChange: (token: 
     });
   }, [onChange]);
 
+  // Google's script (~100 KB+) loads only when the box comes within 400px of the viewport, not on page load.
   useEffect(() => {
-    if (SITE_KEY) void renderReal();
+    if (!SITE_KEY) return undefined;
+    const host = hostRef.current;
+    if (!host || typeof IntersectionObserver === 'undefined') {
+      void renderReal();
+      return undefined;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          observer.disconnect();
+          void renderReal();
+        }
+      },
+      { rootMargin: '400px 0px' },
+    );
+    observer.observe(host);
+    return () => observer.disconnect();
   }, [renderReal]);
 
   if (SITE_KEY) {

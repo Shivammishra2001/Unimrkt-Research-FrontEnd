@@ -33,7 +33,6 @@ export interface StrapiServiceSummary {
   slug: string;
   summary: string;
   thumbnail: StrapiMedia | null;
-  basePrice: string | null;
   updatedAt: string;
 }
 
@@ -162,7 +161,6 @@ export interface ServiceSummary {
   title: string;
   summary: string;
   thumbnail?: ImageModel;
-  basePrice?: string;
 }
 
 export interface ServiceDetail extends ServiceSummary {

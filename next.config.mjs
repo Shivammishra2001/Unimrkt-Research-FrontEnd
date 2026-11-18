@@ -30,9 +30,18 @@ const nextConfig = {
   async headers() {
     return [
       { source: '/videos/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }] },
+      // Static artwork in /public (not content-hashed, so a day + background revalidation rather than immutable).
+      ...['/images/:path*', '/icons/:path*', '/figma-home/:path*', '/figma-contact/:path*', '/figma-industries/:path*', '/figma-wwu/:path*'].map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
+      })),
     ];
   },
   images: {
+    // Serve AVIF where the browser supports it, WebP otherwise (smaller than the JPEG/PNG sources).
+    formats: ['image/avif', 'image/webp'],
+    // Optimized variants are reused for a day instead of being revalidated every 60s.
+    minimumCacheTTL: 86400,
     remotePatterns: [
       // Strapi's local upload provider serves media at /uploads/** on port 1337.
       ...remoteHosts.map((hostname) => ({

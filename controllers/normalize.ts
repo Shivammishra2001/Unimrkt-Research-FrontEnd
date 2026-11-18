@@ -57,7 +57,6 @@ import type {
   TrustLogoModel,
 } from '@/models/industry';
 import type { StrapiGalleryItemListResponse, GalleryImage } from '@/models/gallery';
-import type { StrapiServicesPageResponse, ServicesPageSettings } from '@/models/servicesPage';
 import type { StrapiOurCompanyPageResponse, OurCompanySettings } from '@/models/ourCompanyPage';
 import type { StrapiContactPageResponse, StrapiOfficeLocation, ContactPageSettings, OfficeLocationModel } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse, StrapiJobListing, WorkWithUsSettings, JobListingModel } from '@/models/workWithUsPage';
@@ -482,19 +481,13 @@ function normalizeServiceSummaryFields(data: {
   title: string;
   summary: string;
   thumbnail: StrapiServiceDetail['thumbnail'];
-  basePrice: string | null;
 }): ServiceSummary {
   return {
     slug: data.slug,
     title: data.title,
     summary: data.summary,
     thumbnail: toImageModel(data.thumbnail, data.title),
-    basePrice: data.basePrice ?? undefined,
   };
-}
-
-export function normalizeServiceList(res: StrapiServiceListResponse): ServiceSummary[] {
-  return res.data.map(normalizeServiceSummaryFields);
 }
 
 function normalizeServiceStatItem(item: StrapiServiceStatItem): ServiceStatItemModel {
@@ -902,72 +895,6 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
           quickActions: (data.chatWidget.quickActions ?? []).map((a) => ({ id: `chat-action-${a.id}`, label: a.label, reply: a.reply })),
           placeholder: data.chatWidget.placeholder || undefined,
           acknowledgement: data.chatWidget.acknowledgement || undefined,
-        }
-      : undefined,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Services Page settings (singleType) — /services' hero/intro/value-props/
-// workflow/FAQ/CTA copy.
-// ---------------------------------------------------------------------------
-
-export function normalizeServicesPageSettings(res: StrapiServicesPageResponse): ServicesPageSettings {
-  const data = res.data;
-
-  return {
-    hero: data.hero
-      ? {
-          eyebrow: data.hero.eyebrow ?? undefined,
-          heading: data.hero.heading,
-          subheading: data.hero.subheading ?? undefined,
-          media: toImageModel(data.hero.media, data.hero.heading),
-          actions: (data.hero.actions ?? []).map(normalizeLink),
-        }
-      : undefined,
-    introEyebrow: data.introEyebrow ?? undefined,
-    introHeading: data.introHeading,
-    introParagraph1: data.introParagraph1 ?? undefined,
-    introParagraph2: data.introParagraph2 ?? undefined,
-    valuePropsHeading: data.valuePropsHeading ?? undefined,
-    valuePropsBody: data.valuePropsBody ?? undefined,
-    valuePropsBackground: toImageModel(data.valuePropsBackground, data.valuePropsHeading ?? 'Value proposition background'),
-    valueProps: (data.valueProps ?? []).map(normalizeFeatureItem).sort((a, b) => a.order - b.order),
-    workflow: data.workflow
-      ? {
-          eyebrow: data.workflow.eyebrow ?? undefined,
-          heading: data.workflow.heading,
-          subheading: data.workflow.subheading ?? undefined,
-          steps: (data.workflow.steps ?? [])
-            .map((step) => ({
-              id: `workflow-step-${step.id}`,
-              stepNumber: step.stepNumber ?? undefined,
-              title: step.title,
-              description: step.description,
-              icon: toImageModel(step.icon, step.title),
-              iconIdentifier: step.iconIdentifier ?? undefined,
-              order: step.order ?? 0,
-            }))
-            .sort((a, b) => a.order - b.order),
-        }
-      : undefined,
-    faq: data.faq
-      ? {
-          heading: data.faq.heading,
-          background: toImageModel(data.faq.background, data.faq.heading),
-          items: (data.faq.items ?? []).map((item) => ({
-            id: `services-faq-${item.id}`,
-            question: item.question,
-            answer: item.answer,
-          })),
-        }
-      : undefined,
-    cta: data.cta
-      ? {
-          heading: data.cta.heading,
-          body: data.cta.body ?? undefined,
-          actions: (data.cta.actions ?? []).map(normalizeLink),
-          background: toImageModel(data.cta.background, data.cta.heading),
         }
       : undefined,
   };

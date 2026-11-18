@@ -83,7 +83,6 @@ const webDevelopment: StrapiServiceDetail = {
   slug: 'web-development',
   summary: 'Scalable and custom web applications for your enterprise.',
   thumbnail: null,
-  basePrice: '₹40,000',
   updatedAt: NOW,
   createdAt: NOW,
   publishedAt: NOW,
@@ -110,7 +109,6 @@ const uiUxDesign: StrapiServiceDetail = {
   slug: 'ui-ux-design',
   summary: 'Interface and interaction design for teams who need a design system, not just a mockup.',
   thumbnail: null,
-  basePrice: 'From $1,800',
   updatedAt: NOW,
   createdAt: NOW,
   publishedAt: NOW,
@@ -137,7 +135,6 @@ const cloudDevops: StrapiServiceDetail = {
   slug: 'cloud-devops',
   summary: 'Infrastructure, CI/CD and on-call support for the Strapi + Next.js stack you already run.',
   thumbnail: null,
-  basePrice: 'From $3,200/mo',
   updatedAt: NOW,
   createdAt: NOW,
   publishedAt: NOW,
@@ -179,14 +176,13 @@ export function mockServiceListResponse(params: {
   const pageItems = ordered.slice(start, start + pageSize);
 
   return {
-    data: pageItems.map(({ id, documentId, title, slug, summary, thumbnail, basePrice, updatedAt }) => ({
+    data: pageItems.map(({ id, documentId, title, slug, summary, thumbnail, updatedAt }) => ({
       id,
       documentId,
       title,
       slug,
       summary,
       thumbnail,
-      basePrice,
       updatedAt,
     })),
     meta: {

@@ -202,16 +202,6 @@ export function getGlobal(): Promise<StrapiGlobalResponse> {
   return strapiFetch<StrapiGlobalResponse>('global', { tag: 'global' });
 }
 
-export function getServices(params: { page?: number; pageSize?: number; sort?: string } = {}): Promise<StrapiServiceListResponse> {
-  return strapiFetch<StrapiServiceListResponse>('services', {
-    query: {
-      pagination: { page: params.page ?? 1, pageSize: params.pageSize ?? 24 },
-      ...(params.sort ? { sort: params.sort } : {}),
-    },
-    tag: 'services',
-  });
-}
-
 export function getServiceBySlug(slug: string): Promise<StrapiServiceDetailResponse> {
   return strapiFetch<StrapiServiceDetailResponse>(`services/slug/${encodeURIComponent(slug)}`, {
     tag: `service-${slug}`,

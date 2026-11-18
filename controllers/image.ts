@@ -41,10 +41,6 @@ export function toBrowserMediaUrl(url: string | undefined): string | undefined {
   return url.replace(/^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?(?=\/uploads\/)/, '');
 }
 
-/** Exported alias for the one non-image case: a video-typed blocks.hero
- * media upload, which never becomes an ImageModel. */
-export const toAbsoluteMediaUrl = toAbsoluteUrl;
-
 /**
  * Returns `undefined` for null/undefined media so callers use
  * `hero.media?.src` rather than a separate null check.

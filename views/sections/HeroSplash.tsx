@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent, type KeyboardEvent } from 'react';
 import { useReducedMotion } from 'framer-motion';
-import Image from 'next/image';
+import Image, { getImageProps } from 'next/image';
 import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import { LoopingVideo, type VideoSource } from '@/views/ui/LoopingVideo';
-import { toBrowserMediaUrl } from '@/controllers/image';
 import type { HeroModel, LinkModel } from '@/models/domain';
 
 /** One selectable row of the hero's right-hand list plus the left-hand copy it drives. */
@@ -93,6 +92,10 @@ const STEPS = [
 const WHEEL_COOLDOWN_MS = 450;
 /** Time each row stays selected before the hero advances on its own. */
 const AUTO_ADVANCE_MS = 5000;
+/** The opening slide holds longer: its headline is the page's LCP element, and a crossfade during page load would make
+ * the next headline a new, later LCP candidate (and a late Speed Index change). After the first advance — or any
+ * manual pick — the normal AUTO_ADVANCE_MS rhythm applies. */
+const FIRST_AUTO_ADVANCE_MS = 9000;
 
 /**
  * blocks.hero, `mediaAlignment: 'background'` — Figma 1794:16926. A full-bleed
@@ -190,9 +193,13 @@ export function HeroSplash({
 
   // One timeout per selection: a manual pick (or any gate flipping) re-arms it.
   const autoPlay = count > 1 && !reduceMotion && !hovered && !keyboardFocus && inView && tabVisible;
+  const hasAdvanced = useRef(false);
+  useEffect(() => {
+    if (active !== 0) hasAdvanced.current = true;
+  }, [active]);
   useEffect(() => {
     if (!autoPlay) return undefined;
-    const timer = window.setTimeout(() => setActive((a) => (a + 1) % count), AUTO_ADVANCE_MS);
+    const timer = window.setTimeout(() => setActive((a) => (a + 1) % count), hasAdvanced.current ? AUTO_ADVANCE_MS : FIRST_AUTO_ADVANCE_MS);
     return () => window.clearTimeout(timer);
   }, [autoPlay, active, count]);
 
@@ -235,17 +242,21 @@ export function HeroSplash({
   }
 
   const useVideo = videoSources.length > 0;
-  const poster = toBrowserMediaUrl(block.media?.src);
+  // LCP: the hero's still (Strapi hero photo, else the bundled compressed WebP) is painted immediately as a real,
+  // high-priority <img> behind the video — a <video> alone is not an LCP candidate, which made Lighthouse report
+  // NO_LCP. The same optimized URL is the video's poster, so the browser fetches it once.
+  const posterImage = block.media ?? { src: '/images/home/hero-poster.webp', alt: '', width: 1920, height: 1080 };
+  const { props: posterProps } = getImageProps({ src: posterImage.src, alt: '', width: posterImage.width, height: posterImage.height, sizes: '100vw', quality: 80 });
 
   return (
     <section ref={sectionRef} className="relative w-full min-h-screen lg:min-h-[clamp(740px,100svh,1005px)] overflow-hidden bg-[#040112] text-white">
-      {/* z-0 background: video (muted loop) with the photo as its poster, or just the photo. */}
+      {/* z-0 background: the still (LCP) with the muted looping video over it; one shared 70% layer so the look is
+          unchanged once the video plays. */}
       {useVideo ? (
-        <LoopingVideo
-          sources={videoSources}
-          poster={poster}
-          className="absolute inset-0 z-0 h-full w-full object-cover opacity-70"
-        />
+        <div className="absolute inset-0 z-0 opacity-70">
+          <Image src={posterImage.src} alt="" fill sizes="100vw" quality={80} priority fetchPriority="high" className="object-cover" />
+          <LoopingVideo sources={videoSources} poster={posterProps.src} preload="metadata" className="absolute inset-0 h-full w-full object-cover" />
+        </div>
       ) : block.media ? (
         <StrapiImage image={block.media} sizes="100vw" priority={index === 0} fill className="z-0 object-cover opacity-70" />
       ) : null}

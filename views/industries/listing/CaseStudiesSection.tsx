@@ -88,7 +88,7 @@ export function CaseStudiesSection({ content }: { content: IndustriesPageContent
             onScroll={syncActive}
             role="group"
             aria-label="Case study highlights"
-            className="-my-12 flex snap-x snap-mandatory touch-pan-x gap-6 overflow-x-auto overscroll-x-contain scroll-smooth px-4 py-12 [scrollbar-width:none] sm:px-6 lg:gap-[30px] lg:px-8 min-[1620px]:-mx-12 min-[1620px]:px-12 [&::-webkit-scrollbar]:hidden"
+            className="-my-12 flex snap-x snap-mandatory touch-pan-x scroll-px-4 gap-6 overflow-x-auto overscroll-x-contain scroll-smooth px-4 py-12 [scrollbar-width:none] sm:scroll-px-6 sm:px-6 lg:scroll-px-8 lg:gap-[30px] lg:px-8 min-[1620px]:-mx-12 min-[1620px]:scroll-px-12 min-[1620px]:px-12 [&::-webkit-scrollbar]:hidden"
             style={{ scrollPaddingInline: 'clamp(16px, 4vw, 32px)' }}
           >
             {content.cards.map((item, i) => (

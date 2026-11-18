@@ -54,7 +54,7 @@ export function IndustriesSlider({ content, industries }: { content: ServicesLis
           ref={trackRef}
           onScroll={sync}
           aria-label={content.eyebrow}
-          className="-my-10 flex snap-x snap-mandatory gap-6 overflow-x-auto overscroll-x-contain scroll-smooth px-4 py-10 [scrollbar-width:none] sm:px-6 lg:gap-[30px] lg:px-8 min-[1700px]:-mx-10 min-[1700px]:px-10 [&::-webkit-scrollbar]:hidden"
+          className="-my-10 flex snap-x snap-mandatory scroll-px-4 gap-6 overflow-x-auto overscroll-x-contain scroll-smooth px-4 py-10 [scrollbar-width:none] sm:scroll-px-6 sm:px-6 lg:scroll-px-8 lg:gap-[30px] lg:px-8 min-[1700px]:-mx-10 min-[1700px]:scroll-px-10 min-[1700px]:px-10 [&::-webkit-scrollbar]:hidden"
           style={{ scrollPaddingInline: 'clamp(16px, 4vw, 40px)' }}
         >
           {industries.map((industry, i) => (
