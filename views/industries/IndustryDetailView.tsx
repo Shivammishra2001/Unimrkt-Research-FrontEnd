@@ -78,6 +78,7 @@ export function IndustryDetailView({
         frame="rounded"
         imageSide="right"
         minHeightClass="lg:min-h-[777px]"
+        expandable
       />
 
       <WhyResearchSection whyResearch={content.whyResearch} />

@@ -1,6 +1,7 @@
 import { Container } from '@/views/ui/Container';
 import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
+import { ExpandableBody } from './ExpandableBody';
 import type { LinkModel, ImageModel } from '@/models/domain';
 
 interface ContentBlockProps {
@@ -15,13 +16,15 @@ interface ContentBlockProps {
   imageSide: 'left' | 'right';
   /** Desktop section height from the Figma frame, e.g. 'lg:min-h-[777px]'. */
   minHeightClass?: string;
+  /** Long body copy starts collapsed with a Read More / Read Less toggle ("What We Do"). */
+  expandable?: boolean;
 }
 
 /** Reused for both long-form content blocks — "What We Do" (Figma node
  * 384:6360-6366, 579:8010) and the mirrored "{Title} Research" block
  * (384:6361-6364, 384:6475). Every field is CMS-driven
  * (`whatWeDo*`/`empower*`); renders nothing without a `heading`. */
-export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageSide, minHeightClass }: ContentBlockProps) {
+export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageSide, minHeightClass, expandable = false }: ContentBlockProps) {
   if (!heading) return null;
 
   const imageBlock = image && (
@@ -54,6 +57,7 @@ export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageS
 
   // Figma 384:6362 — two paragraphs with one blank line (30.4px) between them.
   const paragraphs = (body ?? '').split(/\r?\n/).map((p) => p.trim()).filter(Boolean);
+  const bodyClass = `${frame === 'circle' ? 'max-w-[808px]' : 'max-w-[833px]'} font-sans text-[16px] leading-[1.9] text-[#02060e]/80`;
 
   return (
     <section className={`flex items-center bg-white py-16 sm:py-20 lg:items-start ${frame === 'circle' ? 'lg:pb-[97px]' : 'lg:pb-[103px]'} lg:pt-[72px] ${minHeightClass ?? ''}`}>
@@ -64,15 +68,18 @@ export function ContentBlock({ eyebrow, heading, body, cta, image, frame, imageS
             <h2 className={`mt-3 ${frame === 'circle' ? 'max-w-[780px]' : 'max-w-[460px]'} lg:mt-[3px] font-sans text-3xl font-semibold capitalize leading-[1.2] text-[#02060e] sm:text-4xl lg:text-[50px] lg:leading-[1.2] lg:tracking-[-3px]`}>
               {heading}
             </h2>
-            {paragraphs.length > 0 && (
-              <div className={`mt-6 ${frame === 'circle' ? 'max-w-[808px]' : 'max-w-[833px]'} font-sans text-[16px] leading-[1.9] text-[#02060e]/80 lg:mt-[15px]`}>
-                {paragraphs.map((p, i) => (
-                  <p key={i} className={i > 0 ? 'mt-[30.4px]' : undefined}>
-                    {p}
-                  </p>
-                ))}
-              </div>
-            )}
+            {paragraphs.length > 0 &&
+              (expandable ? (
+                <ExpandableBody paragraphs={paragraphs} className={`mt-6 ${bodyClass} lg:mt-[15px]`} />
+              ) : (
+                <div className={`mt-6 ${bodyClass} lg:mt-[15px]`}>
+                  {paragraphs.map((p, i) => (
+                    <p key={i} className={i > 0 ? 'mt-[30.4px]' : undefined}>
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              ))}
             {cta && <Button link={cta} className="mt-8 lg:mt-[50px]" />}
           </div>
           {imageBlock && <div className={`${imageSide === 'right' ? 'lg:order-2' : 'lg:order-1'} ${frame === 'circle' ? 'lg:mt-[35px]' : 'lg:mt-3'}`}>{imageBlock}</div>}
