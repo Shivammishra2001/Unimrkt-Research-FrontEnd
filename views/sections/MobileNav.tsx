@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/views/ui/Button';
 import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import { CloseIcon } from '@/views/ui/icons/CloseIcon';
-import { groupIndustries, industriesFor, isIndustriesItem, isServicesItem, type NavIndustry } from './nav/industryGroups';
+import { groupIndustries, industriesFor, isIndustriesItem, isServicesItem, withCount, type NavIndustry } from './nav/industryGroups';
 import type { NavigationModel } from '@/models/domain';
 import type { ServiceTreeItemModel } from '@/models/service';
 
@@ -139,7 +139,7 @@ export function MobileNav({
                 return (
                   <AccordionRow key={item.id} label={item.label} href="/industries" onNavigate={onClose}>
                     <div className="pb-3">
-                      {groupIndustries(industryList).map((g) => (
+                      {groupIndustries(industryList, navigation.industriesMenu).map((g) => (
                         <div key={g.label} className="mt-2">
                           <p className="py-1.5 text-[11px] font-bold uppercase tracking-[1.8px] text-white/45">{g.label}</p>
                           <ul className="ml-[3px] border-l border-white/10 pl-5">
@@ -153,14 +153,18 @@ export function MobileNav({
                           </ul>
                         </div>
                       ))}
-                      <Link href="/industries" onClick={onClose} className={`mt-2 flex items-center gap-1.5 ${MIN_TOUCH_TARGET} text-sm font-semibold text-[#ff8a85]`}>
-                        View All {industryList.length} Industries <span aria-hidden="true">↗</span>
+                      <Link
+                        href={navigation.industriesMenu?.viewAllLink?.href ?? '/industries'}
+                        onClick={onClose}
+                        className={`mt-2 flex items-center gap-1.5 ${MIN_TOUCH_TARGET} text-sm font-semibold text-[#ff8a85]`}
+                      >
+                        {withCount(navigation.industriesMenu?.viewAllLink?.label ?? 'View All {count} Industries', industryList.length)} <span aria-hidden="true">↗</span>
                       </Link>
                     </div>
                   </AccordionRow>
                 );
               }
-              if (item.children.length > 0) {
+              if (item.children.length > 0 && item.menuType !== 'link') {
                 return (
                   <AccordionRow key={item.id} label={item.label} href={item.href} isExternal={item.isExternal} onNavigate={onClose}>
                     <ul className="mb-2 ml-[3px] border-l border-white/10 pl-5">

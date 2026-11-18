@@ -112,11 +112,14 @@ export function normalizeLink(link: StrapiLink): LinkModel {
 }
 
 export function normalizeNavItem(item: StrapiNavItem): NavigationItemModel {
+  // A typed URL wins; otherwise the picked Page's own path (so a renamed slug follows automatically).
+  const pageHref = item.page?.slug ? (item.page.slug === 'home' ? '/' : `/${item.page.slug}`) : undefined;
   return {
     id: `nav-${item.id}`,
     label: item.label,
-    href: item.href,
+    href: item.href || pageHref || '#',
     isExternal: item.isExternal,
+    menuType: item.menuType ?? undefined,
     showIndicator: item.showIndicator ?? false,
     // Strapi components cap nesting at one level — every child is
     // hardcoded to an empty children array rather than recursed further.
@@ -821,8 +824,30 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
     // Non-null assertion — logo is a required field on the schema.
     logo: toImageModel(data.logo, data.siteName)!,
     logoDark: toImageModel(data.logoDark, data.siteName),
-    items: data.primaryNav.map(normalizeNavItem),
+    // "Visible" off hides an item without deleting it.
+    items: data.primaryNav.filter((item) => item.isVisible !== false).map(normalizeNavItem),
     cta: data.navCta ? normalizeLink(data.navCta) : undefined,
+    servicesMenu: data.servicesMenu
+      ? {
+          eyebrow: data.servicesMenu.eyebrow || undefined,
+          autoIncludeNew: data.servicesMenu.autoIncludeNew !== false,
+          categories: (data.servicesMenu.categories ?? [])
+            .filter((c) => c.service?.slug)
+            .map((c) => ({ slug: c.service!.slug, label: c.label || undefined, description: c.description || undefined, isVisible: c.isVisible !== false })),
+          exploreLink: data.servicesMenu.exploreLink ? normalizeLink(data.servicesMenu.exploreLink) : undefined,
+          ctaLink: data.servicesMenu.ctaLink ? normalizeLink(data.servicesMenu.ctaLink) : undefined,
+        }
+      : undefined,
+    industriesMenu: data.industriesMenu
+      ? {
+          eyebrow: data.industriesMenu.eyebrow || undefined,
+          intro: data.industriesMenu.intro || undefined,
+          groups: (data.industriesMenu.groups ?? []).map((g) => ({ label: g.label, slugs: (g.industries ?? []).map((i) => i.slug) })),
+          otherGroupLabel: data.industriesMenu.otherGroupLabel || undefined,
+          viewAllLink: data.industriesMenu.viewAllLink ? normalizeLink(data.industriesMenu.viewAllLink) : undefined,
+          ctaLink: data.industriesMenu.ctaLink ? normalizeLink(data.industriesMenu.ctaLink) : undefined,
+        }
+      : undefined,
   };
 
   const footer: FooterModel = {

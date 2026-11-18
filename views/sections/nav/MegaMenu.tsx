@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import Link from 'next/link';
 import type { ServiceTreeItemModel } from '@/models/service';
-import { groupIndustries, type NavIndustry } from './industryGroups';
+import { groupIndustries, withCount, type NavIndustry } from './industryGroups';
+import type { IndustriesMenuModel, ServicesMenuModel } from '@/models/domain';
 
 const PANEL_MAX = 1040;
 const EASE = 'ease-[cubic-bezier(0.22,1,0.36,1)]';
@@ -116,7 +117,7 @@ function CategoryIcon({ slug, className = '' }: { slug: string; className?: stri
 /** First sentence of the CMS summary — one calm line under the category title, never an ellipsis mid-word. */
 const firstSentence = (s: string) => (s.match(/^.*?[.!?](\s|$)/)?.[0] ?? s).trim();
 
-export function ServicesMega({ categories, onNavigate }: { categories: ServiceTreeItemModel[]; onNavigate: () => void }) {
+export function ServicesMega({ categories, menu, onNavigate }: { categories: ServiceTreeItemModel[]; menu?: ServicesMenuModel; onNavigate: () => void }) {
   const [active, setActive] = useState(categories[0]?.slug ?? '');
   const intent = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clear = () => {
@@ -184,7 +185,7 @@ export function ServicesMega({ categories, onNavigate }: { categories: ServiceTr
                 aria-hidden={!on}
                 className={`[grid-area:1/1] transition-[opacity,transform,visibility] duration-200 ${EASE} ${on ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-1 opacity-0'}`}
               >
-                <p className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#ff8a85]">Research Services</p>
+                <p className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#ff8a85]">{menu?.eyebrow || 'Research Services'}</p>
                 <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
                   <h3 className="text-[22px] font-semibold leading-tight tracking-[-0.5px] text-white">{c.title}</h3>
                   <Link href={`/services/${c.slug}`} onClick={onNavigate} className="group inline-flex items-center gap-1 text-[13px] font-semibold text-white/70 transition-colors duration-150 hover:text-white">
@@ -213,22 +214,29 @@ export function ServicesMega({ categories, onNavigate }: { categories: ServiceTr
           })}
         </div>
       </div>
-      <FooterBar left={{ label: 'Explore All Research Services', href: '/services' }} right={{ label: 'Need a Custom Study? Talk to Experts', href: '/contact' }} onNavigate={onNavigate} />
+      <FooterBar
+        left={menu?.exploreLink ?? { label: 'Explore All Research Services', href: '/services' }}
+        right={menu?.ctaLink ?? { label: 'Need a Custom Study? Talk to Experts', href: '/contact' }}
+        onNavigate={onNavigate}
+      />
     </div>
   );
 }
 
 /* ----------------------------------------------------------- industries */
 
-export function IndustriesMega({ industries, onNavigate }: { industries: NavIndustry[]; onNavigate: () => void }) {
-  const groups = groupIndustries(industries);
+export function IndustriesMega({ industries, menu, onNavigate }: { industries: NavIndustry[]; menu?: IndustriesMenuModel; onNavigate: () => void }) {
+  const groups = groupIndustries(industries, menu);
+  const n = industries.length;
+  const viewAll = menu?.viewAllLink ?? { label: 'View All {count} Industries', href: '/industries' };
+  const cta = menu?.ctaLink ?? { label: 'Request Industry Sample / Proposal', href: '/contact' };
   return (
     <div>
       <div className="px-7 pb-3 pt-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-white/[0.06] pb-4">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#ff8a85]">Industries We Serve</p>
-            <p className="mt-1.5 text-[14px] text-white/60">Sector-specific research across {industries.length} industries and 90+ countries.</p>
+            <p className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#ff8a85]">{menu?.eyebrow || 'Industries We Serve'}</p>
+            <p className="mt-1.5 text-[14px] text-white/60">{withCount(menu?.intro || 'Sector-specific research across {count} industries and 90+ countries.', n)}</p>
           </div>
         </div>
         {/* CSS columns balance the sector groups automatically, whatever the CMS adds. */}
@@ -258,7 +266,7 @@ export function IndustriesMega({ industries, onNavigate }: { industries: NavIndu
           ))}
         </div>
       </div>
-      <FooterBar left={{ label: `View All ${industries.length} Industries`, href: '/industries' }} right={{ label: 'Request Industry Sample / Proposal', href: '/contact' }} onNavigate={onNavigate} />
+      <FooterBar left={{ label: withCount(viewAll.label, n), href: viewAll.href }} right={{ label: withCount(cta.label, n), href: cta.href }} onNavigate={onNavigate} />
     </div>
   );
 }

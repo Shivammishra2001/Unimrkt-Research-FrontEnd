@@ -6,7 +6,7 @@ import { getGlobal, StrapiError } from '@/controllers/strapi';
 import { normalizeGlobal } from '@/controllers/normalize';
 import { getAllServiceCategories } from '@/controllers/service';
 import { getAllIndustries } from '@/controllers/industry';
-import type { NavIndustry } from '@/views/sections/nav/industryGroups';
+import { isServicesItem, type NavIndustry } from '@/views/sections/nav/industryGroups';
 import { Navbar } from '@/views/sections/Navbar';
 import { Footer } from '@/views/sections/Footer';
 import { ChatWidget } from '@/views/ui/ChatWidget';
@@ -119,7 +119,7 @@ function withDynamicServicesDropdown(
   return {
     ...navigation,
     items: navigation.items.map((item): NavigationItemModel => {
-      if (item.href !== '/services') return item;
+      if (!isServicesItem(item)) return item;
       return {
         ...item,
         children: categories.map((c) => ({

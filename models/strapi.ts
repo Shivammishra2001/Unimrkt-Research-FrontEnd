@@ -61,13 +61,36 @@ export interface StrapiNavChildItem {
   isExternal: boolean;
 }
 
+export type StrapiNavMenuType = 'link' | 'dropdown' | 'services_mega_menu' | 'industries_mega_menu';
+
 export interface StrapiNavItem {
   id: number;
   label: string;
-  href: string;
+  /** Optional since a picked Page can supply the URL. */
+  href: string | null;
   isExternal: boolean;
   children: StrapiNavChildItem[];
   showIndicator?: boolean;
+  menuType?: StrapiNavMenuType | null;
+  isVisible?: boolean | null;
+  page?: { slug: string; title?: string; isActive?: boolean | null } | null;
+}
+
+export interface StrapiServicesMenu {
+  eyebrow: string | null;
+  autoIncludeNew: boolean | null;
+  categories: Array<{ id: number; label: string | null; description: string | null; isVisible: boolean | null; service: { slug: string; title: string } | null }>;
+  exploreLink: StrapiLink | null;
+  ctaLink: StrapiLink | null;
+}
+
+export interface StrapiIndustriesMenu {
+  eyebrow: string | null;
+  intro: string | null;
+  groups: Array<{ id: number; label: string; industries: Array<{ slug: string; title: string }> }>;
+  otherGroupLabel: string | null;
+  viewAllLink: StrapiLink | null;
+  ctaLink: StrapiLink | null;
 }
 
 export interface StrapiSeo {
@@ -334,6 +357,8 @@ export interface StrapiGlobal {
   logoDark: StrapiMedia | null;
   primaryNav: StrapiNavItem[];
   navCta: StrapiLink | null;
+  servicesMenu?: StrapiServicesMenu | null;
+  industriesMenu?: StrapiIndustriesMenu | null;
   footerColumns: StrapiFooterColumn[];
   socialLinks: StrapiLink[];
   copyright: string | null;

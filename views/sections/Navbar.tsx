@@ -10,7 +10,7 @@ import { HamburgerIcon } from '@/views/ui/icons/HamburgerIcon';
 import { CloseIcon } from '@/views/ui/icons/CloseIcon';
 import { MobileNav } from './MobileNav';
 import { MegaPanel, ServicesMega, IndustriesMega } from './nav/MegaMenu';
-import { isServicesItem, isIndustriesItem, industriesFor, type NavIndustry } from './nav/industryGroups';
+import { applyServicesMenu, isServicesItem, isIndustriesItem, industriesFor, type NavIndustry } from './nav/industryGroups';
 import type { NavigationItemModel, NavigationModel } from '@/models/domain';
 import type { ServiceTreeItemModel } from '@/models/service';
 
@@ -191,6 +191,8 @@ export function Navbar({
   const isPostPage = pathname.startsWith('/blogs/');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  // Global → Services Mega-Menu (order / rename / hide) applied to the live category tree.
+  const menuCategories = applyServicesMenu(serviceCategories ?? [], navigation.servicesMenu);
 
   useEffect(() => {
     function onScroll() {
@@ -249,14 +251,15 @@ export function Navbar({
           </Link>
           <nav className="hidden items-center gap-6 xl:flex min-[1536px]:gap-10 min-[1800px]:absolute min-[1800px]:left-1/2 min-[1800px]:top-1/2 min-[1800px]:-translate-x-1/2 min-[1800px]:-translate-y-1/2 min-[1800px]:gap-[72px]">
             {navigation.items.map((item) => {
-              if (isServicesItem(item) && serviceCategories?.length) {
-                return <NavLink key={item.id} item={item} mega={(close) => <ServicesMega categories={serviceCategories} onNavigate={close} />} />;
+              if (isServicesItem(item) && menuCategories.length) {
+                return <NavLink key={item.id} item={item} mega={(close) => <ServicesMega categories={menuCategories} menu={navigation.servicesMenu} onNavigate={close} />} />;
               }
               const industryList = isIndustriesItem(item) ? industriesFor(item, industries) : null;
               if (industryList?.length) {
-                return <NavLink key={item.id} item={item} mega={(close) => <IndustriesMega industries={industryList} onNavigate={close} />} />;
+                return <NavLink key={item.id} item={item} mega={(close) => <IndustriesMega industries={industryList} menu={navigation.industriesMenu} onNavigate={close} />} />;
               }
-              return <NavLink key={item.id} item={item} />;
+              // Menu type "link" is always a plain link, even if child links are still attached in the CMS.
+              return <NavLink key={item.id} item={item.menuType === 'link' ? { ...item, children: [] } : item} />;
             })}
           </nav>
           {navigation.cta && (
@@ -287,7 +290,7 @@ export function Navbar({
         open={isMobileOpen}
         onClose={() => setIsMobileOpen(false)}
         navigation={navigation}
-        serviceCategories={serviceCategories}
+        serviceCategories={menuCategories.length ? menuCategories : serviceCategories}
         industries={industries}
       />
     </>

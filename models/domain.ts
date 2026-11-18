@@ -27,6 +27,8 @@ export interface NavigationItemModel {
   label: string;
   href: string;
   isExternal: boolean;
+  /** Global → Primary Nav "Menu type"; undefined on older data (the Navbar then detects Services / Industries by URL). */
+  menuType?: 'link' | 'dropdown' | 'services_mega_menu' | 'industries_mega_menu';
   children: NavigationItemModel[];
   // A chevron with real dropdown children behind it is one thing; Figma's
   // nav also shows the same chevron on "About unimrkt" and "Contact",
@@ -306,6 +308,30 @@ export interface NavigationModel {
   logoDark?: ImageModel;
   items: NavigationItemModel[];
   cta?: LinkModel;
+  /** Global → Services Mega-Menu (order / rename / hide categories, eyebrow, footer links). */
+  servicesMenu?: ServicesMenuModel;
+  /** Global → Industries Mega-Menu (sector groups, Other label, intro, footer links). */
+  industriesMenu?: IndustriesMenuModel;
+}
+
+export interface ServicesMenuModel {
+  eyebrow?: string;
+  /** New top-level services not listed in `categories` are appended automatically. */
+  autoIncludeNew: boolean;
+  categories: Array<{ slug: string; label?: string; description?: string; isVisible: boolean }>;
+  exploreLink?: LinkModel;
+  ctaLink?: LinkModel;
+}
+
+export interface IndustriesMenuModel {
+  eyebrow?: string;
+  /** May contain {count}. */
+  intro?: string;
+  groups: Array<{ label: string; slugs: string[] }>;
+  otherGroupLabel?: string;
+  /** Labels may contain {count}. */
+  viewAllLink?: LinkModel;
+  ctaLink?: LinkModel;
 }
 
 export interface FooterModel {
