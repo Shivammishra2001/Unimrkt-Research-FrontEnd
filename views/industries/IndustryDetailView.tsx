@@ -96,6 +96,7 @@ export function IndustryDetailView({
         frame="circle"
         imageSide="right"
         minHeightClass="lg:min-h-[892px]"
+        expandable
       />
 
       <EnquiryForm eyebrow={content.enquiry.eyebrow} heading={content.enquiry.heading} body={content.enquiry.body} image={content.enquiry.image} />

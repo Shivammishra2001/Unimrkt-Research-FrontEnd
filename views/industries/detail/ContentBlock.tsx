@@ -16,7 +16,7 @@ interface ContentBlockProps {
   imageSide: 'left' | 'right';
   /** Desktop section height from the Figma frame, e.g. 'lg:min-h-[777px]'. */
   minHeightClass?: string;
-  /** Long body copy starts collapsed with a Read More / Read Less toggle ("What We Do"). */
+  /** Long body copy starts collapsed with a Read More / Read Less toggle ("What We Do", "{Title} Research"). */
   expandable?: boolean;
 }
 
