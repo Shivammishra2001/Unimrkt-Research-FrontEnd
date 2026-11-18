@@ -32,6 +32,8 @@ import type { StrapiGalleryItemListResponse } from '@/models/gallery';
 import type { StrapiBlogDetailResponse, StrapiBlogListResponse, StrapiBlogSlugsResponse } from '@/models/blog';
 import type { StrapiCategoryListResponse } from '@/models/category';
 import type { StrapiOurCompanyPageResponse } from '@/models/ourCompanyPage';
+import type { StrapiBlogPageResponse } from '@/models/blogPage';
+import type { StrapiGalleryPageResponse } from '@/models/galleryPage';
 import type { StrapiContactPageResponse } from '@/models/contactPage';
 import type { StrapiWorkWithUsPageResponse } from '@/models/workWithUsPage';
 import type { StrapiCaseStudyListResponse, StrapiCaseStudyDetailResponse, StrapiCaseStudySlugsResponse } from '@/models/caseStudy';
@@ -305,6 +307,16 @@ async function getPageContentBlock<T>(slug: string, component: string): Promise<
   const block = res.data.blocks?.find((b) => b.__component === component);
   if (!block) throw new StrapiError('Not found', 404, `pages/slug/${slug}`);
   return { data: block } as unknown as T;
+}
+
+/** Pages → Blogs (slug "blogs") — /blogs listing copy + shared blog-post labels. */
+export function getBlogPageSettings(): Promise<StrapiBlogPageResponse> {
+  return getPageContentBlock<StrapiBlogPageResponse>('blogs', 'page-content.blog');
+}
+
+/** Pages → Gallery (slug "gallery"). */
+export function getGalleryPageSettings(): Promise<StrapiGalleryPageResponse> {
+  return getPageContentBlock<StrapiGalleryPageResponse>('gallery', 'page-content.gallery');
 }
 
 export function getOurCompanyPageSettings(): Promise<StrapiOurCompanyPageResponse> {

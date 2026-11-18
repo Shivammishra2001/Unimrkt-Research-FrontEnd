@@ -77,6 +77,7 @@ export interface StrapiServiceDetail extends StrapiServiceSummary, StrapiClosing
 
   methodologiesEyebrow: string | null;
   methodologiesHeading: string | null;
+  methodologiesBody?: string | null;
   methodologies: StrapiIndustryDetailCard[];
 
   industriesEyebrow: string | null;
@@ -135,6 +136,8 @@ export interface StrapiServiceTreeItem {
   slug: string;
   summary: string;
   thumbnail: StrapiMedia | null;
+  listingDescription?: string | null;
+  listingIcon?: StrapiMedia | null;
   children: StrapiServiceTreeChild[];
 }
 
@@ -199,6 +202,7 @@ export interface ServiceDetail extends ServiceSummary {
 
   methodologiesEyebrow?: string;
   methodologiesHeading?: string;
+  methodologiesBody?: string;
   methodologies: IndustryDetailCardModel[];
 
   industriesEyebrow?: string;
@@ -254,5 +258,8 @@ export interface ServiceTreeItemModel {
   title: string;
   summary: string;
   thumbnail?: ImageModel;
+  /** Services listing panel copy / icon (empty = the Figma art, then the summary). */
+  listingDescription?: string;
+  listingIcon?: ImageModel;
   children: ServiceTreeChildModel[];
 }

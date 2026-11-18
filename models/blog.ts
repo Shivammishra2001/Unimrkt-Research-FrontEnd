@@ -63,6 +63,7 @@ export interface StrapiBlogFaqItem {
 }
 
 export interface StrapiBlogDetail extends StrapiBlogSummary {
+  author?: string | null;
   body: StrapiBlocksContent | null;
   faqItems: StrapiBlogFaqItem[];
   seo: StrapiSeo | null;
@@ -97,6 +98,8 @@ export interface BlogSummary {
 }
 
 export interface BlogDetail extends BlogSummary {
+  /** Byline; empty = "Unimrkt". */
+  author?: string;
   /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
   isActive?: boolean;
   body: StrapiBlocksContent;

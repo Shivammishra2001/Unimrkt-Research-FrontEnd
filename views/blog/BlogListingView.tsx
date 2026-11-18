@@ -8,6 +8,7 @@ import { BlogGridSection } from './BlogGridSection';
 import { SITEWIDE_BLOG_FAQ_ITEMS } from './BlogFaqAccordion';
 import type { BlogSummary } from '@/models/blog';
 import type { CategoryModel } from '@/models/category';
+import type { BlogPageSettings } from '@/models/blogPage';
 import type { ClosingBandsSettings } from '@/models/domain';
 import { resolveClosingBands } from '@/views/sections/closingBands';
 
@@ -26,9 +27,22 @@ const HERO_CTA = {
  * (522:4788-4799, the Home band) · "About Our Blog" + closing CTA (522:4720-4779, same design as the industry pages).
  * Posts and category tabs are CMS-dynamic; the remaining copy is static text copied off the node.
  */
-export function BlogListingView({ posts, categories, globalBands }: { posts: BlogSummary[]; categories: CategoryModel[]; globalBands?: ClosingBandsSettings }) {
-  // Closing bands from Global Header, Footer & SEO (this page has no page record of its own yet), else the built-in copy.
-  const bands = resolveClosingBands(globalBands);
+export function BlogListingView({
+  posts,
+  categories,
+  globalBands,
+  page = { faqItems: [] },
+}: {
+  posts: BlogSummary[];
+  categories: CategoryModel[];
+  globalBands?: ClosingBandsSettings;
+  /** Pages → Blogs (every field optional; empty = built-in copy). */
+  page?: BlogPageSettings;
+}) {
+  // Closing bands: Pages → Blogs overrides, then Global Header, Footer & SEO, then the built-in copy.
+  const bands = resolveClosingBands(globalBands, page.closingBands);
+  const heroHeading = (page.heroHeading ?? 'Market Research\nInsights & Industry Trends').split('\n');
+  const aboutParagraphs = page.aboutBody ? page.aboutBody.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean) : null;
   const sortedPosts = [...posts].sort((a, b) => a.order - b.order);
 
   return (
@@ -37,7 +51,7 @@ export function BlogListingView({ posts, categories, globalBands }: { posts: Blo
       <section className="relative w-full bg-[#040112] text-white lg:min-h-[768px]">
         <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
           <div className="absolute -left-[0.74%] -top-[10.03%] h-[127.86%] w-[101.47%] opacity-70">
-            <Image src="/images/blog/hero-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+            <Image src={page.heroImage?.src ?? '/images/blog/hero-bg.jpg'} alt="" fill priority sizes="100vw" className="object-cover" />
           </div>
           <div className="absolute inset-0 bg-[#010913]/40" />
           <div
@@ -52,18 +66,22 @@ export function BlogListingView({ posts, categories, globalBands }: { posts: Blo
         <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-16 lg:pt-[276px] min-[1500px]:px-0">
           <p className="inline-flex h-10 items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
             <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
-            Our Blog
+            {page.heroEyebrow ?? 'Our Blog'}
           </p>
           <h1 className="mt-[14.5px] max-w-[735px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
-            Market Research
-            <br className="hidden sm:block" /> Insights &amp; Industry Trends
+            {heroHeading.map((line, i) => (
+              <span key={i}>
+                {i > 0 && <br className="hidden sm:block" />}
+                {i > 0 ? ' ' : ''}
+                {line}
+              </span>
+            ))}
           </h1>
           <p className="mt-[12.8px] max-w-[716px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">
-            Stay informed with expert articles, research methodologies, industry trends, customer insights, and business
-            intelligence from Unimrkt Research.
+            {page.heroSubheading ?? 'Stay informed with expert articles, research methodologies, industry trends, customer insights, and business intelligence from Unimrkt Research.'}
           </p>
           <div className="mt-8 lg:mt-[47.4px]">
-            <Button link={HERO_CTA} />
+            <Button link={page.heroCta ?? HERO_CTA} />
           </div>
         </div>
       </section>
@@ -78,7 +96,7 @@ export function BlogListingView({ posts, categories, globalBands }: { posts: Blo
           aria-hidden="true"
         />
         <div className="relative mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
-          <BlogGridSection posts={sortedPosts} categories={categories} />
+          <BlogGridSection posts={sortedPosts} categories={categories} heading={page.gridHeading} intro={page.gridIntro} />
         </div>
       </section>
 
@@ -117,16 +135,16 @@ export function BlogListingView({ posts, categories, globalBands }: { posts: Blo
           heading: bands.faq.heading,
           background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
           cta: bands.faq.cta,
-          items: SITEWIDE_BLOG_FAQ_ITEMS,
+          items: page.faqItems.length > 0 ? page.faqItems : SITEWIDE_BLOG_FAQ_ITEMS,
         }}
       />
 
       <AboutServicesCta
         detail
         about={{
-          eyebrow: 'About Our Blog',
-          heading: 'Insights That Drive Smarter Business Decisions',
-          paragraphs: [
+          eyebrow: page.aboutEyebrow ?? 'About Our Blog',
+          heading: page.aboutHeading ?? 'Insights That Drive Smarter Business Decisions',
+          paragraphs: aboutParagraphs ?? [
             'Welcome to the Unimrkt Research Blog, your trusted source for the latest market research insights, industry trends, and expert perspectives. From primary research methodologies and consumer behavior to business strategy and emerging market opportunities, our articles are designed to help organizations make informed, data-driven decisions.',
             'Explore practical guides, research best practices, case studies, and thought leadership from experienced industry professionals. Whether you’re a business leader, marketer, or researcher, our blog delivers valuable knowledge to help you understand markets, uncover opportunities, and stay ahead in today’s competitive business landscape.',
           ],

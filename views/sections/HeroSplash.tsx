@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent, type KeyboardEvent } from 'react';
 import { useReducedMotion } from 'framer-motion';
+import Image from 'next/image';
 import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
 import { LoopingVideo, type VideoSource } from '@/views/ui/LoopingVideo';
@@ -62,7 +63,8 @@ export function buildHeroSlides(block: HeroModel): HeroSlide[] {
       description: item.description ?? block.subheading,
       label: item.label,
       slug,
-      icon: ICON_SLUGS.has(slug) ? `/figma-home/hero/${slug}.svg` : undefined,
+      // The row's Icon from Strapi wins; otherwise the Figma pictogram matched by the row label.
+      icon: item.icon?.src ?? (ICON_SLUGS.has(slug) ? `/figma-home/hero/${slug}.svg` : undefined),
       ctaLink,
     };
   });
@@ -328,8 +330,9 @@ export function HeroSplash({
                     aria-hidden="true"
                   >
                     {slide.icon && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={slide.icon} alt="" className={`block transition-all duration-500 ease-out motion-reduce:transition-none ${step.icon}`} />
+                      // next/image so a Strapi upload is fetched through the app (the CMS host is not browser-reachable on every
+                      // deployment); the size still comes from the step classes.
+                      <Image src={slide.icon} alt="" width={64} height={64} className={`block transition-all duration-500 ease-out motion-reduce:transition-none ${step.icon}`} />
                     )}
                     <span className={`pointer-events-none absolute inset-0 rounded-[inherit] ${step.shadow}`} />
                   </span>

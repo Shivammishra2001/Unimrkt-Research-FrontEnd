@@ -64,6 +64,7 @@ export function normalizeServicesListingPage(raw: StrapiServicesListingPage | nu
       eyebrow: text(showcase.eyebrow, F.showcase.eyebrow),
       heading: text(showcase.heading, F.showcase.heading),
       body: text(showcase.body, F.showcase.body),
+      ctaLabel: text(showcase.ctaLabel, F.showcase.ctaLabel),
     },
     why: {
       heading: text(why.heading, F.why.heading),

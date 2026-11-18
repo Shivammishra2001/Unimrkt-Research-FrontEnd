@@ -33,7 +33,7 @@ export interface ServicesCoverageCard {
 export interface ServicesListingContent {
   hero: { eyebrow: string; heading: string; subheading: string; image?: ImageModel; actions: LinkModel[] };
   intro: { eyebrow: string; heading: string; paragraphs: string[]; image?: ImageModel };
-  showcase: { eyebrow: string; heading: string; body: string };
+  showcase: { eyebrow: string; heading: string; body: string; /** Panel button label. */ ctaLabel: string };
   why: { heading: string; body: string; stats: ServicesStat[] };
   process: IndustriesPageContent['process'];
   band: { heading: string; body: string; cta: LinkModel; personImage?: ImageModel };
@@ -75,6 +75,7 @@ export const SERVICES_LISTING_FALLBACK: ServicesListingContent = {
     eyebrow: 'Our Services',
     heading: 'End-to-End Market Research Solutions',
     body: 'From research design and respondent recruitment to data collection, analysis, and reporting, Unimrkt Research provides comprehensive market research solutions tailored to your business objectives. Our expert team delivers accurate, actionable insights that help organizations make informed decisions, uncover opportunities, and drive sustainable growth.',
+    ctaLabel: 'Explore Research',
   },
   why: {
     heading: 'Why Choose Unimrkt?',

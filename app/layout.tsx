@@ -166,7 +166,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <main className="flex-1 [overflow-x:clip]">{children}</main>
         {global && <Footer footer={global.footer} />}
-        <ChatWidget />
+        <ChatWidget content={global?.chatWidget} />
       </body>
     </html>
   );

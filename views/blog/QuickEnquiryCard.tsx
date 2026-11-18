@@ -16,7 +16,14 @@ const FIELD =
  * Submits to the same /contact-submit route as the /contact form (stored as a Contact Submission with source
  * "blog-quick-enquiry" and the message); the thank-you shows only once the submission is actually saved.
  */
-export function QuickEnquiryCard() {
+export function QuickEnquiryCard({
+  heading = 'Quick Enquiry',
+  subheading = 'Customer Service, We Make it Better',
+}: {
+  /** Pages → Blogs → Post: Quick Enquiry heading / subheading. */
+  heading?: string;
+  subheading?: string;
+} = {}) {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,10 +65,10 @@ export function QuickEnquiryCard() {
   return (
     <div className="rounded-[24px] border border-[#eee] bg-white px-6 pb-[40px] pt-[38px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.05)] sm:px-[35px]">
       <h3 className="font-sans text-[24px] font-semibold leading-[1.34] text-[#04264e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
-        Quick Enquiry
+        {heading}
       </h3>
       <p className="mt-[17px] font-sans text-[14px] font-normal leading-[1.73] text-black/70 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
-        Customer Service, We Make it Better
+        {subheading}
       </p>
 
       {submitted ? (

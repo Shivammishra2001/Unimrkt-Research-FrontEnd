@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import { SendArrowIcon } from './icons/SendArrowIcon';
+import type { ChatWidgetModel } from '@/models/domain';
 
 interface ChatMessage {
   id: string;
@@ -50,9 +51,12 @@ const PANEL_ID = 'chat-widget-panel';
  * own open/close toggle, its icon swapping between the chat bubble and
  * an X to reflect state.
  */
-export function ChatWidget() {
+export function ChatWidget({ content }: { /** Global → Chat Widget (each empty field keeps the built-in copy). */ content?: ChatWidgetModel } = {}) {
+  const greetingText = content?.greeting ?? GREETING_TEXT;
+  const ackText = content?.acknowledgement ?? ACK_TEXT;
+  const quickActions: ReadonlyArray<{ id: string; label: string; reply: string }> = content?.quickActions.length ? content.quickActions : QUICK_ACTIONS;
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'greeting', from: 'bot', text: GREETING_TEXT }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'greeting', from: 'bot', text: greetingText }]);
   const [input, setInput] = useState('');
   const [showQuickActions, setShowQuickActions] = useState(true);
 
@@ -95,7 +99,7 @@ export function ChatWidget() {
     setMessages((prev) => [...prev, { ...msg, id: `msg-${nextIdRef.current}` }]);
   }
 
-  function handleQuickAction(action: (typeof QUICK_ACTIONS)[number]) {
+  function handleQuickAction(action: { id: string; label: string; reply: string }) {
     setShowQuickActions(false);
     pushMessage({ from: 'user', text: action.label });
     window.setTimeout(() => pushMessage({ from: 'bot', text: action.reply }), 400);
@@ -108,7 +112,7 @@ export function ChatWidget() {
     setShowQuickActions(false);
     pushMessage({ from: 'user', text: trimmed });
     setInput('');
-    window.setTimeout(() => pushMessage({ from: 'bot', text: ACK_TEXT }), 500);
+    window.setTimeout(() => pushMessage({ from: 'bot', text: ackText }), 500);
   }
 
   return (
@@ -130,10 +134,10 @@ export function ChatWidget() {
       >
         <div className="flex shrink-0 items-center justify-between gap-3 bg-gradient-to-r from-gradient-from to-gradient-to px-5 py-4 text-white">
           <div>
-            <p className="font-sans text-base font-semibold">Chat with Unimrkt</p>
+            <p className="font-sans text-base font-semibold">{content?.title ?? 'Chat with Unimrkt'}</p>
             <p className="mt-0.5 flex items-center gap-1.5 font-sans text-xs text-white/80">
               <span className="size-2 rounded-full bg-emerald-400" aria-hidden="true" />
-              Online
+              {content?.status ?? 'Online'}
             </p>
           </div>
           <button
@@ -163,7 +167,7 @@ export function ChatWidget() {
 
           {showQuickActions && (
             <div className="flex flex-wrap gap-2 pt-1">
-              {QUICK_ACTIONS.map((action) => (
+              {quickActions.map((action) => (
                 <button
                   key={action.id}
                   type="button"
@@ -184,7 +188,7 @@ export function ChatWidget() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message…"
+            placeholder={content?.placeholder ?? 'Type your message…'}
             aria-label="Type your message"
             className="h-11 flex-1 rounded-full border border-[#e4e2e2] bg-[#fbfbfb] px-4 font-sans text-sm text-[#464646] placeholder:text-[#868484] focus:outline-none focus:ring-2 focus:ring-brand-600"
           />

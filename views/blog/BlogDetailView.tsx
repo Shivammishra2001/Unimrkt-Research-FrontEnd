@@ -9,6 +9,7 @@ import { RichContent } from './RichContent';
 import { QuickEnquiryCard } from './QuickEnquiryCard';
 import { RecentPostsCard } from './RecentPostsCard';
 import type { BlogDetail, BlogSummary } from '@/models/blog';
+import type { BlogPageSettings } from '@/models/blogPage';
 import type { ClosingBandsSettings } from '@/models/domain';
 import { resolveClosingBands } from '@/views/sections/closingBands';
 
@@ -46,10 +47,23 @@ function Chevron() {
  * (Quick Enquiry, Recent Posts) from y980 · divider + Share row · "Other Blogs" band · FAQ · closing CTA band.
  * The node has no category pill and no read-time, so neither is drawn.
  */
-export function BlogDetailView({ post, relatedPosts, recentPosts = [], globalBands }: { post: BlogDetail; relatedPosts: BlogSummary[]; recentPosts?: BlogSummary[]; globalBands?: ClosingBandsSettings }) {
-  // Closing bands from Global Header, Footer & SEO, else the built-in copy. The related-posts band keeps this frame's
-  // own "Other Blogs" eyebrow (moves to the blog page record in a later step).
-  const bands = resolveClosingBands(globalBands);
+export function BlogDetailView({
+  post,
+  relatedPosts,
+  recentPosts = [],
+  globalBands,
+  page = { faqItems: [] },
+}: {
+  post: BlogDetail;
+  relatedPosts: BlogSummary[];
+  recentPosts?: BlogSummary[];
+  globalBands?: ClosingBandsSettings;
+  /** Pages → Blogs — the labels shared by every post page, and the blog-wide band overrides. */
+  page?: BlogPageSettings;
+}) {
+  // Closing bands: Pages → Blogs overrides, then Global Header, Footer & SEO, then the built-in copy. The related-posts
+  // band takes its eyebrow from Pages → Blogs ("Other Blogs" by default).
+  const bands = resolveClosingBands(globalBands, page.closingBands);
   // The environment's public site URL (same setting as the sitemap); falls back to the production domain.
   const shareUrl = `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.unimrkt.com').replace(/\/+$/, '')}/blogs/${post.slug}`;
 
@@ -92,7 +106,7 @@ export function BlogDetailView({ post, relatedPosts, recentPosts = [], globalBan
             {post.title}
           </h1>
           <p className="mt-6 whitespace-pre text-center font-sans text-[17px] font-normal leading-[1.7] tracking-[-0.2px] text-[#585858] lg:mt-9 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
-            <span className="font-semibold text-[#712b49]">By Unimrkt</span>
+            <span className="font-semibold text-[#712b49]">By {post.author ?? 'Unimrkt'}</span>
             {'    •   '}
             {formatDate(post.publishedAt)}
           </p>
@@ -120,7 +134,7 @@ export function BlogDetailView({ post, relatedPosts, recentPosts = [], globalBan
 
               <div className="mt-12 h-px w-full bg-[#d9d9d9] lg:mt-[49.5px] lg:w-[calc(100%+20px)]" aria-hidden="true" />
               <div className="mt-6 flex flex-wrap items-center gap-[15px] lg:mt-[25px] lg:pl-[10px]">
-                <span className="font-sans text-[24px] font-semibold capitalize leading-[1.2] tracking-[-1px] text-[#02060e]">Share</span>
+                <span className="font-sans text-[24px] font-semibold capitalize leading-[1.2] tracking-[-1px] text-[#02060e]">{page.postShareLabel ?? 'Share'}</span>
                 <div className="flex items-center gap-[7.765px]">
                   <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" className={SHARE_ICON_CLASS}>
                     <FacebookIcon className="size-4" aria-hidden="true" />
@@ -139,8 +153,8 @@ export function BlogDetailView({ post, relatedPosts, recentPosts = [], globalBan
             </div>
 
             <div className="flex flex-col gap-[30px] lg:sticky lg:top-[140px] lg:self-start lg:pt-[10px]">
-              <QuickEnquiryCard />
-              <RecentPostsCard posts={recentPosts} />
+              <QuickEnquiryCard heading={page.postQuickEnquiryHeading} subheading={page.postQuickEnquirySubheading} />
+              <RecentPostsCard posts={recentPosts} heading={page.postRecentPostsHeading} />
             </div>
           </div>
         </div>
@@ -155,7 +169,7 @@ export function BlogDetailView({ post, relatedPosts, recentPosts = [], globalBan
             kind: 'blogTeaser',
             id: 'blog-other-blogs',
             theme: 'light',
-            eyebrow: 'Other Blogs',
+            eyebrow: page.postRelatedEyebrow ?? 'Other Blogs',
             heading: bands.blog.heading,
             description: bands.blog.description,
             actions: [],

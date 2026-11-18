@@ -23,7 +23,7 @@ export interface StrapiServicesStat {
 export interface StrapiServicesSections {
   hero: { eyebrow: string | null; heading: string | null; subheading: string | null; image: StrapiMedia | null; primaryCta: StrapiLink | null; secondaryCta: StrapiLink | null };
   intro: { eyebrow: string | null; heading: string | null; body: string | null; image: StrapiMedia | null };
-  showcase: { eyebrow: string | null; heading: string | null; body: string | null };
+  showcase: { eyebrow: string | null; heading: string | null; body: string | null; ctaLabel?: string | null };
   why: { heading: string | null; body: string | null; stats: StrapiServicesStat[] | null };
   process: { eyebrow: string | null; heading: string | null; body: string | null; steps: StrapiServicesCard[] | null };
   band: { heading: string | null; body: string | null; personImage: StrapiMedia | null; cta: StrapiLink | null };

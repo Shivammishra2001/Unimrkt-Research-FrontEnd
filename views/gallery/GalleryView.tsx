@@ -9,6 +9,7 @@ import { CloseIcon } from '@/views/ui/icons/CloseIcon';
 import { RefreshIcon } from '@/views/ui/icons/RefreshIcon';
 import type { GalleryData, GalleryImage } from '@/models/gallery';
 import type { ClosingBandsSettings } from '@/models/domain';
+import type { GalleryPageSettings } from '@/models/galleryPage';
 import { resolveClosingBands } from '@/views/sections/closingBands';
 
 const PAGE_SIZE = 9;
@@ -113,9 +114,11 @@ function GalleryLightbox({
  * globally by app/layout.tsx — this view owns only the gallery-specific
  * content between them. Pixel values below are the Figma geometry at the
  * 1900px frame; they collapse to fluid values below `lg`. */
-export function GalleryView({ data, globalBands }: { data: GalleryData; globalBands?: ClosingBandsSettings }) {
-  // Closing CTA from Global Header, Footer & SEO (no gallery page record yet), else the built-in copy.
-  const finalCta = resolveClosingBands(globalBands).finalCta;
+export function GalleryView({ data, globalBands, page = {} }: { data: GalleryData; globalBands?: ClosingBandsSettings; /** Pages → Gallery (empty = built-in copy). */ page?: GalleryPageSettings }) {
+  // Closing CTA: Pages → Gallery override, then Global Header, Footer & SEO, then the built-in copy.
+  const finalCta = resolveClosingBands(globalBands, page.closingBands).finalCta;
+  const heroSrc = page.heroImage?.src ?? '/images/gallery/hero-layer-b.jpg';
+  const heroHeading = (page.heroHeading ?? 'Moments that\nshow our journey').split('\n');
   const [activeCategory, setActiveCategory] = useState('all');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -150,7 +153,7 @@ export function GalleryView({ data, globalBands }: { data: GalleryData; globalBa
           sits under the navbar. */}
       <section className="relative w-full overflow-hidden bg-[#040112] text-white lg:h-[768px]">
         <Image
-          src="/images/gallery/hero-layer-b.jpg"
+          src={heroSrc}
           alt=""
           priority
           width={2163}
@@ -159,7 +162,7 @@ export function GalleryView({ data, globalBands }: { data: GalleryData; globalBa
           className="pointer-events-none absolute left-[-31px] top-[-249px] hidden max-w-none opacity-70 lg:block"
         />
         <Image
-          src="/images/gallery/hero-layer-b.jpg"
+          src={heroSrc}
           alt=""
           fill
           sizes="100vw"
@@ -179,15 +182,19 @@ export function GalleryView({ data, globalBands }: { data: GalleryData; globalBa
         <div className="relative z-10 mx-auto w-full max-w-[1466px] px-4 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-0 lg:pt-[303px] min-[1500px]:px-0">
           <p className="inline-flex h-10 w-[178px] items-center gap-3 whitespace-nowrap rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] font-sans text-[13px] font-bold uppercase leading-[15.6px] tracking-[3px] text-white backdrop-blur-[2px]">
             <span className="size-2 shrink-0 rounded-full bg-[#a82c31]" aria-hidden="true" />
-            OUR GALLERY
+            {page.heroEyebrow ?? 'Our Gallery'}
           </p>
           <h1 className="mt-[15px] max-w-[748px] font-sans text-[36px] font-semibold capitalize leading-[43px] text-white sm:text-[48px] sm:leading-[58px] lg:text-[60px] lg:leading-[72px] lg:tracking-[-3px]">
-            Moments that{' '}
-            <br className="max-sm:hidden" />
-            show our journey
+            {heroHeading.map((line, i) => (
+              <span key={i}>
+                {i > 0 && <br className="max-sm:hidden" />}
+                {i > 0 ? ' ' : ''}
+                {line}
+              </span>
+            ))}
           </h1>
           <p className="mt-[12px] max-w-[630px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">
-            Explore our gallery to see the people, processes and projects that drive our research excellence.
+            {page.heroSubheading ?? 'Explore our gallery to see the people, processes and projects that drive our research excellence.'}
           </p>
         </div>
       </section>
@@ -203,7 +210,7 @@ export function GalleryView({ data, globalBands }: { data: GalleryData; globalBa
         />
         <div className="relative mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8 min-[1700px]:px-0">
           <h2 className="text-center font-sans text-[34px] font-semibold capitalize leading-[41px] tracking-[-1.5px] text-[#02060e] sm:text-[42px] sm:leading-[50px] lg:text-[50px] lg:leading-[60px] lg:tracking-[-3px]">
-            Our Gallery
+            {page.gridHeading ?? 'Our Gallery'}
           </h2>
 
           <div className="mt-[36px] flex flex-wrap justify-center gap-3">
@@ -279,7 +286,7 @@ export function GalleryView({ data, globalBands }: { data: GalleryData; globalBa
         <div className="mx-auto w-full max-w-[1740px]">
           <div className="relative flex min-h-[455px] flex-col items-center overflow-hidden rounded-[40px] bg-[#101723] px-6 pb-16 pt-16 text-center lg:pb-[106px] lg:pt-[108px]">
             <Image
-              src="/images/gallery/cta-people.jpg"
+              src={page.finalCtaImage?.src ?? '/images/gallery/cta-people.jpg'}
               alt=""
               width={1838}
               height={1034}

@@ -231,8 +231,8 @@ export function resolveServiceDetail(service: ServiceDetail): ResolvedServiceDet
     methodologies: {
       eyebrow: service.methodologiesEyebrow || 'Process',
       heading: service.methodologiesHeading || 'Research Methodologies',
-      // No CMS field yet — Figma 483:7163's copy.
-      body: 'We leverage proven qualitative and quantitative research methodologies to collect accurate, reliable data, delivering actionable insights that support smarter decisions, innovation, and sustainable business growth.',
+      // Service → Methodologies body; Figma 483:7163's copy is the fallback.
+      body: service.methodologiesBody || 'We leverage proven qualitative and quantitative research methodologies to collect accurate, reliable data, delivering actionable insights that support smarter decisions, innovation, and sustainable business growth.',
       items:
         service.methodologies.length > 0
           ? service.methodologies

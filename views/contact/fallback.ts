@@ -16,6 +16,8 @@ import type { ContactPageSettings } from '@/models/contactPage';
 import type { FaqItemModel, LinkModel } from '@/models/domain';
 import type { OfficeLocationModel } from '@/models/contactPage';
 import type { ServiceStatItemModel } from '@/models/service';
+import { WHY_WORK_DEFAULT, type WhyWorkContent } from './WhyWorkSection';
+import { HOW_IT_WORKS_DEFAULT, type HowItWorksContent } from './HowItWorksSection';
 
 const ASSET_DIR = '/images/contact';
 
@@ -76,7 +78,19 @@ export interface ResolvedContact {
   form: { eyebrow: string; heading: string; subheading: string; image: ContactPageSettings['formImage'] };
   faqItems: FaqItemModel[];
   workWithUs: { heading: string; body: string; cta: LinkModel; image: ContactPageSettings['workWithUsImage'] };
+  why: WhyWorkContent;
+  how: HowItWorksContent;
+  about: { eyebrow: string; heading: string; paragraphs: string[] };
 }
+
+const ABOUT_DEFAULT = {
+  eyebrow: 'Contact Us',
+  heading: 'Have a Research Question? Let’s Talk.',
+  paragraphs: [
+    'Tell us what you’re trying to understand—whether it’s a market opportunity, customer behaviour, industry trend, competitive landscape or a specific business challenge. Our team takes the time to understand your objectives, target audience and desired outcomes before recommending the right research approach, methodology and scope. From focused studies to complex multi-market research programs, we help businesses ask the right questions and uncover meaningful insights.',
+    'Our capabilities span qualitative and quantitative research, B2B, healthcare, consumer research, CATI and global research across diverse industries and audiences. With experienced researchers, robust quality processes, technology-enabled execution and a global network, we deliver reliable insights that can support confident business decisions. Share your research requirement with us, and our experts will work with you to shape a practical, focused solution aligned with your goals, timelines and market needs. Let’s start a conversation and discover the right research path for your business.',
+  ],
+};
 
 export function resolveContact(settings: ContactPageSettings): ResolvedContact {
   return {
@@ -108,6 +122,26 @@ export function resolveContact(settings: ContactPageSettings): ResolvedContact {
       body: settings.workWithUsBody || 'We offer the best infrastructure for our employees to learn and grow with us.',
       cta: settings.workWithUsCta || { id: 'fallback-work-with-us-cta', label: 'Apply Now', href: '/work-with-us', isExternal: false, variant: 'primary' },
       image: settings.workWithUsImage || localImage('contact-work-with-us-bg.jpg', 'Work With unimrkt', 1740, 455),
+    },
+    why: {
+      eyebrow: settings.whyEyebrow || WHY_WORK_DEFAULT.eyebrow,
+      heading: settings.whyHeading || WHY_WORK_DEFAULT.heading,
+      body: settings.whyBody || WHY_WORK_DEFAULT.body,
+      cards:
+        settings.whyCards.length > 0
+          ? settings.whyCards.map((c) => ({ id: c.id, title: c.title, description: c.description ?? '', icon: c.icon, iconIdentifier: c.iconIdentifier }))
+          : WHY_WORK_DEFAULT.cards,
+    },
+    how: {
+      eyebrow: settings.howEyebrow || HOW_IT_WORKS_DEFAULT.eyebrow,
+      heading: settings.howHeading || HOW_IT_WORKS_DEFAULT.heading,
+      intro: settings.howIntro || HOW_IT_WORKS_DEFAULT.intro,
+      steps: settings.howSteps.length > 0 ? settings.howSteps.map((s) => ({ id: s.id, title: s.title, description: s.description ?? '' })) : HOW_IT_WORKS_DEFAULT.steps,
+    },
+    about: {
+      eyebrow: settings.aboutEyebrow || ABOUT_DEFAULT.eyebrow,
+      heading: settings.aboutHeading || ABOUT_DEFAULT.heading,
+      paragraphs: settings.aboutBody ? settings.aboutBody.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean) : ABOUT_DEFAULT.paragraphs,
     },
   };
 }

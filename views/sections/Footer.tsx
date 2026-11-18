@@ -15,7 +15,7 @@ const SOCIAL_ICON_BY_LABEL: Record<string, ComponentType<SVGProps<SVGSVGElement>
   instagram: InstagramIcon,
 };
 
-/** Certification badges (Figma 267:1555) — static artwork, not CMS-managed. */
+/** Certification badges (Figma 267:1555) — built-in artwork used until Global → Footer badges is filled. */
 const CERTIFICATION_BADGES = [
   { src: '/figma-home/footer/badge-1.png', alt: 'ISO certification' },
   { src: '/figma-home/footer/badge-3.png', alt: 'ISO certification' },
@@ -55,12 +55,19 @@ export function Footer({ footer }: { footer: FooterModel }) {
             <StrapiImage image={footer.logo} sizes="167px" className="h-[120px] w-auto rounded-[50%] object-contain" />
             {footer.tagline && <p className="mt-5 max-w-xs text-[14px] leading-[1.53] lg:max-w-[333px]">{footer.tagline}</p>}
             <div className="mt-8 flex flex-wrap gap-[10px] lg:mt-[52px]">
-              {CERTIFICATION_BADGES.map((badge) => (
-                <span key={badge.src} className="flex size-20 items-center justify-center rounded-full bg-white">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={badge.src} alt={badge.alt} className="size-[95%] rounded-full object-contain" />
-                </span>
-              ))}
+              {/* Global → Footer badges when set (through next/image, like every CMS asset), else the built-in artwork. */}
+              {footer.badges.length > 0
+                ? footer.badges.map((badge, i) => (
+                    <span key={`${badge.src}-${i}`} className="flex size-20 items-center justify-center rounded-full bg-white">
+                      <StrapiImage image={badge} sizes="80px" className="size-[95%] rounded-full object-contain" />
+                    </span>
+                  ))
+                : CERTIFICATION_BADGES.map((badge) => (
+                    <span key={badge.src} className="flex size-20 items-center justify-center rounded-full bg-white">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={badge.src} alt={badge.alt} className="size-[95%] rounded-full object-contain" />
+                    </span>
+                  ))}
             </div>
           </div>
           {footer.columns.map((column) => (
@@ -84,7 +91,7 @@ export function Footer({ footer }: { footer: FooterModel }) {
           ))}
           {footer.socialLinks.length > 0 && (
             <div className="sm:col-span-2 lg:col-span-4 lg:pt-3 xl:col-span-1">
-              <h3 className="font-accent text-[18px] font-semibold leading-[1.26] text-white">Connect with us</h3>
+              <h3 className="font-accent text-[18px] font-semibold leading-[1.26] text-white">{footer.socialHeading ?? 'Connect with us'}</h3>
               <div className="mt-4 flex gap-[7.765px]">
                 {footer.socialLinks.map((social) => {
                   const Icon = SOCIAL_ICON_BY_LABEL[social.label.toLowerCase()];

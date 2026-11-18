@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { hiddenFromVisitors } from '@/controllers/visibility';
 import { InactivePreviewBanner } from '@/views/ui/InactivePreviewBanner';
 import type { Metadata } from 'next';
+import { getBlogPageContent } from '@/controllers/blogPage';
 import { getAllBlogPosts, getAllBlogSlugs, getBlogPostBySlug } from '@/controllers/blog';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { BlogDetailView } from '@/views/blog/BlogDetailView';
@@ -73,10 +74,12 @@ export default async function BlogDetailPage({ params }: { params: RouteParams }
 
   // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
   const globalBands = await getGlobalClosingBands();
+  // Pages → Blogs: labels shared by every post page (never breaks the post if it can't load).
+  const blogPage = await getBlogPageContent().catch(() => ({ faqItems: [] }));
   return (
     <>
       {inactivePreview && <InactivePreviewBanner />}
-      <BlogDetailView globalBands={globalBands} post={post} relatedPosts={pickRelatedPosts(allPosts, post)} recentPosts={pickRecentPosts(allPosts, post.slug)} />
+      <BlogDetailView globalBands={globalBands} page={blogPage} post={post} relatedPosts={pickRelatedPosts(allPosts, post)} recentPosts={pickRecentPosts(allPosts, post.slug)} />
     </>
   );
 }

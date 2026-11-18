@@ -96,8 +96,10 @@ import type {
   BlogSummary,
 } from '@/models/blog';
 import type { StrapiCategory, StrapiCategoryListResponse, CategoryModel } from '@/models/category';
-import type { FaqItemModel, ClosingBandsSettings } from '@/models/domain';
+import type { FaqItemModel, ClosingBandsSettings, ImageModel } from '@/models/domain';
 import type { StrapiClosingBands } from '@/models/strapi';
+import type { StrapiBlogPageResponse, BlogPageSettings } from '@/models/blogPage';
+import type { StrapiGalleryPageResponse, GalleryPageSettings } from '@/models/galleryPage';
 // ---------------------------------------------------------------------------
 // Shared primitives
 // ---------------------------------------------------------------------------
@@ -253,6 +255,7 @@ export function normalizeBlock(block: StrapiBlock): BlockModel | undefined {
           tag: item.tag ?? undefined,
           headline: item.headline ?? undefined,
           ctaLabel: item.ctaLabel ?? undefined,
+          icon: toImageModel(item.icon ?? null, item.label),
         })),
         headingSize: block.headingSize ?? 'display',
         statValue: block.statValue ?? undefined,
@@ -543,6 +546,7 @@ export function normalizeServiceDetail(res: StrapiServiceDetailResponse): Servic
 
     methodologiesEyebrow: data.methodologiesEyebrow ?? undefined,
     methodologiesHeading: data.methodologiesHeading ?? undefined,
+    methodologiesBody: data.methodologiesBody || undefined,
     methodologies: data.methodologies.map(normalizeIndustryDetailCard),
 
     industriesEyebrow: data.industriesEyebrow ?? undefined,
@@ -599,6 +603,8 @@ export function normalizeServiceTree(res: StrapiServiceTreeResponse): ServiceTre
     title: item.title,
     summary: item.summary,
     thumbnail: toImageModel(item.thumbnail, item.title),
+    listingDescription: item.listingDescription?.trim() || undefined,
+    listingIcon: toImageModel(item.listingIcon ?? null, item.title),
     children: item.children.map((c) => ({ slug: c.slug, title: c.title, summary: c.summary })),
   }));
 }
@@ -798,6 +804,7 @@ export function normalizeBlogDetail(res: StrapiBlogDetailResponse): BlogDetail {
   const wordCount = extractPlainText(body).split(/\s+/).filter(Boolean).length;
   return {
     ...normalizeBlogSummaryFields(data),
+    author: data.author?.trim() || undefined,
     isActive: data.isActive !== false,
     body,
     faqItems: (data.faqItems ?? []).map((item): FaqItemModel => ({
@@ -847,6 +854,7 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
       ? {
           eyebrow: data.servicesMenu.eyebrow || undefined,
           autoIncludeNew: data.servicesMenu.autoIncludeNew !== false,
+          overviewLabel: data.servicesMenu.overviewLabel || undefined,
           categories: (data.servicesMenu.categories ?? [])
             .filter((c) => c.service?.slug)
             .map((c) => ({ slug: c.service!.slug, label: c.label || undefined, description: c.description || undefined, isVisible: c.isVisible !== false })),
@@ -876,6 +884,8 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
     copyright: data.copyright ?? undefined,
     logo: navigation.logo,
     tagline: data.footerTagline ?? undefined,
+    badges: (data.footerBadges ?? []).map((m) => toImageModel(m, 'Certification')).filter((m): m is ImageModel => !!m),
+    socialHeading: data.socialHeading || undefined,
   };
 
   return {
@@ -884,6 +894,16 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
     // Non-null assertion — defaultSeo is a required field on the schema.
     defaultSeo: normalizeSeo(data.defaultSeo, data.siteName)!,
     closingBands: normalizeClosingBands(data),
+    chatWidget: data.chatWidget
+      ? {
+          title: data.chatWidget.title || undefined,
+          status: data.chatWidget.status || undefined,
+          greeting: data.chatWidget.greeting || undefined,
+          quickActions: (data.chatWidget.quickActions ?? []).map((a) => ({ id: `chat-action-${a.id}`, label: a.label, reply: a.reply })),
+          placeholder: data.chatWidget.placeholder || undefined,
+          acknowledgement: data.chatWidget.acknowledgement || undefined,
+        }
+      : undefined,
   };
 }
 
@@ -1052,6 +1072,17 @@ export function normalizeContactPageSettings(res: StrapiContactPageResponse): Co
       question: item.question,
       answer: item.answer,
     })),
+    whyEyebrow: data.whyEyebrow || undefined,
+    whyHeading: data.whyHeading || undefined,
+    whyBody: data.whyBody || undefined,
+    whyCards: (data.whyCards ?? []).map(normalizeIndustryDetailCard),
+    howEyebrow: data.howEyebrow || undefined,
+    howHeading: data.howHeading || undefined,
+    howIntro: data.howIntro || undefined,
+    howSteps: (data.howSteps ?? []).map(normalizeIndustryDetailCard),
+    aboutEyebrow: data.aboutEyebrow || undefined,
+    aboutHeading: data.aboutHeading || undefined,
+    aboutBody: data.aboutBody || undefined,
     workWithUsHeading: data.workWithUsHeading ?? undefined,
     workWithUsBody: data.workWithUsBody ?? undefined,
     workWithUsCta: data.workWithUsCta ? normalizeLink(data.workWithUsCta) : undefined,
@@ -1327,5 +1358,49 @@ export function normalizePrivacyPolicyPageSettings(res: StrapiPrivacyPolicyPageR
     legalBody: data.legalBody ?? undefined,
     sections: (data.sections ?? []).map((s) => ({ id: `pp-section-${s.id}`, heading: s.heading, anchor: s.anchor.trim(), body: s.body })),
     seo: normalizeSeo(data.seo, data.heroHeading ?? 'Privacy Policy'),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Pages → Blogs / Gallery (page-content.blog / page-content.gallery)
+// ---------------------------------------------------------------------------
+
+const textOrUndefined = (v: string | null | undefined) => (v && v.trim() ? v : undefined);
+
+export function normalizeBlogPageSettings(res: StrapiBlogPageResponse): BlogPageSettings {
+  const d = res.data;
+  return {
+    heroEyebrow: textOrUndefined(d.heroEyebrow),
+    heroHeading: textOrUndefined(d.heroHeading),
+    heroSubheading: textOrUndefined(d.heroSubheading),
+    heroCta: d.heroCta ? normalizeLink(d.heroCta) : undefined,
+    heroImage: toImageModel(d.heroImage, d.heroHeading ?? 'Blog'),
+    gridHeading: textOrUndefined(d.gridHeading),
+    gridIntro: textOrUndefined(d.gridIntro),
+    faqItems: (d.faqItems ?? []).map((item): FaqItemModel => ({ id: `blogs-faq-${item.id}`, question: item.question, answer: item.answer })),
+    aboutEyebrow: textOrUndefined(d.aboutEyebrow),
+    aboutHeading: textOrUndefined(d.aboutHeading),
+    aboutBody: textOrUndefined(d.aboutBody),
+    postRelatedEyebrow: textOrUndefined(d.postRelatedEyebrow),
+    postQuickEnquiryHeading: textOrUndefined(d.postQuickEnquiryHeading),
+    postQuickEnquirySubheading: textOrUndefined(d.postQuickEnquirySubheading),
+    postRecentPostsHeading: textOrUndefined(d.postRecentPostsHeading),
+    postShareLabel: textOrUndefined(d.postShareLabel),
+    closingBands: normalizeClosingBands(d),
+    seo: normalizeSeo(d.seo, d.heroHeading ?? 'Blog'),
+  };
+}
+
+export function normalizeGalleryPageSettings(res: StrapiGalleryPageResponse): GalleryPageSettings {
+  const d = res.data;
+  return {
+    heroEyebrow: textOrUndefined(d.heroEyebrow),
+    heroHeading: textOrUndefined(d.heroHeading),
+    heroSubheading: textOrUndefined(d.heroSubheading),
+    heroImage: toImageModel(d.heroImage, d.heroHeading ?? 'Gallery'),
+    gridHeading: textOrUndefined(d.gridHeading),
+    finalCtaImage: toImageModel(d.finalCtaImage, 'Gallery'),
+    closingBands: normalizeClosingBands(d),
+    seo: normalizeSeo(d.seo, d.heroHeading ?? 'Gallery'),
   };
 }

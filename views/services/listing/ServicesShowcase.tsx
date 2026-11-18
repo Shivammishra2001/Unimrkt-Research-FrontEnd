@@ -44,8 +44,9 @@ const GROW = 958 / 156;
 const EASE = 'cubic-bezier(0.22,1,0.36,1)';
 const DURATION = 650;
 
-const iconOf = (c: ServiceTreeItemModel) => `/icons/services/${ART[c.slug]?.icon ?? 'panel-primary.svg'}`;
-const descriptionOf = (c: ServiceTreeItemModel) => ART[c.slug]?.description ?? c.summary;
+// The service's own Listing icon / Listing description from Strapi win; the Figma art is the fallback, then the summary.
+const iconOf = (c: ServiceTreeItemModel) => c.listingIcon?.src ?? `/icons/services/${ART[c.slug]?.icon ?? 'panel-primary.svg'}`;
+const descriptionOf = (c: ServiceTreeItemModel) => c.listingDescription ?? ART[c.slug]?.description ?? c.summary;
 
 function PanelPhoto({ category, zoom, sizes, priority }: { category: ServiceTreeItemModel; zoom: boolean; sizes: string; priority?: boolean }) {
   const art = ART[category.slug];
@@ -57,7 +58,7 @@ function PanelPhoto({ category, zoom, sizes, priority }: { category: ServiceTree
   return <Image src={src} alt="" fill sizes={sizes} priority={priority} className={className} style={art ? { objectPosition: art.position } : undefined} />;
 }
 
-function ExploreButton({ href, title, className = '', tabIndex }: { href: string; title: string; className?: string; tabIndex?: number }) {
+function ExploreButton({ href, title, label, className = '', tabIndex }: { href: string; title: string; label: string; className?: string; tabIndex?: number }) {
   return (
     <Link
       href={href}
@@ -65,7 +66,7 @@ function ExploreButton({ href, title, className = '', tabIndex }: { href: string
       aria-label={`Explore ${title}`}
       className={`inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to font-sans text-[13px] font-bold uppercase leading-[16.9px] tracking-[0.78px] text-white transition-[filter] duration-300 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white motion-reduce:transition-none ${className}`}
     >
-      Explore Research
+      {label}
       <SendArrowIcon className="size-4" aria-hidden="true" />
     </Link>
   );
@@ -81,7 +82,7 @@ function ExploreButton({ href, title, className = '', tabIndex }: { href: string
  * strips: their title runs bottom-to-top, ending 14px above a 54px icon that sits 41px off the bottom. All offsets
  * scale with the row (cqw of the 1600px design row). With more than five categories, the dots page the window of five.
  */
-function DesktopAccordion({ categories }: { categories: ServiceTreeItemModel[] }) {
+function DesktopAccordion({ categories, ctaLabel }: { categories: ServiceTreeItemModel[]; ctaLabel: string }) {
   const [start, setStart] = useState(0);
   const [active, setActive] = useState<number | null>(null);
   const stops = Math.max(1, categories.length - PER_ROW + 1);
@@ -148,7 +149,7 @@ function DesktopAccordion({ categories }: { categories: ServiceTreeItemModel[] }
                   {descriptionOf(category) && (
                     <p className="mt-[clamp(6px,0.625cqw,10px)] line-clamp-4 font-sans text-[clamp(13px,1cqw,16px)] font-normal leading-[1.9] text-white/80 xl:line-clamp-3">{descriptionOf(category)}</p>
                   )}
-                  <ExploreButton href={href} title={category.title} tabIndex={0} className="mt-[clamp(12px,1.1875cqw,19px)] h-[clamp(48px,3.75cqw,60px)] px-[clamp(24px,2.5cqw,40px)]" />
+                  <ExploreButton href={href} title={category.title} label={ctaLabel} tabIndex={0} className="mt-[clamp(12px,1.1875cqw,19px)] h-[clamp(48px,3.75cqw,60px)] px-[clamp(24px,2.5cqw,40px)]" />
                 </div>
               </div>
             </li>
@@ -175,7 +176,7 @@ function DesktopAccordion({ categories }: { categories: ServiceTreeItemModel[] }
 
 /** Phones and tablets (<lg): no hover, and 156px strips with vertical text would be unreadable, so each panel shows
  * its expanded content outright — icon, title, a 3-line description and the button — in the snap-scrolling row. */
-function TouchTrack({ categories }: { categories: ServiceTreeItemModel[] }) {
+function TouchTrack({ categories, ctaLabel }: { categories: ServiceTreeItemModel[]; ctaLabel: string }) {
   const { ref, active, onScroll, goTo } = useSnapTrack<HTMLUListElement>();
   const [perView, setPerView] = useState(1);
   useEffect(() => {
@@ -208,7 +209,7 @@ function TouchTrack({ categories }: { categories: ServiceTreeItemModel[] }) {
               <Image src={iconOf(category)} alt="" width={70} height={70} className="size-12" />
               <h3 className={`${lato.className} mt-3 text-[20px] font-bold leading-[1.27] text-white`}>{category.title}</h3>
               {descriptionOf(category) && <p className="mt-2 line-clamp-3 font-sans text-[14px] leading-[1.7] text-white/80">{descriptionOf(category)}</p>}
-              <ExploreButton href={`/services/${category.slug}`} title={category.title} className="mt-4 h-12 px-4 sm:px-5" />
+              <ExploreButton href={`/services/${category.slug}`} title={category.title} label={ctaLabel} className="mt-4 h-12 px-4 sm:px-5" />
             </div>
           </li>
         ))}
@@ -246,8 +247,8 @@ export function ServicesShowcase({ content, categories }: { content: ServicesLis
 
         {categories.length > 0 ? (
           <div className="mx-auto mt-[31px] w-full max-w-[1664px] lg:mt-[34px] px-4 sm:px-6 lg:px-8 min-[1700px]:max-w-[1600px] min-[1700px]:px-0">
-            <DesktopAccordion categories={categories} />
-            <TouchTrack categories={categories} />
+            <DesktopAccordion categories={categories} ctaLabel={content.ctaLabel} />
+            <TouchTrack categories={categories} ctaLabel={content.ctaLabel} />
           </div>
         ) : (
           <p className="mt-12 text-center opacity-70">Services are being updated — check back shortly.</p>

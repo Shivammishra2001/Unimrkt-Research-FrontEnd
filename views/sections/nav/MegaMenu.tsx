@@ -189,7 +189,7 @@ export function ServicesMega({ categories, menu, onNavigate }: { categories: Ser
                 <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
                   <h3 className="text-[22px] font-semibold leading-tight tracking-[-0.5px] text-white">{c.title}</h3>
                   <Link href={`/services/${c.slug}`} onClick={onNavigate} className="group inline-flex items-center gap-1 text-[13px] font-semibold text-white/70 transition-colors duration-150 hover:text-white">
-                    Overview
+                    {menu?.overviewLabel || 'Overview'}
                     <Arrow className="size-3.5 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </Link>
                 </div>

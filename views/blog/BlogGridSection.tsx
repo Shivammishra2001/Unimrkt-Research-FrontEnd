@@ -24,7 +24,18 @@ const ALL_SLUG = 'all';
  * than the full name for exactly 2 of the original 5 categories; that
  * per-category choice now lives on the Category itself, admin-editable,
  * instead of being hardcoded here). */
-export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; categories: CategoryModel[] }) {
+export function BlogGridSection({
+  posts,
+  categories,
+  heading = 'Insights & Stories',
+  intro = 'Explore expert insights, industry trends, research methodologies, and success stories designed to help businesses stay informed, uncover opportunities, make data-driven decisions, and achieve sustainable growth.',
+}: {
+  posts: BlogSummary[];
+  categories: CategoryModel[];
+  /** Pages → Blogs → Grid heading / intro (defaults = the built-in copy). */
+  heading?: string;
+  intro?: string;
+}) {
   const [activeSlug, setActiveSlug] = useState<string>(ALL_SLUG);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -47,11 +58,10 @@ export function BlogGridSection({ posts, categories }: { posts: BlogSummary[]; c
     <div>
       {/* Figma 522:4836-4837: title (cap-top y898) + 2-line intro (y967) under the 60px section lead-in. */}
       <h2 className="text-center font-sans text-[34px] font-semibold capitalize leading-[1.2] tracking-[-1.5px] text-[#02060e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] sm:text-[42px] lg:text-[50px] lg:tracking-[-3px]">
-        Insights &amp; Stories
+        {heading}
       </h2>
       <p className="mx-auto mt-6 max-w-[966px] text-center font-sans text-[16px] font-normal leading-[1.9] text-[#02060e]/80 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] lg:mt-[34px]">
-        Explore expert insights, industry trends, research methodologies, and success stories designed to help businesses stay
-        informed, uncover opportunities, make data-driven decisions, and achieve sustainable growth.
+        {intro}
       </p>
 
       {/* Figma 522:4914 — 56px tabs, 12px gap; active #6c2a4a -> #be2c28 / 13.234px, inactive white + #dedede / 13.125px. */}

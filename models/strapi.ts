@@ -86,6 +86,7 @@ export interface StrapiClosingBands {
 export interface StrapiServicesMenu {
   eyebrow: string | null;
   autoIncludeNew: boolean | null;
+  overviewLabel?: string | null;
   categories: Array<{ id: number; label: string | null; description: string | null; isVisible: boolean | null; service: { slug: string; title: string } | null }>;
   exploreLink: StrapiLink | null;
   ctaLink: StrapiLink | null;
@@ -215,6 +216,7 @@ export interface StrapiServiceBandItem {
   tag?: string | null;
   headline?: string | null;
   ctaLabel?: string | null;
+  icon?: StrapiMedia | null;
 }
 
 export interface StrapiServiceBandBlock extends StrapiBlockBase {
@@ -364,6 +366,16 @@ export interface StrapiGlobal extends StrapiClosingBands {
   logoDark: StrapiMedia | null;
   primaryNav: StrapiNavItem[];
   navCta: StrapiLink | null;
+  footerBadges?: StrapiMedia[] | null;
+  socialHeading?: string | null;
+  chatWidget?: {
+    title: string | null;
+    status: string | null;
+    greeting: string | null;
+    quickActions: Array<{ id: number; label: string; reply: string }> | null;
+    placeholder: string | null;
+    acknowledgement: string | null;
+  } | null;
   servicesMenu?: StrapiServicesMenu | null;
   industriesMenu?: StrapiIndustriesMenu | null;
   footerColumns: StrapiFooterColumn[];

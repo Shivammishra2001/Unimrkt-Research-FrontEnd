@@ -160,6 +160,8 @@ export interface ServiceBandItemModel {
   tag?: string;
   headline?: string;
   ctaLabel?: string;
+  /** Hero side-menu only — row icon (empty = the Figma pictogram for the label). */
+  icon?: ImageModel;
 }
 
 export interface ServiceBandModel extends BlockBase {
@@ -318,6 +320,8 @@ export interface ServicesMenuModel {
   eyebrow?: string;
   /** New top-level services not listed in `categories` are appended automatically. */
   autoIncludeNew: boolean;
+  /** Label of each category's "Overview" link. */
+  overviewLabel?: string;
   categories: Array<{ slug: string; label?: string; description?: string; isVisible: boolean }>;
   exploreLink?: LinkModel;
   ctaLink?: LinkModel;
@@ -342,6 +346,10 @@ export interface FooterModel {
   // above the columns — reuses global.logo rather than a second upload.
   logo: ImageModel;
   tagline?: string;
+  /** Global → Footer badges (certifications), in order; alt text from each upload. */
+  badges: ImageModel[];
+  /** Global → "Connect with us" heading above the social icons. */
+  socialHeading?: string;
 }
 
 export interface GlobalModel {
@@ -350,6 +358,17 @@ export interface GlobalModel {
   defaultSeo: SeoModel;
   /** Site-wide closing bands (Global defaults that pages may override). */
   closingBands: ClosingBandsSettings;
+  /** Global → Chat Widget copy (empty = built-in copy). */
+  chatWidget?: ChatWidgetModel;
+}
+
+export interface ChatWidgetModel {
+  title?: string;
+  status?: string;
+  greeting?: string;
+  quickActions: Array<{ id: string; label: string; reply: string }>;
+  placeholder?: string;
+  acknowledgement?: string;
 }
 
 /** The three bands most pages close with, as stored in Strapi: every field optional (empty = inherit). Global holds the

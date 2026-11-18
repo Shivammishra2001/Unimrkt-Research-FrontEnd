@@ -1,15 +1,20 @@
 import { getGlobalClosingBands } from '@/controllers/closingBands';
 import type { Metadata } from 'next';
+import { cmsMetadata } from '@/controllers/pageMetadata';
+import { getBlogPageContent } from '@/controllers/blogPage';
 import { getAllBlogPosts } from '@/controllers/blog';
 import { getAllCategories } from '@/controllers/category';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { BlogListingView } from '@/views/blog/BlogListingView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
 
-export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Market research insights, industry trends, and expert perspectives from Unimrkt Research.',
-};
+// Title/description from Pages → Blogs → SEO; this copy is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return cmsMetadata(getBlogPageContent, {
+    title: 'Blog',
+    description: 'Market research insights, industry trends, and expert perspectives from Unimrkt Research.',
+  });
+}
 
 // A literal static segment, so Next routes it here rather than into the
 // generic catch-all — this whole /blogs/* prefix permanently belongs to
@@ -20,10 +25,10 @@ export default async function BlogsPage() {
     // them (not derived from `posts`) — a category created in the Admin
     // panel shows up as a filter tab immediately, even before any post is
     // tagged with it.
-    const [posts, categories] = await Promise.all([getAllBlogPosts(), getAllCategories()]);
+    const [posts, categories, page] = await Promise.all([getAllBlogPosts(), getAllCategories(), getBlogPageContent()]);
     // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
     const globalBands = await getGlobalClosingBands();
-    return <BlogListingView globalBands={globalBands} posts={posts} categories={categories} />;
+    return <BlogListingView globalBands={globalBands} page={page} posts={posts} categories={categories} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     throw err;

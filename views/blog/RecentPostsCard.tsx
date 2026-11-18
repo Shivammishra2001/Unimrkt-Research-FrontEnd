@@ -7,13 +7,13 @@ import type { BlogSummary } from '@/models/blog';
  * 17px Medium #0c1c36 title (2-line clamp, 379px wide, brand red on hover), 15px #585858 meta, 1px rules between rows.
  * Views are not tracked in the CMS, so the meta line is the estimated read time only. Renders nothing without posts.
  */
-export function RecentPostsCard({ posts }: { posts: BlogSummary[] }) {
+export function RecentPostsCard({ posts, heading = 'Recent Posts' }: { posts: BlogSummary[]; /** Pages → Blogs → Post: recent posts heading. */ heading?: string }) {
   if (posts.length === 0) return null;
 
   return (
     <div className="rounded-[24px] border border-[#eee] bg-white px-6 pb-[38.5px] pt-[38px] shadow-[6px_6px_54px_0px_rgba(0,0,0,0.05)] sm:px-[35px]">
       <h3 className="font-sans text-[24px] font-semibold leading-[1.34] text-[#04264e] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
-        Recent Posts
+        {heading}
       </h3>
       <ul className="mt-[39.2px] flex flex-col">
         {posts.map((post, i) => (

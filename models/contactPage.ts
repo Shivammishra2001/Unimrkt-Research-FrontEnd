@@ -9,6 +9,7 @@
 import type { StrapiMedia, StrapiResponse, StrapiLink, StrapiFaqItem, StrapiSeo, StrapiClosingBands } from './strapi';
 import type { StrapiServiceStatItem, ServiceStatItemModel } from './service';
 import type { ImageModel, LinkModel, FaqItemModel, SeoModel, ClosingBandsSettings } from './domain';
+import type { StrapiIndustryDetailCard, IndustryDetailCardModel } from './industry';
 
 // ---------------------------------------------------------------------------
 // Raw
@@ -44,6 +45,17 @@ export interface StrapiContactPage extends StrapiClosingBands {
   formSubheading: string | null;
   formImage: StrapiMedia | null;
   faqItems: StrapiFaqItem[];
+  whyEyebrow?: string | null;
+  whyHeading?: string | null;
+  whyBody?: string | null;
+  whyCards?: StrapiIndustryDetailCard[];
+  howEyebrow?: string | null;
+  howHeading?: string | null;
+  howIntro?: string | null;
+  howSteps?: StrapiIndustryDetailCard[];
+  aboutEyebrow?: string | null;
+  aboutHeading?: string | null;
+  aboutBody?: string | null;
   workWithUsHeading: string | null;
   workWithUsBody: string | null;
   workWithUsCta: StrapiLink | null;
@@ -89,6 +101,20 @@ export interface ContactPageSettings {
   formSubheading?: string;
   formImage?: ImageModel;
   faqItems: FaqItemModel[];
+  /** "Why work with Unimrkt" (heading may hold a "
+" desktop line break) + its cards. */
+  whyEyebrow?: string;
+  whyHeading?: string;
+  whyBody?: string;
+  whyCards: IndustryDetailCardModel[];
+  /** "How it works" + its numbered steps. */
+  howEyebrow?: string;
+  howHeading?: string;
+  howIntro?: string;
+  howSteps: IndustryDetailCardModel[];
+  aboutEyebrow?: string;
+  aboutHeading?: string;
+  aboutBody?: string;
   workWithUsHeading?: string;
   workWithUsBody?: string;
   workWithUsCta?: LinkModel;
