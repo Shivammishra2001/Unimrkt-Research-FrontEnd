@@ -84,7 +84,7 @@ export function resolveContact(settings: ContactPageSettings): ResolvedContact {
       eyebrow: settings.heroEyebrow || 'Contact Us',
       heading: settings.heroHeading || 'Let’s Turn Your Business Questions Into Clear Answers',
       subheading: settings.heroSubheading || 'Tell us what you’re trying to understand. Our research experts will help you find the right path forward.',
-      image: settings.heroImage || localImage('contact-hero-bg.jpg', 'Contact Unimrkt Research', 1900, 768),
+      image: settings.heroImage || localImage('contact-hero-photo.jpg', 'Contact Unimrkt Research', 2400, 1429),
       cta: settings.heroCta || FALLBACK_HERO_CTA,
     },
     stats: {

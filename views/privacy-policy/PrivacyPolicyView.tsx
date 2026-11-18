@@ -2,7 +2,7 @@ import { HeroSection } from './HeroSection';
 import { IntroSection } from './IntroSection';
 import { TocSection } from './TocSection';
 import { BodySection } from './BodySection';
-import { resolvePrivacyPolicy } from './fallback';
+import { LAWFUL_ANCHOR, QUALIFIES_ANCHOR, resolvePrivacyPolicy } from './fallback';
 import type { PrivacyPolicyPageSettings } from '@/models/privacyPolicyPage';
 
 /**
@@ -22,6 +22,7 @@ import type { PrivacyPolicyPageSettings } from '@/models/privacyPolicyPage';
  */
 export function PrivacyPolicyView({ settings }: { settings: PrivacyPolicyPageSettings }) {
   const content = resolvePrivacyPolicy(settings);
+  const anchors = new Set([QUALIFIES_ANCHOR, LAWFUL_ANCHOR, ...content.sections.map((s) => s.anchor)]);
 
   return (
     <>
@@ -29,7 +30,7 @@ export function PrivacyPolicyView({ settings }: { settings: PrivacyPolicyPageSet
       <section className="overflow-x-clip bg-white px-4 pb-16 sm:px-6 lg:pb-[117px] min-[1500px]:px-0">
         <div className="mx-auto w-full max-w-[1461px]">
           <IntroSection introBody={content.introBody} />
-          <TocSection toc={content.toc} />
+          <TocSection toc={content.toc} anchors={anchors} />
           <BodySection content={content} />
         </div>
       </section>

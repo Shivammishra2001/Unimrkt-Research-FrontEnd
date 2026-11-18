@@ -7,10 +7,18 @@ import type { Map as LeafletMap, Marker } from 'leaflet';
 export interface MapOffice {
   id: string;
   name: string;
+  /** Strapi Office → Map latitude / longitude / label. When set they place the pin, so renaming an office never loses it. */
+  mapLatitude?: number;
+  mapLongitude?: number;
+  mapLabel?: string;
 }
 
-/** Real coordinates of the three offices (Gurugram Udyog Vihar, Great Neck NY, Headington Oxford). */
-const COORDS: Record<string, { lat: number; lng: number; label: string; kind: 'india' | 'liberty' | 'bigben' }> = {
+type Place = { lat: number; lng: number; label: string; kind: 'india' | 'liberty' | 'bigben' | 'generic' };
+
+/** Fallback coordinates of the three offices (Gurugram Udyog Vihar, Great Neck NY, Headington Oxford), matched by office
+ * name only when the office has no map coordinates in Strapi. The pin artwork (India pin / Liberty / Big Ben) follows the
+ * same name match; any other office gets the plain teardrop pin. */
+const COORDS: Record<string, Place> = {
   'india office': { lat: 28.5018, lng: 77.0884, label: 'India Office', kind: 'india' },
   'united states of america': { lat: 40.8007, lng: -73.7285, label: 'USA Office', kind: 'liberty' },
   'united kingdom': { lat: 51.7595, lng: -1.2085, label: 'UK Office', kind: 'bigben' },
@@ -24,18 +32,26 @@ const MONUMENT: Record<string, string> = {
     '<svg viewBox="0 0 60 140" fill="#a3282a" width="50" height="52" style="position:absolute;left:69px;top:50px"><path d="M30 0l7 34H23z"/><path d="M21 36h18v8H21zM19 44h22v76H19z"/><circle cx="30" cy="62" r="9" fill="none" stroke="#a3282a" stroke-width="3"/><path d="M14 120h32v20H14z"/></svg>',
 };
 
+function placeFor(o: MapOffice): Place | undefined {
+  const known = COORDS[o.name.toLowerCase()];
+  if (typeof o.mapLatitude === 'number' && typeof o.mapLongitude === 'number') {
+    return { lat: o.mapLatitude, lng: o.mapLongitude, label: o.mapLabel || known?.label || o.name, kind: known?.kind ?? 'generic' };
+  }
+  return known && (o.mapLabel ? { ...known, label: o.mapLabel } : known);
+}
+
+const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
+
 /** Pin markup: India uses the exact Figma pin (640:11430); the others share its teardrop. 188x188, tip at (94, 150). */
-function pinHtml(key: string): string {
-  const c = COORDS[key];
-  if (!c) return '';
+function pinHtml(c: Place): string {
   if (c.kind === 'india') {
     return '<img src="/figma-contact/pin-india-transparent.png" alt="India Office" width="188" height="188" style="width:188px;height:188px;display:block" />';
   }
   return (
     '<div style="position:relative;width:188px;height:188px">' +
     '<svg viewBox="0 0 188 188" width="188" height="188" style="position:absolute;inset:0"><path d="M94 150C94 150 50 104 50 76a44 44 0 1 1 88 0c0 28-44 74-44 74z" fill="#a3282a"/><circle cx="94" cy="76" r="30" fill="#fff"/></svg>' +
-    MONUMENT[c.kind] +
-    `<p style="position:absolute;left:50%;top:158px;transform:translateX(-50%);white-space:nowrap;margin:0;font:600 22px/1.34 var(--font-montserrat),sans-serif;letter-spacing:-1px;color:#04264e">${c.label}</p>` +
+    (MONUMENT[c.kind] ?? '') +
+    `<p style="position:absolute;left:50%;top:158px;transform:translateX(-50%);white-space:nowrap;margin:0;font:600 22px/1.34 var(--font-montserrat),sans-serif;letter-spacing:-1px;color:#04264e">${escapeHtml(c.label)}</p>` +
     '</div>'
   );
 }
@@ -72,11 +88,10 @@ export function OfficeMap({ offices, activeId, offsetRatio = 0 }: { offices: Map
       mapRef.current = map;
 
       for (const o of offices) {
-        const key = o.name.toLowerCase();
-        const c = COORDS[key];
+        const c = placeFor(o);
         if (!c) continue;
         const marker = L.marker([c.lat, c.lng], {
-          icon: L.divIcon({ className: 'office-pin', html: pinHtml(key), iconSize: [188, 188], iconAnchor: [94, 150] }),
+          icon: L.divIcon({ className: 'office-pin', html: pinHtml(c), iconSize: [188, 188], iconAnchor: [94, 150] }),
           keyboard: false,
           interactive: false,
         }).addTo(map);
@@ -86,7 +101,7 @@ export function OfficeMap({ offices, activeId, offsetRatio = 0 }: { offices: Map
       flyRef.current = (id, animate) => {
         const markActive = () => markersRef.current.forEach((m, mid) => m.getElement()?.classList.toggle('is-active', mid === id));
         const office = offices.find((o) => o.id === id);
-        const c = office && COORDS[office.name.toLowerCase()];
+        const c = office && placeFor(office);
         if (!c) return;
         const size = map.getSize();
         // Keep the pin right of the centre when the cards cover the left part of the panel.

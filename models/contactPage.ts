@@ -23,6 +23,9 @@ export interface StrapiOfficeLocation {
   phoneLabel: string | null;
   featured: boolean;
   image: StrapiMedia | null;
+  mapLatitude?: number | string | null;
+  mapLongitude?: number | string | null;
+  mapLabel?: string | null;
 }
 
 export interface StrapiContactPage {
@@ -63,6 +66,9 @@ export interface OfficeLocationModel {
   phoneLabel?: string;
   featured: boolean;
   image?: ImageModel;
+  mapLatitude?: number;
+  mapLongitude?: number;
+  mapLabel?: string;
 }
 
 export interface ContactPageSettings {

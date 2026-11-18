@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SectionHeader } from '@/views/industries/listing/shared';
 import { DotPagination } from '@/views/industries/DotPagination';
-import { StrapiImage } from '@/views/ui/StrapiImage';
 import { SendArrowIcon } from '@/views/ui/icons/SendArrowIcon';
 import { useSnapTrack } from '@/views/ui/useSnapTrack';
 import type { ServiceTreeItemModel } from '@/models/service';
@@ -51,8 +50,11 @@ const descriptionOf = (c: ServiceTreeItemModel) => ART[c.slug]?.description ?? c
 function PanelPhoto({ category, zoom, sizes, priority }: { category: ServiceTreeItemModel; zoom: boolean; sizes: string; priority?: boolean }) {
   const art = ART[category.slug];
   const className = `object-cover transform-gpu transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform motion-reduce:transition-none ${zoom ? 'scale-[1.06]' : 'scale-100'}`;
-  if (art) return <Image src={`/images/services/listing/${art.photo}`} alt="" fill sizes={sizes} priority={priority} className={className} style={{ objectPosition: art.position }} />;
-  return category.thumbnail ? <StrapiImage image={category.thumbnail} sizes={sizes} fill className={className} /> : null;
+  // The service's Thumbnail from Strapi wins (seed:approved-media puts the Figma panel photos there); the local Figma
+  // photo is the fallback. A Figma category keeps its panel crop either way.
+  const src = category.thumbnail?.src ?? (art ? `/images/services/listing/${art.photo}` : undefined);
+  if (!src) return null;
+  return <Image src={src} alt="" fill sizes={sizes} priority={priority} className={className} style={art ? { objectPosition: art.position } : undefined} />;
 }
 
 function ExploreButton({ href, title, className = '', tabIndex }: { href: string; title: string; className?: string; tabIndex?: number }) {

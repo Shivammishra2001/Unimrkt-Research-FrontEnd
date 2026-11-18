@@ -1,15 +1,19 @@
 import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
+import { cmsMetadata } from '@/controllers/pageMetadata';
 import { getOurCompanyPageContent } from '@/controllers/ourCompanyPage';
 import { getAllBlogPosts } from '@/controllers/blog';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { OurCompanyView } from '@/views/our-company/OurCompanyView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
 
-export const metadata: Metadata = {
-  title: 'Our Company',
-  description: 'Unimrkt Research is a global market research partner helping organisations understand people, markets, and opportunities across 90+ countries.',
-};
+// Title/description from the page's Strapi SEO component; this copy is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return cmsMetadata(getOurCompanyPageContent, {
+    title: 'Our Company',
+    description: 'Unimrkt Research is a global market research partner helping organisations understand people, markets, and opportunities across 90+ countries.',
+  });
+}
 
 // A literal static segment, so Next routes it here rather than into the
 // generic catch-all — /our-company permanently belongs to this dedicated

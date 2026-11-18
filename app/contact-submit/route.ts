@@ -29,7 +29,13 @@ interface ContactFormBody {
   email?: unknown;
   phone?: unknown;
   company?: unknown;
+  message?: unknown;
+  source?: unknown;
 }
+
+/** Forms allowed to post here. The /contact form sends no `source` and keeps its required Company field; the blog's
+ * Quick Enquiry card (Name / Phone / Email / Message) has no company field and requires a phone instead. */
+const SOURCES = new Set(['contact-page', 'blog-quick-enquiry']);
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as ContactFormBody | null;
@@ -41,8 +47,14 @@ export async function POST(request: NextRequest) {
   const email = typeof body.email === 'string' ? body.email.trim() : '';
   const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
   const company = typeof body.company === 'string' ? body.company.trim() : '';
+  const message = typeof body.message === 'string' ? body.message.trim().slice(0, 2000) : '';
+  const source = typeof body.source === 'string' && SOURCES.has(body.source) ? body.source : 'contact-page';
 
-  if (!name || !email || !company) {
+  if (source === 'blog-quick-enquiry') {
+    if (!name || !email || !phone) {
+      return NextResponse.json({ error: 'Name, Phone and Email are required.' }, { status: 400 });
+    }
+  } else if (!name || !email || !company) {
     return NextResponse.json({ error: 'Name, Email ID, and Company name are required.' }, { status: 400 });
   }
   if (!EMAIL_RE.test(email)) {
@@ -53,7 +65,7 @@ export async function POST(request: NextRequest) {
     const res = await fetch(`${API_BASE_URL}/contact-submissions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: { name, email, phone: phone || undefined, company } }),
+      body: JSON.stringify({ data: { name, email, phone: phone || undefined, company: company || undefined, message: message || undefined, source } }),
     });
 
     if (!res.ok) {

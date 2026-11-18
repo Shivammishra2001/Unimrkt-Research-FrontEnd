@@ -11,10 +11,10 @@ export function HeroSection({ hero }: { hero: ResolvedContact['hero'] }) {
     <>
       <section className="relative w-full bg-[#040112] text-white lg:min-h-[768px]">
         <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-          {/* Figma 640:11255: the raw 1984x1181 photo at (0, -117) in the 1900x768 frame, 70% — the saved hero image was
-              already darkened, so the CMS image is not used here. */}
+          {/* Figma 640:11255: the raw 1984x1181 photo at (0, -117) in the 1900x768 frame, 70%. Strapi's Hero Image when set
+              (seed:approved-media swaps the old pre-darkened export for this raw photo), else the local copy. */}
           <div className="absolute left-0 top-[-15.2%] h-[153.8%] w-[104.4%] opacity-70">
-            <Image src="/images/contact/contact-hero-photo.jpg" alt="" fill priority sizes="100vw" className="object-cover object-right" />
+            <Image src={hero.image?.src ?? '/images/contact/contact-hero-photo.jpg'} alt="" fill priority sizes="100vw" className="object-cover object-right" />
           </div>
           <div className="absolute inset-0 bg-[#010913]/40" />
           <div

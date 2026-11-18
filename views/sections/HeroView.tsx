@@ -71,11 +71,10 @@ function HeroMedia({ block, priority }: { block: HeroModel; priority: boolean })
  */
 export function HeroView({ block, index }: { block: HeroModel; index: number }) {
   if (block.mediaAlignment === 'background') {
-    // Video source priority: Figma's own footage file name (layer 1794:16929),
-    // then the generic hero-background.{webm,mp4}, then a video uploaded to the
-    // block's `media` field in Strapi, else the photo.
+    // Video source priority: a video uploaded to the block in Strapi wins; otherwise Figma's own footage file
+    // (layer 1794:16929) / the generic hero-background.{webm,mp4}; else the photo.
     const staticVideos = findStaticVideos('0_Lighthouse_Light_1920x1080', 'hero-background');
-    const videoSources = staticVideos.length > 0 ? staticVideos : block.videoUrl ? [{ src: block.videoUrl }] : [];
+    const videoSources = block.videoUrl ? [{ src: block.videoUrl }] : staticVideos;
     return <HeroSplash block={block} index={index} videoSources={videoSources} />;
   }
 
@@ -85,10 +84,10 @@ export function HeroView({ block, index }: { block: HeroModel; index: number }) 
     // row below it — giant "16" + rotated label on the left, a hairline
     // divider, then the paragraph + CTA on the right.
     const hasStat = !!block.statValue;
-    // Banner footage: Figma's own file name (layer 267:1482), then the generic
-    // about-banner.{webm,mp4}, else a video uploaded to the block's `media` in Strapi, else the photo.
+    // Banner footage: a video uploaded to the block in Strapi wins; otherwise Figma's own file (layer 267:1482) /
+    // the generic about-banner.{webm,mp4}; else the photo.
     const staticBanner = findStaticVideos('6012918_People_Person_1920x1080', 'about-banner');
-    const bannerVideo: VideoSource[] = staticBanner.length > 0 ? staticBanner : block.videoUrl ? [{ src: block.videoUrl }] : [];
+    const bannerVideo: VideoSource[] = block.videoUrl ? [{ src: block.videoUrl }] : staticBanner;
     const headingLines = block.heading.split(/(?<=,)\s+/);
     return (
       <Section theme={block.theme} anchorId={block.anchorId} className="relative scroll-mt-[130px] overflow-hidden pt-24 sm:pt-28 lg:pb-[70px] lg:pt-[96px] min-[1800px]:pt-[73px]">

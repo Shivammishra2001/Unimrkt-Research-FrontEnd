@@ -1,14 +1,18 @@
 import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
+import { cmsMetadata } from '@/controllers/pageMetadata';
 import { getContactPageContent } from '@/controllers/contactPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { ContactView } from '@/views/contact/ContactView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
 
-export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: 'Tell us what you’re trying to understand. Our research experts will help you find the right path forward.',
-};
+// Title/description from the page's Strapi SEO component; this copy is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return cmsMetadata(getContactPageContent, {
+    title: 'Contact Us',
+    description: 'Tell us what you’re trying to understand. Our research experts will help you find the right path forward.',
+  });
+}
 
 // A literal static segment, so Next routes it here rather than into the
 // generic catch-all — /contact permanently belongs to this dedicated

@@ -1,15 +1,19 @@
 import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
+import { cmsMetadata } from '@/controllers/pageMetadata';
 import { getTeamMemberList } from '@/controllers/teamMember';
 import { getOurTeamPageContent } from '@/controllers/ourTeamPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { OurTeamView } from '@/views/our-team/OurTeamView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
 
-export const metadata: Metadata = {
-  title: 'Our Team',
-  description: 'A diverse team of research experts bringing experience, insight, and strategic thinking to every project.',
-};
+// Title/description from the page's Strapi SEO component; this copy is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return cmsMetadata(getOurTeamPageContent, {
+    title: 'Our Team',
+    description: 'A diverse team of research experts bringing experience, insight, and strategic thinking to every project.',
+  });
+}
 
 // A literal static segment, so Next routes it here rather than into the
 // generic catch-all. Mirrors app/privacy-policy/page.tsx.

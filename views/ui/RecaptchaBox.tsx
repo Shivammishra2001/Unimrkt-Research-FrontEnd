@@ -119,7 +119,7 @@ export function RecaptchaBox({ onChange, invalid = false }: { onChange: (token: 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/figma-industries/enquiry/recaptcha-logo.svg" alt="" width={48} height={46} className="h-[46px] w-12" />
           <p className="font-[Roboto,Arial,sans-serif] text-[8px] font-medium text-[#a6a6a6]">
-            <Link href="/privacy-policy">Privacy</Link> - <Link href="/contact">Terms</Link>
+            <Link href="/privacy-policy">Privacy</Link> - <Link href="/terms-and-conditions">Terms</Link>
           </p>
         </div>
       </div>

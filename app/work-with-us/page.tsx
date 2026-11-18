@@ -1,14 +1,18 @@
 import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
+import { cmsMetadata } from '@/controllers/pageMetadata';
 import { getWorkWithUsPageContent } from '@/controllers/workWithUsPage';
 import { isBackendUnreachable } from '@/controllers/strapi';
 import { WorkWithUsView } from '@/views/work-with-us/WorkWithUsView';
 import { OfflineNotice } from '@/views/ui/OfflineNotice';
 
-export const metadata: Metadata = {
-  title: 'Work With Us',
-  description: 'Great people build great research — explore careers at Unimrkt Research and find your next opportunity.',
-};
+// Title/description from the page's Strapi SEO component; this copy is the fallback.
+export async function generateMetadata(): Promise<Metadata> {
+  return cmsMetadata(getWorkWithUsPageContent, {
+    title: 'Work With Us',
+    description: 'Great people build great research — explore careers at Unimrkt Research and find your next opportunity.',
+  });
+}
 
 // A literal static segment, so Next routes it here rather than into the
 // generic catch-all — /work-with-us permanently belongs to this

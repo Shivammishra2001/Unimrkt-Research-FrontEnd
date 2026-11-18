@@ -13,20 +13,46 @@ const FIELD =
  * 24px SemiBold #04264e title, 14px subtitle at 70%, four fields 12px apart (65/65/65/115), the 302x74 reCAPTCHA box,
  * and a 440x60 gradient Submit.
  *
- * Scope note: no lead-capture endpoint exists in this codebase yet, so submit only shows the acknowledgement.
+ * Submits to the same /contact-submit route as the /contact form (stored as a Contact Submission with source
+ * "blog-quick-enquiry" and the message); the thank-you shows only once the submission is actually saved.
  */
 export function QuickEnquiryCard() {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [robotToken, setRobotToken] = useState<string | null>(null);
   const [robotError, setRobotError] = useState(false);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!robotToken) {
       setRobotError(true);
       return;
     }
-    setSubmitted(true);
+    const form = new FormData(e.currentTarget);
+    setSending(true);
+    setError(null);
+    try {
+      const res = await fetch('/contact-submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.get('name'),
+          phone: form.get('phone'),
+          email: form.get('email'),
+          message: form.get('message'),
+          source: 'blog-quick-enquiry',
+          recaptchaToken: robotToken,
+        }),
+      });
+      const data = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (!res.ok) throw new Error(data?.error || 'Something went wrong submitting your enquiry. Please try again.');
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong submitting your enquiry. Please try again.');
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -52,11 +78,18 @@ export function QuickEnquiryCard() {
           {/* Figma 1499:16743 — reCAPTCHA checkbox widget. */}
           <RecaptchaBox onChange={setRobotToken} invalid={robotError} />
 
+          {error && (
+            <p role="alert" className="font-sans text-[13px] text-[#b52c2c]">
+              {error}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="mt-[19px] flex h-[60px] w-full items-center justify-center gap-1 rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-10 font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.78px] text-white transition-[filter] duration-300 hover:brightness-110 motion-reduce:transition-none"
+            disabled={sending}
+            className="mt-[19px] flex h-[60px] w-full items-center justify-center gap-1 rounded-[4px] bg-gradient-to-r from-[#6c2a4a] to-[#be2c28] px-10 font-sans text-[13px] font-bold uppercase leading-[1.3] tracking-[0.78px] text-white transition-[filter] duration-300 hover:brightness-110 disabled:opacity-70 motion-reduce:transition-none"
           >
-            Submit
+            {sending ? 'Sending…' : 'Submit'}
             <SendArrowIcon className="size-4" aria-hidden="true" />
           </button>
         </form>

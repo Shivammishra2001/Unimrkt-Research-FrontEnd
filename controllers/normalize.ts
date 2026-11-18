@@ -987,6 +987,12 @@ export function normalizeOurCompanyPageSettings(res: StrapiOurCompanyPageRespons
 // Contact page (/contact, Figma node 637:10433)
 // ---------------------------------------------------------------------------
 
+function finiteOrUndefined(value: number | string | null | undefined): number | undefined {
+  if (value == null || value === '') return undefined;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : undefined;
+}
+
 function normalizeOfficeLocation(office: StrapiOfficeLocation): OfficeLocationModel {
   return {
     id: `office-${office.id}`,
@@ -997,6 +1003,10 @@ function normalizeOfficeLocation(office: StrapiOfficeLocation): OfficeLocationMo
     phoneLabel: office.phoneLabel ?? undefined,
     featured: office.featured ?? false,
     image: toImageModel(office.image, office.name),
+    // Strapi decimals can arrive as strings; anything non-numeric is ignored (the name-matched fallback then applies).
+    mapLatitude: finiteOrUndefined(office.mapLatitude),
+    mapLongitude: finiteOrUndefined(office.mapLongitude),
+    mapLabel: office.mapLabel || undefined,
   };
 }
 
@@ -1295,6 +1305,7 @@ export function normalizePrivacyPolicyPageSettings(res: StrapiPrivacyPolicyPageR
     panelClosing: data.panelClosing ?? undefined,
     legalHeading: data.legalHeading ?? undefined,
     legalBody: data.legalBody ?? undefined,
+    sections: (data.sections ?? []).map((s) => ({ id: `pp-section-${s.id}`, heading: s.heading, anchor: s.anchor.trim(), body: s.body })),
     seo: normalizeSeo(data.seo, data.heroHeading ?? 'Privacy Policy'),
   };
 }

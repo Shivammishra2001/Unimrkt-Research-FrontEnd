@@ -5,7 +5,8 @@ import type { ResolvedPrivacyPolicy } from './fallback';
 /** /privacy-policy hero + breadcrumb — Figma node 1114:50556 (y0-828). 768px #040112 hero: the 70% shield photo
  * (1114:50564, 2303x906 at -10/-54), a 40% #010913 wash, the 1064px left shade at 80% and the 255px top fade at 85%; the header
  * floats over it. Content at x=217, top-aligned: badge y305, 60/72px -3px title (cap-top 375, 597px wide), 670px intro (524).
- * No CTA is drawn. The saved CMS hero image was already darkened, so the raw Figma photo is used. */
+ * No CTA is drawn. Strapi's Hero Image when set (seed:approved-media swaps the old pre-darkened export for the raw
+ * photo), else the local copy. */
 export function HeroSection({ hero }: { hero: ResolvedPrivacyPolicy['hero'] }) {
   const headingLines = hero.heading.split('\n');
 
@@ -14,7 +15,7 @@ export function HeroSection({ hero }: { hero: ResolvedPrivacyPolicy['hero'] }) {
       <section className="relative w-full overflow-x-clip bg-[#040112] text-white lg:min-h-[768px]">
         <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
           <div className="absolute -left-[0.53%] -top-[7.03%] h-[117.97%] w-[121.21%] opacity-70">
-            <Image src="/images/privacy-policy/hero-raw.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+            <Image src={hero.image?.src ?? "/images/privacy-policy/hero-raw.jpg"} alt="" fill priority sizes="100vw" className="object-cover" />
           </div>
           <div className="absolute inset-0 bg-[#010913]/40" />
           <div

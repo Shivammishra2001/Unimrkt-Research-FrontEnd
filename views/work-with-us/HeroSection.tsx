@@ -6,14 +6,15 @@ import type { ResolvedWorkWithUs } from './fallback';
 /** /work-with-us hero + breadcrumb — Figma node 924:23216 (y0-828). 768px #040112 hero: the 70% photo
  * (924:23230, 1959x823 at y0 — the other photo layer in the node, 924:23229, is not visible in its render), a 40% #010913 wash, the 1064px left shade at 80% and the 255px top
  * fade at 85%; the header floats over it. Content at x=217: badge y276, 60/72px title (cap-top 346, 594px wide), 738px intro
- * (497), 303x60 button (596). The saved CMS hero image was already darkened, so the raw Figma photos are used. */
+ * (497), 303x60 button (596). Strapi's Hero Image when set (seed:approved-media swaps the old pre-darkened export for the raw
+ * photo), else the local copy. */
 export function HeroSection({ hero }: { hero: ResolvedWorkWithUs['hero'] }) {
   return (
     <>
       <section className="relative w-full bg-[#040112] text-white lg:min-h-[768px]">
         <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
           <div className="absolute left-0 top-0 h-[107.2%] w-[103.1%] opacity-70">
-            <Image src="/images/work-with-us/hero-b.png" alt="" fill priority sizes="100vw" className="object-cover" />
+            <Image src={hero.image?.src ?? "/images/work-with-us/hero-b.png"} alt="" fill priority sizes="100vw" className="object-cover" />
           </div>
           <div className="absolute inset-0 bg-[#010913]/40" />
           <div

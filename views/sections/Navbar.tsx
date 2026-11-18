@@ -239,9 +239,10 @@ export function Navbar({
         <div className="relative mx-auto flex w-full max-w-[1740px] items-center justify-between px-4 sm:px-6 xl:px-8 min-[1800px]:px-0">
           <Link href="/" className="inline-flex min-h-11 shrink-0 items-center">
             {/* Figma 1794:16994: the exact brand PNG (white field, red arc) at 138x99,
-                placed as-is — no wrapper, padding or radius around it. */}
+                placed as-is — no wrapper, padding or radius around it. Global → Logo when set
+                (seed:approved-media replaces the old placeholder with this PNG), else the local copy. */}
             <Image
-              src="/images/brand/logo.png"
+              src={navigation.logo?.src ?? '/images/brand/logo.png'}
               alt={navigation.siteName}
               width={138}
               height={99}

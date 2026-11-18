@@ -151,7 +151,7 @@ export function resolveWorkWithUs(settings: WorkWithUsSettings): ResolvedWorkWit
       subheading:
         settings.heroSubheading ||
         'At Unimrkt, we give our employees a space to learn, grow and innovate. If you’re passionate about research, data and making an impact you’ll feel right at home here.',
-      image: settings.heroImage || localImage('wwu-hero-bg.jpg', 'Great People Build Great Research', 1900, 768),
+      image: settings.heroImage || localImage('hero-b.png', 'Great People Build Great Research', 3171, 1333),
       cta: settings.heroCta || FALLBACK_HERO_CTA,
     },
     values: {

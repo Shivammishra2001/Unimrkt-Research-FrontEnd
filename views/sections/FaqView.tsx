@@ -24,10 +24,9 @@ export function FaqView({ block, variant = 'home' }: { block: FaqModel; index: n
         // Figma 267:1240/1241: a 1900x719 clip with the world map (1377x787 at -71px) @ 8% opacity.
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[719px] overflow-hidden" aria-hidden="true">
           <div className="absolute left-1/2 top-[-71px] h-[787px] w-[1377px] -translate-x-1/2 opacity-[0.08]">
-            {/* Figma's own raster (identical to the seed asset). The CMS upload on
-                some environments is a pre-faded 1900x719 export, which the 8%
-                layer opacity would then fade a second time to nothing. */}
-            <Image src="/figma-home/faq-worldmap.png" alt="" fill sizes="1377px" className="object-cover" />
+            {/* The block's Background from Strapi (seed:approved-media replaces the old pre-faded 1900x719 export —
+                which this 8% layer would fade to nothing — with Figma's own raster), else the local raster. */}
+            <Image src={block.background.src || '/figma-home/faq-worldmap.png'} alt="" fill sizes="1377px" className="object-cover" />
           </div>
         </div>
       )}

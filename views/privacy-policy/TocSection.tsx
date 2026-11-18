@@ -5,9 +5,10 @@ import { H2, TRIM } from './text';
 import type { ResolvedPrivacyPolicy } from './fallback';
 
 /** "This Privacy Policy Defines and Regulates:" — Figma node 1114:50556 (y1326-1836). 36px/-2px #a72b31 title, then 12 underlined
- * 16px SemiBold links at 80% on a 40px pitch, each with a 10px red dot 7px in from x220 (text at +24). Only the first two anchors
- * have a drawn body section; the scroll-sync below highlights those while they are in view. */
-export function TocSection({ toc }: { toc: ResolvedPrivacyPolicy['toc'] }) {
+ * 16px SemiBold links at 80% on a 40px pitch, each with a 10px red dot 7px in from x220 (text at +24). An entry links only when
+ * its section exists (the two fixed clauses + any Strapi "Sections" with a matching anchor); the scroll-sync below highlights
+ * those while they are in view. */
+export function TocSection({ toc, anchors }: { toc: ResolvedPrivacyPolicy['toc']; /** Anchors that have a section on the page. */ anchors: Set<string> }) {
   const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,14 +34,19 @@ export function TocSection({ toc }: { toc: ResolvedPrivacyPolicy['toc'] }) {
         {toc.items.map((item) => (
           <li key={item.id} className={`relative pl-6 font-sans text-[16px] font-semibold leading-[2.5] ${TRIM}`}>
             <span className="absolute left-[7px] top-px size-[10px] rounded-full bg-[#b52c2c]" aria-hidden="true" />
-            <a
-              href={`#${item.anchor}`}
-              className={`underline underline-offset-2 transition-colors hover:text-[#a72b31] ${
-                activeAnchor === item.anchor ? 'text-[#a72b31]' : 'text-[#02060e] opacity-80'
-              }`}
-            >
-              {item.label}
-            </a>
+            {/* Only an entry whose section exists is a link; the rest stay as the node draws them, without a dead jump. */}
+            {anchors.has(item.anchor) ? (
+              <a
+                href={`#${item.anchor}`}
+                className={`underline underline-offset-2 transition-colors hover:text-[#a72b31] ${
+                  activeAnchor === item.anchor ? 'text-[#a72b31]' : 'text-[#02060e] opacity-80'
+                }`}
+              >
+                {item.label}
+              </a>
+            ) : (
+              <span className="text-[#02060e] opacity-80">{item.label}</span>
+            )}
           </li>
         ))}
       </ul>

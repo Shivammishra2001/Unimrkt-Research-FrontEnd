@@ -1,11 +1,7 @@
 import type { ReactNode } from 'react';
 import { BODY, H2, TRIM } from './text';
-import type { ResolvedPrivacyPolicy } from './fallback';
+import { LAWFUL_ANCHOR, QUALIFIES_ANCHOR, type ResolvedPrivacyPolicy } from './fallback';
 import type { PrivacyPolicyListItemModel } from '@/models/privacyPolicyPage';
-
-// The two TOC anchors that have body copy drawn beneath them.
-const QUALIFIES_ANCHOR = 'What-qualifies-as-Personal-Data';
-const LAWFUL_ANCHOR = 'What-Constitutes-the-Lawful-Collection-and-Use-of-Personal-Data';
 
 /** Paragraphs with a blank 30.4px line between them, as Figma's text boxes draw them. */
 function Paragraphs({ text, className = '' }: { text: string; className?: string }) {
@@ -75,6 +71,16 @@ export function BodySection({ content }: { content: ResolvedPrivacyPolicy }) {
 
       <SubHeading className="mt-10 lg:mt-[57px]">{content.legal.heading}</SubHeading>
       <p className={`${BODY} mt-4 lg:mt-[26px]`}>{content.legal.body}</p>
+
+      {/* Further clauses from Strapi (Privacy Policy → Sections), each a TOC target by its anchor. */}
+      {content.sections.map((s) => (
+        <div key={s.id}>
+          <h2 id={s.anchor} className={`${H2} mt-12 scroll-mt-28 lg:mt-[69px]`}>
+            {s.heading}
+          </h2>
+          <Paragraphs text={s.body} className="mt-6 lg:mt-[33px]" />
+        </div>
+      ))}
     </>
   );
 }

@@ -29,7 +29,7 @@ function localImage(filename: string, alt: string, width: number, height: number
   return { src: `${ASSET_DIR}/${filename}`, alt, width, height };
 }
 
-const FALLBACK_HERO_IMAGE = localImage('pp-hero-bg.jpg', 'Built on Trust. Protected by Privacy.', 1900, 747);
+const FALLBACK_HERO_IMAGE = localImage('hero-raw.jpg', 'Built on Trust. Protected by Privacy.', 4094, 1609);
 
 function tocItem(idSuffix: string, label: string, anchor: string): PrivacyPolicyTocItemModel {
   return { id: `fallback-toc-${idSuffix}`, label, anchor };
@@ -101,6 +101,7 @@ export interface ResolvedPrivacyPolicy {
   registration: { heading: string; body: string };
   panel: { heading: string; intro: string; dataSourcesList: PrivacyPolicyListItemModel[]; closing: string };
   legal: { heading: string; body: string };
+  sections: Array<{ id: string; heading: string; anchor: string; body: string }>;
 }
 
 export function resolvePrivacyPolicy(settings: PrivacyPolicyPageSettings): ResolvedPrivacyPolicy {
@@ -180,5 +181,11 @@ export function resolvePrivacyPolicy(settings: PrivacyPolicyPageSettings): Resol
         settings.legalBody ||
         'Unimrkt Research may be required to use and retain personal data for legal and compliance reasons, such as the prevention, detection, or investigation of a crime, loss prevention, fraud or any other abuse of their services and IT systems. Unimrkt Research may also use the User’s personal data to meet its internal and external audit requirements, information security purposes or to protect or enforce their rights of privacy, safety, or property, or those of other persons that may be encountered for the purposes set out or contractual or statutory requirements and their compliance.',
     },
+    // CMS-only: no fallback copy is invented for legal clauses that Figma doesn't draw.
+    sections: settings.sections ?? [],
   };
 }
+
+/** The two fixed clause anchors (their headings carry these ids in BodySection). */
+export const QUALIFIES_ANCHOR = 'What-qualifies-as-Personal-Data';
+export const LAWFUL_ANCHOR = 'What-Constitutes-the-Lawful-Collection-and-Use-of-Personal-Data';

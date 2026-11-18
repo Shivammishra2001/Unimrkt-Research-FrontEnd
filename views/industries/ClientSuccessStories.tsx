@@ -21,13 +21,14 @@ export function ClientSuccessStories({ content }: { content: IndustriesPageConte
   return (
     <section className="relative bg-white py-16 lg:h-[821px] lg:pb-0 lg:pt-[99.6px]">
       {/* Figma 1384:27212 "image 74": 1900x697 wave artwork at 6% opacity, mix-blend darken, starting 696px into the section and
-          straddling its lower edge into the blogs band below. Always the node's own PNG: the decorative layer is not CMS-driven. */}
+          straddling its lower edge into the blogs band below. The page's "Background waves image" from Strapi when set
+          (seed:approved-media replaced the wrong placeholder with this PNG), else the local copy. */}
       <div
         className="pointer-events-none absolute inset-x-0 top-1/2 h-[55%] overflow-hidden opacity-[0.06] mix-blend-darken lg:top-[696px] lg:h-[697px]"
         aria-hidden="true"
       >
         <Image
-          src="/images/industries/client-waves.png"
+          src={("backgroundWavesImage" in content && content.backgroundWavesImage?.src) || "/images/industries/client-waves.png"}
           alt=""
           width={2000}
           height={889}

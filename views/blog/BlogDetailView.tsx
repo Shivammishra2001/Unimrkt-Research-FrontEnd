@@ -45,7 +45,8 @@ function Chevron() {
  * The node has no category pill and no read-time, so neither is drawn.
  */
 export function BlogDetailView({ post, relatedPosts, recentPosts = [] }: { post: BlogDetail; relatedPosts: BlogSummary[]; recentPosts?: BlogSummary[] }) {
-  const shareUrl = `https://www.unimrkt.com/blogs/${post.slug}`;
+  // The environment's public site URL (same setting as the sitemap); falls back to the production domain.
+  const shareUrl = `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.unimrkt.com').replace(/\/+$/, '')}/blogs/${post.slug}`;
 
   return (
     <article>

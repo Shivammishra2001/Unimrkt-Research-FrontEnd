@@ -50,6 +50,7 @@ export interface StrapiPrivacyPolicyPage {
   panelClosing: string | null;
   legalHeading: string | null;
   legalBody: string | null;
+  sections?: Array<{ id: number; heading: string; anchor: string; body: string }>;
   seo: StrapiSeo | null;
 }
 
@@ -97,5 +98,7 @@ export interface PrivacyPolicyPageSettings {
   panelClosing?: string;
   legalHeading?: string;
   legalBody?: string;
+  /** Further clauses (heading + anchor + body), rendered after the fixed ones; the TOC links to them by anchor. */
+  sections: Array<{ id: string; heading: string; anchor: string; body: string }>;
   seo?: SeoModel;
 }
