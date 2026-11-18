@@ -8,16 +8,11 @@ import { ChevronIcon } from '@/views/ui/icons/ChevronIcon';
 import { CloseIcon } from '@/views/ui/icons/CloseIcon';
 import { RefreshIcon } from '@/views/ui/icons/RefreshIcon';
 import type { GalleryData, GalleryImage } from '@/models/gallery';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 const PAGE_SIZE = 9;
 
-const CTA_LINK = {
-  id: 'gallery-cta',
-  label: 'Talk to Our Experts',
-  href: '/contact',
-  isExternal: false,
-  variant: 'secondary' as const,
-};
 
 // Cheap shimmer placeholder — matches the blur-while-loading treatment
 // StrapiImage gets from a real blurDataURL, without needing one baked
@@ -118,7 +113,9 @@ function GalleryLightbox({
  * globally by app/layout.tsx — this view owns only the gallery-specific
  * content between them. Pixel values below are the Figma geometry at the
  * 1900px frame; they collapse to fluid values below `lg`. */
-export function GalleryView({ data }: { data: GalleryData }) {
+export function GalleryView({ data, globalBands }: { data: GalleryData; globalBands?: ClosingBandsSettings }) {
+  // Closing CTA from Global Header, Footer & SEO (no gallery page record yet), else the built-in copy.
+  const finalCta = resolveClosingBands(globalBands).finalCta;
   const [activeCategory, setActiveCategory] = useState('all');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -295,14 +292,13 @@ export function GalleryView({ data }: { data: GalleryData }) {
               aria-hidden="true"
             />
             <h2 className="relative font-sans text-[30px] font-semibold capitalize leading-[34px] text-white sm:text-[36px] sm:leading-[41px] lg:text-[50px] lg:leading-[57px] lg:tracking-[-2px]">
-              Start Your Research Journey
+              {finalCta.heading}
             </h2>
             <p className="relative mt-[10px] max-w-[819px] font-sans text-[16px] font-medium leading-[33.6px] text-white">
-              Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and
-              make confident business decisions.
+              {finalCta.body}
             </p>
             <div className="relative mt-9 flex justify-center lg:mt-[47px]">
-              <Button link={CTA_LINK} variant="secondary" />
+              <Button link={finalCta.action} variant="secondary" />
             </div>
           </div>
         </div>

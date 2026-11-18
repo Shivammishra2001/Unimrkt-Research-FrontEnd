@@ -348,4 +348,14 @@ export interface GlobalModel {
   navigation: NavigationModel;
   footer: FooterModel;
   defaultSeo: SeoModel;
+  /** Site-wide closing bands (Global defaults that pages may override). */
+  closingBands: ClosingBandsSettings;
+}
+
+/** The three bands most pages close with, as stored in Strapi: every field optional (empty = inherit). Global holds the
+ * defaults; services, industries and page records hold optional overrides of the same shape. */
+export interface ClosingBandsSettings {
+  blog?: { eyebrow?: string; heading?: string; description?: string };
+  faq?: { heading?: string; cta?: LinkModel };
+  finalCta?: { heading?: string; body?: string; action?: LinkModel };
 }

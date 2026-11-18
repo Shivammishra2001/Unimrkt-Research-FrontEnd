@@ -1,3 +1,4 @@
+import { getGlobalClosingBands } from '@/controllers/closingBands';
 import { notFound } from 'next/navigation';
 import { hiddenFromVisitors } from '@/controllers/visibility';
 import { InactivePreviewBanner } from '@/views/ui/InactivePreviewBanner';
@@ -70,10 +71,12 @@ export default async function BlogDetailPage({ params }: { params: RouteParams }
   if (!post) notFound();
   const inactivePreview = hiddenFromVisitors(post);
 
+  // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
+  const globalBands = await getGlobalClosingBands();
   return (
     <>
       {inactivePreview && <InactivePreviewBanner />}
-      <BlogDetailView post={post} relatedPosts={pickRelatedPosts(allPosts, post)} recentPosts={pickRecentPosts(allPosts, post.slug)} />
+      <BlogDetailView globalBands={globalBands} post={post} relatedPosts={pickRelatedPosts(allPosts, post)} recentPosts={pickRecentPosts(allPosts, post.slug)} />
     </>
   );
 }

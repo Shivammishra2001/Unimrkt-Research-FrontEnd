@@ -1,3 +1,4 @@
+import { getGlobalClosingBands } from '@/controllers/closingBands';
 import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getAllIndustries } from '@/controllers/industry';
@@ -38,7 +39,9 @@ export default async function IndustriesPage() {
       getAllBlogPosts(),
       getIndustriesPageContent(),
     ]);
-    return <IndustryListingView industries={industries} blogPosts={blogPosts} content={content} />;
+    // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
+    const globalBands = await getGlobalClosingBands();
+    return <IndustryListingView globalBands={globalBands} industries={industries} blogPosts={blogPosts} content={content} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     notFoundIfMissing(err);

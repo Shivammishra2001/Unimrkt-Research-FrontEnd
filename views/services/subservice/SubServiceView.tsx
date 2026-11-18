@@ -7,6 +7,8 @@ import { ProcessSection } from './ProcessSection';
 import { resolveSubService } from './content';
 import type { ServiceDetail } from '@/models/service';
 import type { BlogSummary } from '@/models/blog';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /**
  * Level-3 sub-service page (a service with a parent: Services > Primary Research > Telephonic Surveys) — Figma node
@@ -14,8 +16,10 @@ import type { BlogSummary } from '@/models/blog';
  * slider, What We Can Measure (photo cards), Quality First (glass cards), CATI technology (expanding panels), Latest
  * Blogs, FAQ, About and the closing CTA band. Level-2 services (no parent) keep ServiceDetailView's template.
  */
-export function SubServiceView({ service, blogPosts }: { service: ServiceDetail; blogPosts: BlogSummary[] }) {
+export function SubServiceView({ service, blogPosts, globalBands }: { service: ServiceDetail; blogPosts: BlogSummary[]; globalBands?: ClosingBandsSettings }) {
   const c = resolveSubService(service);
+  // Closing bands: this service's overrides, then Global Header, Footer & SEO, then the built-in copy.
+  const bands = resolveClosingBands(globalBands, service.closingBands);
   const posts = [...blogPosts].sort((a, b) => a.order - b.order);
 
   return (
@@ -49,9 +53,9 @@ export function SubServiceView({ service, blogPosts }: { service: ServiceDetail;
             kind: 'blogTeaser',
             id: `service-${service.slug}-latest-blogs`,
             theme: 'light',
-            eyebrow: 'Latest Blogs',
-            heading: 'Exploring Market Trends',
-            description: 'Discover Emerging Market Trends That Shape Smarter Business Decisions.',
+            eyebrow: bands.blog.eyebrow,
+            heading: bands.blog.heading,
+            description: bands.blog.description,
             actions: [],
             posts: posts.slice(0, 6).map((post) => ({
               id: `post-${post.slug}`,
@@ -68,8 +72,8 @@ export function SubServiceView({ service, blogPosts }: { service: ServiceDetail;
         <IndustryFaqSection
           titleClassName="mt-[43px] lg:mt-[121px]"
           content={{
-            cta: { id: `service-${service.slug}-faq-cta`, label: 'Browse Blogs', href: '/blogs', isExternal: false, variant: 'primary' },
-            heading: c.faq.heading,
+            cta: bands.faq.cta,
+            heading: bands.faq.heading,
             items: c.faq.items,
           }}
         />
@@ -79,9 +83,9 @@ export function SubServiceView({ service, blogPosts }: { service: ServiceDetail;
         titleMaxWidth="960px"
         about={{ eyebrow: c.about.eyebrow, heading: c.about.heading, paragraphs: c.about.paragraphs }}
         finalCta={{
-          heading: 'Start Your Research Journey',
-          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
-          action: { id: `service-${service.slug}-final-cta`, label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+          heading: bands.finalCta.heading,
+          body: bands.finalCta.body,
+          action: bands.finalCta.action,
         }}
       />
     </div>

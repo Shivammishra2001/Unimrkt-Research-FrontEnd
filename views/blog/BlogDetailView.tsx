@@ -9,6 +9,8 @@ import { RichContent } from './RichContent';
 import { QuickEnquiryCard } from './QuickEnquiryCard';
 import { RecentPostsCard } from './RecentPostsCard';
 import type { BlogDetail, BlogSummary } from '@/models/blog';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 function formatDate(iso?: string): string {
   if (!iso) return '';
@@ -44,7 +46,10 @@ function Chevron() {
  * (Quick Enquiry, Recent Posts) from y980 · divider + Share row · "Other Blogs" band · FAQ · closing CTA band.
  * The node has no category pill and no read-time, so neither is drawn.
  */
-export function BlogDetailView({ post, relatedPosts, recentPosts = [] }: { post: BlogDetail; relatedPosts: BlogSummary[]; recentPosts?: BlogSummary[] }) {
+export function BlogDetailView({ post, relatedPosts, recentPosts = [], globalBands }: { post: BlogDetail; relatedPosts: BlogSummary[]; recentPosts?: BlogSummary[]; globalBands?: ClosingBandsSettings }) {
+  // Closing bands from Global Header, Footer & SEO, else the built-in copy. The related-posts band keeps this frame's
+  // own "Other Blogs" eyebrow (moves to the blog page record in a later step).
+  const bands = resolveClosingBands(globalBands);
   // The environment's public site URL (same setting as the sitemap); falls back to the production domain.
   const shareUrl = `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.unimrkt.com').replace(/\/+$/, '')}/blogs/${post.slug}`;
 
@@ -151,8 +156,8 @@ export function BlogDetailView({ post, relatedPosts, recentPosts = [] }: { post:
             id: 'blog-other-blogs',
             theme: 'light',
             eyebrow: 'Other Blogs',
-            heading: 'Exploring Market Trends',
-            description: 'Discover Emerging Market Trends That Shape Smarter Business Decisions.',
+            heading: bands.blog.heading,
+            description: bands.blog.description,
             actions: [],
             posts: relatedPosts.slice(0, 3).map((related) => ({
               id: `post-${related.slug}`,
@@ -174,7 +179,7 @@ export function BlogDetailView({ post, relatedPosts, recentPosts = [] }: { post:
             kind: 'faq',
             id: 'blog-post-faq',
             theme: 'light',
-            heading: 'Frequently Asked Questions',
+            heading: bands.faq.heading,
             background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
             items: post.faqItems,
           }}
@@ -183,9 +188,9 @@ export function BlogDetailView({ post, relatedPosts, recentPosts = [] }: { post:
 
       <FinalCtaBand
         finalCta={{
-          heading: 'Start Your Research Journey',
-          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
-          action: { id: 'blog-post-final-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+          heading: bands.finalCta.heading,
+          body: bands.finalCta.body,
+          action: bands.finalCta.action,
         }}
       />
     </article>

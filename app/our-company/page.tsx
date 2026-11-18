@@ -1,3 +1,4 @@
+import { getGlobalClosingBands } from '@/controllers/closingBands';
 import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { cmsMetadata } from '@/controllers/pageMetadata';
@@ -23,7 +24,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function OurCompanyPage() {
   try {
     const [settings, blogPosts] = await Promise.all([getOurCompanyPageContent(), getAllBlogPosts()]);
-    return <OurCompanyView settings={settings} blogPosts={blogPosts} />;
+    // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
+    const globalBands = await getGlobalClosingBands();
+    return <OurCompanyView globalBands={globalBands} settings={settings} blogPosts={blogPosts} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     notFoundIfMissing(err);

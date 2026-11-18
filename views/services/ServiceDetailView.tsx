@@ -13,6 +13,8 @@ import { IndustryFaqSection } from '@/views/industries/listing/IndustryFaqSectio
 import { AboutServicesCta } from '@/views/industries/listing/AboutServicesCta';
 import type { ServiceDetail } from '@/models/service';
 import type { BlogSummary } from '@/models/blog';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /**
  * /services/[slug] detail page — Figma node 474:5731 ("Primary Research", 1900x9705). Navbar/Footer are global
@@ -26,9 +28,11 @@ import type { BlogSummary } from '@/models/blog';
  * empty, so every service renders the full page. The form, blog band, FAQ shell and about/CTA band are the site's
  * shared components, which Figma draws identically here.
  */
-export function ServiceDetailView({ service, blogPosts }: { service: ServiceDetail; blogPosts: BlogSummary[] }) {
+export function ServiceDetailView({ service, blogPosts, globalBands }: { service: ServiceDetail; blogPosts: BlogSummary[]; globalBands?: ClosingBandsSettings }) {
   // Level-3 (a sub-service such as Primary Research > Telephonic Surveys) has its own template — Figma 859:15301.
-  if (service.parent) return <SubServiceView service={service} blogPosts={blogPosts} />;
+  if (service.parent) return <SubServiceView service={service} blogPosts={blogPosts} globalBands={globalBands} />;
+  // Closing bands: this service's overrides, then Global Header, Footer & SEO, then the built-in copy.
+  const bands = resolveClosingBands(globalBands, service.closingBands);
   const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
   const content = resolveServiceDetail(service);
   const aboutParagraphs = content.about.body
@@ -57,9 +61,9 @@ export function ServiceDetailView({ service, blogPosts }: { service: ServiceDeta
             kind: 'blogTeaser',
             id: `service-${service.slug}-latest-blogs`,
             theme: 'light',
-            eyebrow: 'Latest Blogs',
-            heading: 'Exploring Market Trends',
-            description: 'Discover Emerging Market Trends That Shape Smarter Business Decisions.',
+            eyebrow: bands.blog.eyebrow,
+            heading: bands.blog.heading,
+            description: bands.blog.description,
             actions: [],
             posts: sortedBlogPosts.slice(0, 6).map((post) => ({
               id: `post-${post.slug}`,
@@ -78,8 +82,8 @@ export function ServiceDetailView({ service, blogPosts }: { service: ServiceDeta
         <IndustryFaqSection
           titleClassName="mt-[43px] lg:mt-[121px]"
           content={{
-            cta: { id: `service-${service.slug}-faq-cta`, label: 'Browse Blogs', href: '/blogs', isExternal: false, variant: 'primary' },
-            heading: 'Frequently Asked Questions',
+            cta: bands.faq.cta,
+            heading: bands.faq.heading,
             items: content.faqItems,
           }}
         />
@@ -90,9 +94,9 @@ export function ServiceDetailView({ service, blogPosts }: { service: ServiceDeta
         titleMaxWidth="720px"
         about={{ eyebrow: content.about.eyebrow, heading: content.about.heading, paragraphs: aboutParagraphs }}
         finalCta={{
-          heading: 'Start Your Research Journey',
-          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
-          action: { id: `service-${service.slug}-final-cta`, label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+          heading: bands.finalCta.heading,
+          body: bands.finalCta.body,
+          action: bands.finalCta.action,
         }}
       />
     </div>

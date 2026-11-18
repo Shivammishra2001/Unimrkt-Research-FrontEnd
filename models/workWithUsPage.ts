@@ -6,9 +6,9 @@
  * IndustryDetailCardModel/StrapiIndustryDetailCard for every card grid
  * (values/benefits/journey steps).
  */
-import type { StrapiMedia, StrapiResponse, StrapiLink, StrapiFaqItem, StrapiSeo } from './strapi';
+import type { StrapiMedia, StrapiResponse, StrapiLink, StrapiFaqItem, StrapiSeo, StrapiClosingBands } from './strapi';
 import type { StrapiIndustryDetailCard, IndustryDetailCardModel } from './industry';
-import type { ImageModel, LinkModel, FaqItemModel, SeoModel } from './domain';
+import type { ImageModel, LinkModel, FaqItemModel, SeoModel, ClosingBandsSettings } from './domain';
 
 // ---------------------------------------------------------------------------
 // Raw
@@ -39,7 +39,7 @@ export interface StrapiJobListing {
   qualificationsItems: string[] | null;
 }
 
-export interface StrapiWorkWithUsPage {
+export interface StrapiWorkWithUsPage extends StrapiClosingBands {
   heroEyebrow: string | null;
   heroHeading: string | null;
   heroSubheading: string | null;
@@ -93,6 +93,8 @@ export interface JobListingModel {
 }
 
 export interface WorkWithUsSettings {
+  /** Optional overrides of the Global closing bands (empty fields inherit). */
+  closingBands?: ClosingBandsSettings;
   heroEyebrow?: string;
   heroHeading?: string;
   heroSubheading?: string;

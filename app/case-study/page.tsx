@@ -1,3 +1,4 @@
+import { getGlobalClosingBands } from '@/controllers/closingBands';
 import { notFoundIfMissing } from '@/controllers/visibility';
 import type { Metadata } from 'next';
 import { getCaseStudyList } from '@/controllers/caseStudy';
@@ -16,7 +17,9 @@ export const metadata: Metadata = {
 export default async function CaseStudyPage() {
   try {
     const [caseStudies, settings] = await Promise.all([getCaseStudyList(), getCaseStudyPageContent()]);
-    return <CaseStudyView caseStudies={caseStudies} settings={settings} />;
+    // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
+    const globalBands = await getGlobalClosingBands();
+    return <CaseStudyView globalBands={globalBands} caseStudies={caseStudies} settings={settings} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     notFoundIfMissing(err);

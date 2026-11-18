@@ -14,6 +14,8 @@ import { FaqView } from '@/views/sections/FaqView';
 import type { IndustryDetail } from '@/models/industry';
 import type { BlogSummary } from '@/models/blog';
 import type { CaseStudySummary } from '@/models/caseStudy';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /**
  * /industries/[slug] detail page — Figma node 384:6205 ("Automotives").
@@ -33,14 +35,18 @@ export function IndustryDetailView({
   industry,
   blogPosts,
   latestCaseStudies = [],
+  globalBands,
 }: {
   industry: IndustryDetail;
   blogPosts: BlogSummary[];
+  /** Global Header, Footer & SEO closing bands (this industry's overrides win field by field). */
+  globalBands?: ClosingBandsSettings;
   /** Fallback for the Case Studies section: the latest published case studies. */
   latestCaseStudies?: CaseStudySummary[];
 }) {
   const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
   const content = resolveIndustryDetail(industry);
+  const bands = resolveClosingBands(globalBands, industry.closingBands);
 
   // Figma 384:6205 always draws this section: the industry's own picks when set,
   // otherwise the two latest published case studies.
@@ -109,8 +115,8 @@ export function IndustryDetailView({
             kind: 'blogTeaser',
             id: 'industry-latest-blogs',
             theme: 'light',
-            eyebrow: 'Latest Blogs',
-            heading: 'Exploring Market Trends',
+            eyebrow: bands.blog.eyebrow,
+            heading: bands.blog.heading,
             actions: [],
             posts: sortedBlogPosts.slice(1, 4).map((post) => ({
               id: `post-${post.slug}`,
@@ -130,9 +136,9 @@ export function IndustryDetailView({
           kind: 'faq',
           id: 'industry-faq',
           theme: 'light',
-          heading: 'Frequently Asked Questions',
+          heading: bands.faq.heading,
           background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
-          cta: { id: 'industry-faq-cta', label: 'Browse Blogs', href: '/blogs', isExternal: false, variant: 'primary' },
+          cta: bands.faq.cta,
           items: content.faqItems,
         }}
       />
@@ -143,9 +149,9 @@ export function IndustryDetailView({
         detail
         about={{ eyebrow: content.about.eyebrow, heading: content.about.heading, paragraphs: content.about.body.split('\n\n').map((p) => p.trim()).filter(Boolean) }}
         finalCta={{
-          heading: 'Start Your Research Journey',
-          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
-          action: { id: 'industry-final-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+          heading: bands.finalCta.heading,
+          body: bands.finalCta.body,
+          action: bands.finalCta.action,
         }}
       />
     </>

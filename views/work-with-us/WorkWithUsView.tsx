@@ -8,6 +8,8 @@ import { resolveWorkWithUs } from './fallback';
 import { FaqView } from '@/views/sections/FaqView';
 import { AboutServicesCta } from '@/views/industries/listing/AboutServicesCta';
 import type { WorkWithUsSettings } from '@/models/workWithUsPage';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /**
  * /work-with-us — Figma node 924:23216 ("Work With Us", file
@@ -25,7 +27,9 @@ import type { WorkWithUsSettings } from '@/models/workWithUsPage';
  * Journey" component every other page reuses (byte-identical copy,
  * confirmed again on this node).
  */
-export function WorkWithUsView({ settings }: { settings: WorkWithUsSettings }) {
+export function WorkWithUsView({ settings, globalBands }: { settings: WorkWithUsSettings; globalBands?: ClosingBandsSettings }) {
+  // Closing bands: this page's overrides (Pages → Work With Us), then Global Header, Footer & SEO, then the built-in copy.
+  const bands = resolveClosingBands(globalBands, settings.closingBands);
   const content = resolveWorkWithUs(settings);
 
   return (
@@ -43,7 +47,7 @@ export function WorkWithUsView({ settings }: { settings: WorkWithUsSettings }) {
           kind: 'faq',
           id: 'wwu-faq',
           theme: 'light',
-          heading: 'Frequently Asked Questions',
+          heading: bands.faq.heading,
           background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
           items: content.faqItems,
         }}
@@ -57,9 +61,9 @@ export function WorkWithUsView({ settings }: { settings: WorkWithUsSettings }) {
           paragraphs: content.aboutCareers.body.split('\n\n').map((p) => p.trim()).filter(Boolean),
         }}
         finalCta={{
-          heading: 'Start Your Research Journey',
-          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
-          action: { id: 'wwu-final-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+          heading: bands.finalCta.heading,
+          body: bands.finalCta.body,
+          action: bands.finalCta.action,
         }}
       />
     </>

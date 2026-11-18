@@ -9,8 +9,8 @@
  * render order. All are optional: a missing field falls back to the
  * template default resolved in views/services/detail/fallback.ts.
  */
-import type { StrapiFeatureItem, StrapiMedia, StrapiResponse, StrapiSeo, StrapiLink, StrapiFaqItem } from './strapi';
-import type { FeatureModel, ImageModel, SeoModel, LinkModel, FaqItemModel } from './domain';
+import type { StrapiFeatureItem, StrapiMedia, StrapiResponse, StrapiSeo, StrapiLink, StrapiFaqItem, StrapiClosingBands } from './strapi';
+import type { FeatureModel, ImageModel, SeoModel, LinkModel, FaqItemModel, ClosingBandsSettings } from './domain';
 import type { StrapiIndustryDetailCard, StrapiTrustLogo, IndustryDetailCardModel, TrustLogoModel } from './industry';
 
 // ---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ export interface StrapiServiceSummary {
 // Deliberately a *narrower* type than StrapiServiceDetail (the listing
 // controller forces `populate: { thumbnail: true }` only) — not that type
 // with fields omitted at the call site.
-export interface StrapiServiceDetail extends StrapiServiceSummary {
+export interface StrapiServiceDetail extends StrapiServiceSummary, StrapiClosingBands {
   features: StrapiFeatureItem[];
   seo: StrapiSeo | null;
   createdAt: string;
@@ -163,6 +163,8 @@ export interface ServiceSummary {
 }
 
 export interface ServiceDetail extends ServiceSummary {
+  /** Optional overrides of the Global closing bands (empty fields inherit). */
+  closingBands?: ClosingBandsSettings;
   /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
   isActive?: boolean;
   features: FeatureModel[];

@@ -13,6 +13,8 @@ import { AboutServicesCta } from './listing/AboutServicesCta';
 import type { IndustrySummary } from '@/models/industry';
 import type { BlogSummary } from '@/models/blog';
 import type { IndustriesPageContent } from '@/models/industriesPage';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /** /industries listing — Figma node 1384:26772 (1900px frame, y0-12700).
  * Navbar/Footer are global (app/layout.tsx; the navbar is transparent
@@ -26,11 +28,15 @@ export function IndustryListingView({
   industries,
   blogPosts,
   content,
+  globalBands,
 }: {
   industries: IndustrySummary[];
   blogPosts: BlogSummary[];
   content: IndustriesPageContent;
+  /** Global Header, Footer & SEO closing bands — only the Latest Blogs band applies here (FAQ / CTA come from Pages → Industries). */
+  globalBands?: ClosingBandsSettings;
 }) {
+  const bands = resolveClosingBands(globalBands);
   const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
 
   return (
@@ -53,8 +59,8 @@ export function IndustryListingView({
             kind: 'blogTeaser',
             id: 'industries-latest-blogs',
             theme: 'light',
-            eyebrow: 'Latest Blogs',
-            heading: 'Exploring Market Trends',
+            eyebrow: bands.blog.eyebrow,
+            heading: bands.blog.heading,
             actions: [],
             posts: sortedBlogPosts.slice(0, 6).map((post) => ({
               id: `post-${post.slug}`,

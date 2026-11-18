@@ -1,3 +1,4 @@
+import { getGlobalClosingBands } from '@/controllers/closingBands';
 import type { Metadata } from 'next';
 import { getAllBlogPosts } from '@/controllers/blog';
 import { getAllCategories } from '@/controllers/category';
@@ -20,7 +21,9 @@ export default async function BlogsPage() {
     // panel shows up as a filter tab immediately, even before any post is
     // tagged with it.
     const [posts, categories] = await Promise.all([getAllBlogPosts(), getAllCategories()]);
-    return <BlogListingView posts={posts} categories={categories} />;
+    // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
+    const globalBands = await getGlobalClosingBands();
+    return <BlogListingView globalBands={globalBands} posts={posts} categories={categories} />;
   } catch (err) {
     if (isBackendUnreachable(err)) return <OfflineNotice />;
     throw err;

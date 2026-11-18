@@ -8,16 +8,16 @@
  * Ecosystem, Values, and Industries all share that exact shape — and
  * ServiceStatItemModel/StrapiServiceStatItem for the 4-stat band.
  */
-import type { StrapiMedia, StrapiResponse, StrapiLink, StrapiFaqItem, StrapiSeo } from './strapi';
+import type { StrapiMedia, StrapiResponse, StrapiLink, StrapiFaqItem, StrapiSeo, StrapiClosingBands } from './strapi';
 import type { StrapiIndustryDetailCard, IndustryDetailCardModel } from './industry';
 import type { StrapiServiceStatItem, ServiceStatItemModel } from './service';
-import type { ImageModel, LinkModel, FaqItemModel, SeoModel } from './domain';
+import type { ImageModel, LinkModel, FaqItemModel, SeoModel, ClosingBandsSettings } from './domain';
 
 // ---------------------------------------------------------------------------
 // Raw
 // ---------------------------------------------------------------------------
 
-export interface StrapiOurCompanyPage {
+export interface StrapiOurCompanyPage extends StrapiClosingBands {
   heroEyebrow: string | null;
   heroHeading: string | null;
   heroSubheading: string | null;
@@ -59,6 +59,8 @@ export type StrapiOurCompanyPageResponse = StrapiResponse<StrapiOurCompanyPage>;
 // ---------------------------------------------------------------------------
 
 export interface OurCompanySettings {
+  /** Optional overrides of the Global closing bands (empty fields inherit). */
+  closingBands?: ClosingBandsSettings;
   heroEyebrow?: string;
   heroHeading?: string;
   heroSubheading?: string;

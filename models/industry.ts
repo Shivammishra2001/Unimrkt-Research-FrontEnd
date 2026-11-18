@@ -9,8 +9,8 @@
  * the render order. All are optional: a missing field means that
  * section has no CMS content yet and renders nothing (no fallback text).
  */
-import type { StrapiMedia, StrapiResponse, StrapiSeo, StrapiLink, StrapiIndustryItem, StrapiFaqItem } from './strapi';
-import type { LinkModel, ImageModel, SeoModel, IndustryItemModel, FaqItemModel } from './domain';
+import type { StrapiMedia, StrapiResponse, StrapiSeo, StrapiLink, StrapiIndustryItem, StrapiFaqItem, StrapiClosingBands } from './strapi';
+import type { LinkModel, ImageModel, SeoModel, IndustryItemModel, FaqItemModel, ClosingBandsSettings } from './domain';
 
 // ---------------------------------------------------------------------------
 // Raw
@@ -43,7 +43,7 @@ export interface StrapiIndustrySummary {
   updatedAt: string;
 }
 
-export interface StrapiIndustryDetail extends StrapiIndustrySummary {
+export interface StrapiIndustryDetail extends StrapiIndustrySummary, StrapiClosingBands {
   legacyUrl: string | null;
   suggestedUrl: string | null;
   seo: StrapiSeo | null;
@@ -148,6 +148,8 @@ export interface TrustLogoModel {
 }
 
 export interface IndustryDetail extends IndustrySummary {
+  /** Optional overrides of the Global closing bands (empty fields inherit). */
+  closingBands?: ClosingBandsSettings;
   /** False only when the CMS switch is OFF — such an entry is previewable (draft mode) but never public. */
   isActive?: boolean;
   legacyUrl?: string;

@@ -8,6 +8,8 @@ import { resolveContact } from './fallback';
 import { FaqView } from '@/views/sections/FaqView';
 import { AboutServicesCta } from '@/views/industries/listing/AboutServicesCta';
 import type { ContactPageSettings } from '@/models/contactPage';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /**
  * /contact — Figma node 637:10433 ("Contact", file foaJFuv0vRX8nD43o0ylgB). Navbar/Footer are global (app/layout.tsx;
@@ -18,7 +20,9 @@ import type { ContactPageSettings } from '@/models/contactPage';
  * office cards / "Why work with unimrkt?" / "How it works" steps / "Let's Team Up!" form / FAQ / "Have a Research
  * Question? Let's Talk." copy + the closing CTA band. The Why-work, How-it-works and closing copy are static text off the node.
  */
-export function ContactView({ settings }: { settings: ContactPageSettings }) {
+export function ContactView({ settings, globalBands }: { settings: ContactPageSettings; globalBands?: ClosingBandsSettings }) {
+  // Closing bands: this page's overrides (Pages → Contact), then Global Header, Footer & SEO, then the built-in copy.
+  const bands = resolveClosingBands(globalBands, settings.closingBands);
   const content = resolveContact(settings);
 
   return (
@@ -36,7 +40,7 @@ export function ContactView({ settings }: { settings: ContactPageSettings }) {
           kind: 'faq',
           id: 'contact-faq',
           theme: 'light',
-          heading: 'Frequently Asked Questions',
+          heading: bands.faq.heading,
           background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
           items: content.faqItems,
         }}
@@ -53,9 +57,9 @@ export function ContactView({ settings }: { settings: ContactPageSettings }) {
           ],
         }}
         finalCta={{
-          heading: 'Start Your Research Journey',
-          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
-          action: { id: 'contact-final-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+          heading: bands.finalCta.heading,
+          body: bands.finalCta.body,
+          action: bands.finalCta.action,
         }}
       />
     </>

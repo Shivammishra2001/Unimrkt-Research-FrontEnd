@@ -6,9 +6,9 @@
  * StrapiServiceStatItem for the 4-stat band (identical shape to
  * /our-company's).
  */
-import type { StrapiMedia, StrapiResponse, StrapiLink, StrapiFaqItem, StrapiSeo } from './strapi';
+import type { StrapiMedia, StrapiResponse, StrapiLink, StrapiFaqItem, StrapiSeo, StrapiClosingBands } from './strapi';
 import type { StrapiServiceStatItem, ServiceStatItemModel } from './service';
-import type { ImageModel, LinkModel, FaqItemModel, SeoModel } from './domain';
+import type { ImageModel, LinkModel, FaqItemModel, SeoModel, ClosingBandsSettings } from './domain';
 
 // ---------------------------------------------------------------------------
 // Raw
@@ -28,7 +28,7 @@ export interface StrapiOfficeLocation {
   mapLabel?: string | null;
 }
 
-export interface StrapiContactPage {
+export interface StrapiContactPage extends StrapiClosingBands {
   heroEyebrow: string | null;
   heroHeading: string | null;
   heroSubheading: string | null;
@@ -72,6 +72,8 @@ export interface OfficeLocationModel {
 }
 
 export interface ContactPageSettings {
+  /** Optional overrides of the Global closing bands (empty fields inherit). */
+  closingBands?: ClosingBandsSettings;
   heroEyebrow?: string;
   heroHeading?: string;
   heroSubheading?: string;

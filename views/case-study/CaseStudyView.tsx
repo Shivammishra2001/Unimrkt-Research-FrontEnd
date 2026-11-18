@@ -8,6 +8,8 @@ import { BlogFaqAccordion } from '@/views/blog/BlogFaqAccordion';
 import { BlogBottomCta } from '@/views/blog/BlogBottomCta';
 import type { CaseStudySummary } from '@/models/caseStudy';
 import type { CaseStudyPageSettings } from '@/models/caseStudyPage';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /**
  * /case-study — Figma node 1023:45614 ("Case Study", file
@@ -27,7 +29,12 @@ import type { CaseStudyPageSettings } from '@/models/caseStudyPage';
  * same "Start Your Research Journey" component every other page
  * reuses (byte-identical copy, confirmed again on this node).
  */
-export function CaseStudyView({ caseStudies, settings }: { caseStudies: CaseStudySummary[]; settings: CaseStudyPageSettings }) {
+export function CaseStudyView({ caseStudies, settings, globalBands }: { caseStudies: CaseStudySummary[]; settings: CaseStudyPageSettings; globalBands?: ClosingBandsSettings }) {
+  // Final CTA: the Case Studies page's own Bottom CTA fields (also used on every case-study detail page) override
+  // Global Header, Footer & SEO, then the built-in copy.
+  const bands = resolveClosingBands(globalBands, {
+    finalCta: { heading: settings.bottomCtaHeading, body: settings.bottomCtaBody, action: settings.bottomCtaAction },
+  });
   const content = resolveCaseStudy(caseStudies, settings);
 
   return (
@@ -38,7 +45,7 @@ export function CaseStudyView({ caseStudies, settings }: { caseStudies: CaseStud
       <TestimonialsSection testimonials={content.testimonials} />
       <BlogFaqAccordion heading={content.faqHeading} items={content.faqItems} />
       <AboutCaseStudySection about={content.about} />
-      <BlogBottomCta />
+      <BlogBottomCta heading={bands.finalCta.heading} body={bands.finalCta.body} action={bands.finalCta.action} />
     </>
   );
 }

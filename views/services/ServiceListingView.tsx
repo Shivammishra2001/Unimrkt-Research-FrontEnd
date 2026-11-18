@@ -16,6 +16,8 @@ import type { ServiceTreeItemModel } from '@/models/service';
 import type { IndustrySummary } from '@/models/industry';
 import type { BlogSummary } from '@/models/blog';
 import type { IndustriesPageContent } from '@/models/industriesPage';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /** Items whose key contains one of `lead` (in that order) first, then the rest in their original order. */
 function leadWith<T>(items: T[], key: (item: T) => string, lead: string[]): T[] {
@@ -43,13 +45,17 @@ export function ServiceListingView({
   industries,
   blogPosts,
   testimonials,
+  globalBands,
 }: {
   categories: ServiceTreeItemModel[];
   content: ServicesListingContent;
   industries: IndustrySummary[];
   blogPosts: BlogSummary[];
   testimonials: IndustriesPageContent['testimonials']['items'];
+  /** Global Header, Footer & SEO closing bands — only the Latest Blogs band applies here (FAQ / CTA come from Pages → Services). */
+  globalBands?: ClosingBandsSettings;
 }) {
+  const bands = resolveClosingBands(globalBands);
   const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
   // Lead with the entries Figma draws, in its order; everything else follows in CMS order.
   const panelCategories = leadWith(categories, (c) => c.slug, ['primary-research', 'qualitative-research', 'quantitative-research', 'business-research', 'research-support-functions']);
@@ -81,8 +87,8 @@ export function ServiceListingView({
             kind: 'blogTeaser',
             id: 'services-latest-blogs',
             theme: 'light',
-            eyebrow: 'Latest Blogs',
-            heading: 'Exploring Market Trends',
+            eyebrow: bands.blog.eyebrow,
+            heading: bands.blog.heading,
             actions: [],
             posts: sortedBlogPosts.slice(0, 6).map((post) => ({
               id: `post-${post.slug}`,

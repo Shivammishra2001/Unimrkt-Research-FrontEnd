@@ -96,7 +96,8 @@ import type {
   BlogSummary,
 } from '@/models/blog';
 import type { StrapiCategory, StrapiCategoryListResponse, CategoryModel } from '@/models/category';
-import type { FaqItemModel } from '@/models/domain';
+import type { FaqItemModel, ClosingBandsSettings } from '@/models/domain';
+import type { StrapiClosingBands } from '@/models/strapi';
 // ---------------------------------------------------------------------------
 // Shared primitives
 // ---------------------------------------------------------------------------
@@ -505,6 +506,7 @@ function normalizeServiceStatItem(item: StrapiServiceStatItem): ServiceStatItemM
 export function normalizeServiceDetail(res: StrapiServiceDetailResponse): ServiceDetail {
   const { data } = res;
   return {
+    closingBands: normalizeClosingBands(data),
     ...normalizeServiceSummaryFields(data),
     isActive: data.isActive !== false,
     features: (data.features ?? []).map(normalizeFeatureItem),
@@ -626,6 +628,7 @@ export function normalizeIndustryList(res: StrapiIndustryListResponse): Industry
 export function normalizeIndustryDetail(res: StrapiIndustryDetailResponse): IndustryDetail {
   const { data } = res;
   return {
+    closingBands: normalizeClosingBands(data),
     ...normalizeIndustrySummaryFields(data),
     isActive: data.isActive !== false,
     legacyUrl: data.legacyUrl ?? undefined,
@@ -816,6 +819,19 @@ export function normalizeBlogSlugs(res: StrapiBlogSlugsResponse): BlogSlugModel[
 // Global
 // ---------------------------------------------------------------------------
 
+/** shared.blog-band / faq-band / final-cta (Global defaults or page overrides) — empty strings become undefined so a
+ * blank field inherits instead of rendering empty. */
+export function normalizeClosingBands(data: StrapiClosingBands): ClosingBandsSettings {
+  const t = (v: string | null | undefined) => (v && v.trim() ? v : undefined);
+  return {
+    blog: data.blogBand ? { eyebrow: t(data.blogBand.eyebrow), heading: t(data.blogBand.heading), description: t(data.blogBand.description) } : undefined,
+    faq: data.faqBand ? { heading: t(data.faqBand.heading), cta: data.faqBand.cta ? normalizeLink(data.faqBand.cta) : undefined } : undefined,
+    finalCta: data.finalCta
+      ? { heading: t(data.finalCta.heading), body: t(data.finalCta.body), action: data.finalCta.action ? normalizeLink(data.finalCta.action) : undefined }
+      : undefined,
+  };
+}
+
 export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
   const data: StrapiGlobal = res.data;
 
@@ -867,6 +883,7 @@ export function normalizeGlobal(res: StrapiGlobalResponse): GlobalModel {
     footer,
     // Non-null assertion — defaultSeo is a required field on the schema.
     defaultSeo: normalizeSeo(data.defaultSeo, data.siteName)!,
+    closingBands: normalizeClosingBands(data),
   };
 }
 
@@ -944,6 +961,7 @@ export function normalizeOurCompanyPageSettings(res: StrapiOurCompanyPageRespons
   const data = res.data;
 
   return {
+    closingBands: normalizeClosingBands(data),
     heroEyebrow: data.heroEyebrow ?? undefined,
     heroHeading: data.heroHeading ?? undefined,
     heroSubheading: data.heroSubheading ?? undefined,
@@ -1014,6 +1032,7 @@ export function normalizeContactPageSettings(res: StrapiContactPageResponse): Co
   const data = res.data;
 
   return {
+    closingBands: normalizeClosingBands(data),
     heroEyebrow: data.heroEyebrow ?? undefined,
     heroHeading: data.heroHeading ?? undefined,
     heroSubheading: data.heroSubheading ?? undefined,
@@ -1063,6 +1082,7 @@ export function normalizeWorkWithUsPageSettings(res: StrapiWorkWithUsPageRespons
   const data = res.data;
 
   return {
+    closingBands: normalizeClosingBands(data),
     heroEyebrow: data.heroEyebrow ?? undefined,
     heroHeading: data.heroHeading ?? undefined,
     heroSubheading: data.heroSubheading ?? undefined,

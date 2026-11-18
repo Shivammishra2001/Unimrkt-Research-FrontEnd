@@ -1,3 +1,4 @@
+import { getGlobalClosingBands } from '@/controllers/closingBands';
 import type { Metadata } from 'next';
 import { getAllServiceCategories } from '@/controllers/service';
 import { getServicesListingContent } from '@/controllers/servicesListingPage';
@@ -49,7 +50,9 @@ export default async function ServicesPage() {
         .then((c) => c.testimonials.items)
         .catch(() => []),
     ]);
-    return <ServiceListingView categories={categories} content={content} industries={industries} blogPosts={blogPosts} testimonials={testimonials} />;
+    // Global Header, Footer & SEO closing bands (cached; never throws). The view applies this page's own overrides.
+    const globalBands = await getGlobalClosingBands();
+    return <ServiceListingView globalBands={globalBands} categories={categories} content={content} industries={industries} blogPosts={blogPosts} testimonials={testimonials} />;
   } catch (err) {
     // Backend down: a friendly offline notice beats an unhandled 500 —
     // the next request picks Strapi back up automatically once it's

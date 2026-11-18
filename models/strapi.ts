@@ -76,6 +76,13 @@ export interface StrapiNavItem {
   page?: { slug: string; title?: string; isActive?: boolean | null } | null;
 }
 
+/** shared.blog-band / shared.faq-band / shared.final-cta — on Global and (as overrides) on pages. */
+export interface StrapiClosingBands {
+  blogBand?: { eyebrow: string | null; heading: string | null; description: string | null } | null;
+  faqBand?: { heading: string | null; cta: StrapiLink | null } | null;
+  finalCta?: { heading: string | null; body: string | null; action: StrapiLink | null } | null;
+}
+
 export interface StrapiServicesMenu {
   eyebrow: string | null;
   autoIncludeNew: boolean | null;
@@ -349,7 +356,7 @@ export interface StrapiFooterColumn {
   links: StrapiLink[];
 }
 
-export interface StrapiGlobal {
+export interface StrapiGlobal extends StrapiClosingBands {
   id: number;
   documentId?: string;
   siteName: string;

@@ -22,11 +22,14 @@ export function BlogFaqAccordion({
   heading,
   items,
   showCta = false,
+  cta,
   className = '',
 }: {
   heading: string;
   items: FaqItemModel[];
   showCta?: boolean;
+  /** The button's label and link (FAQ band: page override → Global → built-in); defaults to Browse Blogs → /blogs. */
+  cta?: { label: string; href: string };
   className?: string;
 }) {
   const [openId, setOpenId] = useState<string | null>(items[0]?.id ?? null);
@@ -46,10 +49,10 @@ export function BlogFaqAccordion({
       <Container className="relative flex flex-col items-center">
         {showCta && (
           <Link
-            href="/blogs"
+            href={cta?.href ?? '/blogs'}
             className="inline-flex h-[60px] items-center justify-center gap-2 rounded-[4px] bg-gradient-to-r from-gradient-from to-gradient-to px-10 font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-white transition-transform hover:brightness-110"
           >
-            Browse Blogs
+            {cta?.label ?? 'Browse Blogs'}
           </Link>
         )}
         <h2 className={`${showCta ? 'mt-6' : ''} max-w-3xl text-center capitalize text-3xl font-semibold leading-[1.2] text-heading sm:text-4xl lg:text-[50px] lg:tracking-[-3px]`}>

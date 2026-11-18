@@ -8,6 +8,8 @@ import { BlogGridSection } from './BlogGridSection';
 import { SITEWIDE_BLOG_FAQ_ITEMS } from './BlogFaqAccordion';
 import type { BlogSummary } from '@/models/blog';
 import type { CategoryModel } from '@/models/category';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 const HERO_CTA = {
   id: 'blog-hero-cta',
@@ -24,7 +26,9 @@ const HERO_CTA = {
  * (522:4788-4799, the Home band) · "About Our Blog" + closing CTA (522:4720-4779, same design as the industry pages).
  * Posts and category tabs are CMS-dynamic; the remaining copy is static text copied off the node.
  */
-export function BlogListingView({ posts, categories }: { posts: BlogSummary[]; categories: CategoryModel[] }) {
+export function BlogListingView({ posts, categories, globalBands }: { posts: BlogSummary[]; categories: CategoryModel[]; globalBands?: ClosingBandsSettings }) {
+  // Closing bands from Global Header, Footer & SEO (this page has no page record of its own yet), else the built-in copy.
+  const bands = resolveClosingBands(globalBands);
   const sortedPosts = [...posts].sort((a, b) => a.order - b.order);
 
   return (
@@ -87,9 +91,9 @@ export function BlogListingView({ posts, categories }: { posts: BlogSummary[]; c
             kind: 'blogTeaser',
             id: 'blog-latest-blogs',
             theme: 'light',
-            eyebrow: 'Latest Blogs',
-            heading: 'Exploring Market Trends',
-            description: 'Discover Emerging Market Trends That Shape Smarter Business Decisions.',
+            eyebrow: bands.blog.eyebrow,
+            heading: bands.blog.heading,
+            description: bands.blog.description,
             actions: [],
             posts: sortedPosts.slice(1, 4).map((post) => ({
               id: `post-${post.slug}`,
@@ -110,9 +114,9 @@ export function BlogListingView({ posts, categories }: { posts: BlogSummary[]; c
           kind: 'faq',
           id: 'blog-faq',
           theme: 'light',
-          heading: 'Frequently Asked Questions',
+          heading: bands.faq.heading,
           background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
-          cta: { id: 'blog-faq-cta', label: 'Browse Blogs', href: '/blogs', isExternal: false, variant: 'primary' },
+          cta: bands.faq.cta,
           items: SITEWIDE_BLOG_FAQ_ITEMS,
         }}
       />
@@ -128,9 +132,9 @@ export function BlogListingView({ posts, categories }: { posts: BlogSummary[]; c
           ],
         }}
         finalCta={{
-          heading: 'Start Your Research Journey',
-          body: 'Partner with Unimrkt Research to uncover actionable market intelligence, understand your industry, and make confident business decisions.',
-          action: { id: 'blog-final-cta', label: 'Talk to Our Experts', href: '/contact', isExternal: false, variant: 'secondary' },
+          heading: bands.finalCta.heading,
+          body: bands.finalCta.body,
+          action: bands.finalCta.action,
         }}
       />
     </>

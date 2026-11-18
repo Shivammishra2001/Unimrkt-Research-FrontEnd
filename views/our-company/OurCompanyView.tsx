@@ -12,6 +12,8 @@ import { BlogFaqAccordion } from '@/views/blog/BlogFaqAccordion';
 import { BlogBottomCta } from '@/views/blog/BlogBottomCta';
 import type { OurCompanySettings } from '@/models/ourCompanyPage';
 import type { BlogSummary } from '@/models/blog';
+import type { ClosingBandsSettings } from '@/models/domain';
+import { resolveClosingBands } from '@/views/sections/closingBands';
 
 /**
  * /our-company — Figma node 617:7561 ("Our Company", file
@@ -32,8 +34,10 @@ import type { BlogSummary } from '@/models/blog';
  * and /services/[slug] already this session), not page-specific
  * content, so they reuse the existing shared components unconditionally.
  */
-export function OurCompanyView({ settings, blogPosts }: { settings: OurCompanySettings; blogPosts: BlogSummary[] }) {
+export function OurCompanyView({ settings, blogPosts, globalBands }: { settings: OurCompanySettings; blogPosts: BlogSummary[]; globalBands?: ClosingBandsSettings }) {
   const content = resolveOurCompany(settings);
+  // Closing bands: this page's overrides (Pages → Our Company), then Global Header, Footer & SEO, then the built-in copy.
+  const bands = resolveClosingBands(globalBands, settings.closingBands);
   const sortedBlogPosts = [...blogPosts].sort((a, b) => a.order - b.order);
 
   return (
@@ -46,12 +50,12 @@ export function OurCompanyView({ settings, blogPosts }: { settings: OurCompanySe
       <ValuesSection values={content.values} />
       <IndustriesSection industries={content.industries} />
 
-      {sortedBlogPosts.length > 0 && <FeaturedBlogSection posts={sortedBlogPosts} heading="Latest Blogs" />}
+      {sortedBlogPosts.length > 0 && <FeaturedBlogSection posts={sortedBlogPosts} heading={bands.blog.eyebrow} />}
 
-      <BlogFaqAccordion heading="Frequently Asked Questions" items={content.faqItems} showCta />
+      <BlogFaqAccordion heading={bands.faq.heading} items={content.faqItems} showCta cta={bands.faq.cta} />
 
       <AboutCompanySection aboutCompany={content.aboutCompany} />
-      <BlogBottomCta />
+      <BlogBottomCta heading={bands.finalCta.heading} body={bands.finalCta.body} action={bands.finalCta.action} />
     </>
   );
 }
