@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,14 +9,29 @@ import { NavChevronIcon } from '@/views/ui/icons/NavChevronIcon';
 import { HamburgerIcon } from '@/views/ui/icons/HamburgerIcon';
 import { CloseIcon } from '@/views/ui/icons/CloseIcon';
 import { MobileNav } from './MobileNav';
+import { MegaPanel, ServicesMega, IndustriesMega } from './nav/MegaMenu';
+import { isServicesItem, isIndustriesItem, industriesFor, type NavIndustry } from './nav/industryGroups';
 import type { NavigationItemModel, NavigationModel } from '@/models/domain';
 import type { ServiceTreeItemModel } from '@/models/service';
 
 const CLOSE_DELAY_MS = 200;
 
-function NavLink({ item, light = false }: { item: NavigationItemModel; /** Dark text for the white header on /blogs/[slug]. */ light?: boolean }) {
+function NavLink({
+  item,
+  light = false,
+  mega,
+}: {
+  item: NavigationItemModel;
+  /** Dark text for the white header on /blogs/[slug]. */
+  light?: boolean;
+  /** Mega-menu content (Services / Industries); receives a close() for its links. */
+  mega?: (close: () => void) => ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
 
   function clearCloseTimeout() {
     if (closeTimeout.current) {
@@ -36,6 +51,47 @@ function NavLink({ item, light = false }: { item: NavigationItemModel; /** Dark 
   }
 
   useEffect(() => clearCloseTimeout, []);
+
+  if (mega) {
+    const close = () => {
+      clearCloseTimeout();
+      setOpen(false);
+    };
+    return (
+      <div
+        ref={wrapRef}
+        className="relative"
+        onMouseEnter={openNow}
+        onMouseLeave={closeWithDelay}
+        // Keyboard: tabbing into the menu keeps it open; tabbing out of it closes it; Escape closes and returns focus.
+        onFocus={openNow}
+        onBlur={(e) => {
+          if (!wrapRef.current?.contains(e.relatedTarget as Node | null)) closeWithDelay();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' && open) {
+            close();
+            buttonRef.current?.focus();
+          }
+        }}
+      >
+        <button
+          ref={buttonRef}
+          type="button"
+          onClick={() => (open ? close() : openNow())}
+          className={`flex items-center gap-1 whitespace-nowrap font-nav text-[13px] min-[1600px]:text-[15px] font-bold uppercase leading-normal tracking-[0.16px] transition-colors ${light ? 'text-[#02060e] hover:text-[#02060e]/70' : 'text-white hover:text-white/80'}`}
+          aria-expanded={open}
+          aria-controls={panelId}
+        >
+          {item.label}
+          <NavChevronIcon className={`size-3.5 transition-transform duration-200 ${open ? '-rotate-90' : 'rotate-90'}`} aria-hidden="true" />
+        </button>
+        <MegaPanel open={open} anchorRef={wrapRef} id={panelId}>
+          {mega(close)}
+        </MegaPanel>
+      </div>
+    );
+  }
 
   if (item.children.length === 0) {
     return (
@@ -109,6 +165,7 @@ function NavLink({ item, light = false }: { item: NavigationItemModel; /** Dark 
 export function Navbar({
   navigation,
   serviceCategories = null,
+  industries = null,
 }: {
   navigation: NavigationModel;
   /** Full Services category tree (with real sub-service children) — the
@@ -118,6 +175,9 @@ export function Navbar({
    * every existing call site (and the `global`-fetch-failed fallback
    * chrome) keeps working without passing it. */
   serviceCategories?: ServiceTreeItemModel[] | null;
+  /** Every industry from Strapi (title + slug) for the Industries mega-menu; null falls back to the nav's own
+   * Industries children. */
+  industries?: NavIndustry[] | null;
 }) {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
@@ -188,9 +248,16 @@ export function Navbar({
             />
           </Link>
           <nav className="hidden items-center gap-6 xl:flex min-[1536px]:gap-10 min-[1800px]:absolute min-[1800px]:left-1/2 min-[1800px]:top-1/2 min-[1800px]:-translate-x-1/2 min-[1800px]:-translate-y-1/2 min-[1800px]:gap-[72px]">
-            {navigation.items.map((item) => (
-              <NavLink key={item.id} item={item} />
-            ))}
+            {navigation.items.map((item) => {
+              if (isServicesItem(item) && serviceCategories?.length) {
+                return <NavLink key={item.id} item={item} mega={(close) => <ServicesMega categories={serviceCategories} onNavigate={close} />} />;
+              }
+              const industryList = isIndustriesItem(item) ? industriesFor(item, industries) : null;
+              if (industryList?.length) {
+                return <NavLink key={item.id} item={item} mega={(close) => <IndustriesMega industries={industryList} onNavigate={close} />} />;
+              }
+              return <NavLink key={item.id} item={item} />;
+            })}
           </nav>
           {navigation.cta && (
             <Button
@@ -221,6 +288,7 @@ export function Navbar({
         onClose={() => setIsMobileOpen(false)}
         navigation={navigation}
         serviceCategories={serviceCategories}
+        industries={industries}
       />
     </>
   );

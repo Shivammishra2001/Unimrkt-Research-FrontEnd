@@ -5,6 +5,8 @@ import './globals.css';
 import { getGlobal, StrapiError } from '@/controllers/strapi';
 import { normalizeGlobal } from '@/controllers/normalize';
 import { getAllServiceCategories } from '@/controllers/service';
+import { getAllIndustries } from '@/controllers/industry';
+import type { NavIndustry } from '@/views/sections/nav/industryGroups';
 import { Navbar } from '@/views/sections/Navbar';
 import { Footer } from '@/views/sections/Footer';
 import { ChatWidget } from '@/views/ui/ChatWidget';
@@ -95,6 +97,19 @@ const loadServiceCategories = cache(async (): Promise<ServiceTreeItemModel[] | n
   }
 });
 
+/** All industries (title + slug) for the Industries mega-menu — live from Strapi like the Services tree, so a new
+ * industry appears in the nav automatically. A failed fetch returns null and the menu falls back to the nav's own
+ * Industries children. */
+const loadNavIndustries = cache(async (): Promise<NavIndustry[] | null> => {
+  try {
+    const list = await getAllIndustries({ pageSize: 100 });
+    return list.map((i) => ({ slug: i.slug, title: i.title }));
+  } catch (err) {
+    console.error('[layout] Industry list fetch failed, Industries menu falls back to CMS-seeded children:', err);
+    return null;
+  }
+});
+
 function withDynamicServicesDropdown(
   navigation: GlobalModel['navigation'],
   categories: ServiceTreeItemModel[] | null
@@ -132,7 +147,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const global = await loadGlobal();
-  const categories = global ? await loadServiceCategories() : null;
+  const [categories, navIndustries] = global ? await Promise.all([loadServiceCategories(), loadNavIndustries()]) : [null, null];
 
   return (
     <html
@@ -144,6 +159,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Navbar
             navigation={withDynamicServicesDropdown(global.navigation, categories)}
             serviceCategories={categories}
+            industries={navIndustries}
           />
         ) : (
           <header className="border-b border-slate-200 p-4 text-center text-sm">{BRAND_NAME}</header>
