@@ -41,7 +41,7 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
     <div className="relative z-10 w-full bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.04)]">
       <nav
         aria-label="Breadcrumb"
-        className="mx-auto flex min-h-[60px] w-full max-w-container items-center gap-[7px] px-4 sm:px-6 lg:px-8 min-[1700px]:px-0"
+        className="mx-auto flex min-h-[60px] w-full max-w-container flex-wrap items-center gap-x-[7px] gap-y-0 px-4 sm:px-6 lg:px-8 min-[1700px]:px-0"
       >
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
@@ -55,7 +55,7 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
                   {item.label}
                 </Link>
               ) : (
-                <span aria-current="page" className="min-w-0 truncate font-sans text-[14px] font-normal leading-[1.2] text-[#868484]">
+                <span aria-current="page" className="min-w-0 py-[13px] font-sans text-[14px] font-normal leading-[1.2] text-[#868484]">
                   {item.label}
                 </span>
               )}

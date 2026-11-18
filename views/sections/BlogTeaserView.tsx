@@ -17,7 +17,7 @@ const ARROW_BUTTON =
  * right edge as a horizontal scroller, and the CTA centered underneath.
  * From lg up it is scaled with container units (views/ui/stage.ts); below
  * lg it stacks. */
-export function BlogTeaserView({ block, variant = 'home', compact = false }: { block: BlogTeaserModel; index: number; /** 'blog' = the /blogs frame (Figma 522:4808-4828): 746px band, 13px eyebrow, description line, arrows at y336. */ variant?: 'home' | 'blog' | 'post'; /** /services (Figma 1231:77069 y8385-9015): no CTA row, so the band ends at the cards' bottom edge (630px at 1900). */ compact?: boolean }) {
+export function BlogTeaserView({ block, variant = 'home', compact = false }: { block: BlogTeaserModel; index: number; /** 'blog' = the /blogs frame (Figma 522:4808-4828): 746px band, 13px eyebrow, description line, arrows at y336. */ variant?: 'home' | 'blog' | 'post'; /** /services and /services/[slug] (Figma 1231:77069 y8385-9015, 474:5731 y6316-6946): no CTA row, so the band ends at the cards' bottom edge (630px at 1900), whatever the panel variant. */ compact?: boolean }) {
   // 'post' = /blogs/[slug] (Figma 1499:16864-16884): same panel as 'blog' but the band is 648px tall.
   const blogFrame = variant === 'blog' || variant === 'post';
   const trackRef = useRef<HTMLUListElement>(null);
@@ -38,7 +38,7 @@ export function BlogTeaserView({ block, variant = 'home', compact = false }: { b
       id={block.anchorId}
       className="relative overflow-hidden bg-white text-slate-900 lg:[container-type:inline-size]"
     >
-      <div className={`relative flex flex-col gap-8 pb-12 lg:block lg:pb-0 ${variant === 'post' ? 'lg:h-[34.1053cqw]' : blogFrame ? 'lg:h-[39.2632cqw]' : compact ? 'lg:h-[33.1579cqw]' : 'lg:h-[38.7895cqw]'}`}>
+      <div className={`relative flex flex-col gap-8 pb-12 lg:block lg:pb-0 ${compact ? 'lg:h-[33.1579cqw]' : variant === 'post' ? 'lg:h-[34.1053cqw]' : blogFrame ? 'lg:h-[39.2632cqw]' : 'lg:h-[38.7895cqw]'}`}>
         <div
           className="relative overflow-hidden bg-gradient-to-r from-gradient-from to-gradient-to px-6 py-10 text-white sm:px-10 lg:absolute lg:left-[var(--l)] lg:top-[var(--t)] lg:h-[var(--h)] lg:w-[var(--w)] lg:p-0"
           style={geometry({ l: 0, t: 0, w: 861, h: 462 })}
@@ -74,8 +74,9 @@ export function BlogTeaserView({ block, variant = 'home', compact = false }: { b
                 </>
               )}
             </h2>
+            {/* compact (the services pages): the box keeps 310px when the 13px floor would otherwise push the line into the arrows. */}
             {blogFrame && block.description && (
-              <p className="mt-4 max-w-[334px] font-sans text-[14px] font-normal leading-[1.4] text-white/90 lg:mt-[0.8211cqw] lg:max-w-[17.5789cqw] lg:text-[length:var(--fs)]" style={geometry({ fs: 14 })}>
+              <p className={`mt-4 max-w-[334px] font-sans text-[14px] font-normal leading-[1.4] text-white/90 lg:mt-[0.8211cqw] lg:text-[length:var(--fs)] ${compact ? 'lg:max-w-[max(17.5789cqw,310px)]' : 'lg:max-w-[17.5789cqw]'}`} style={geometry({ fs: 14 })}>
                 {block.description}
               </p>
             )}

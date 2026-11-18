@@ -45,14 +45,41 @@ export interface ResolvedContentBlock {
   image?: ServiceDetail['heroImage'];
 }
 
+/** A capability photo card: the CMS feature, its hover copy and where its arrow links (the matching sub-service). */
+export interface ResolvedCapability {
+  id: string;
+  title: string;
+  description: string;
+  image?: FeatureModel['icon'];
+  href?: string;
+}
+
+/** Figma 474:5753-5767 "Trusted by Global Businesses" logos, at their drawn size — used only while the service has no
+ * trust logos in the CMS. */
+export const FIGMA_TRUST_LOGOS: Array<TrustLogoModel & { width: number; height: number }> = [
+  { id: 'figma-logo-suzuki', name: 'Suzuki', width: 141, height: 27, image: { src: '/images/services/detail/logo-suzuki.webp', alt: 'Suzuki', width: 423, height: 81 } },
+  { id: 'figma-logo-coca-cola', name: 'Coca-Cola', width: 113, height: 35, image: { src: '/images/services/detail/logo-coca-cola.webp', alt: 'Coca-Cola', width: 339, height: 105 } },
+  { id: 'figma-logo-hdfc-bank', name: 'HDFC Bank', width: 161, height: 42, image: { src: '/images/services/detail/logo-hdfc-bank.webp', alt: 'HDFC Bank', width: 483, height: 126 } },
+  { id: 'figma-logo-amazon', name: 'Amazon', width: 141, height: 41, image: { src: '/images/services/detail/logo-amazon.webp', alt: 'Amazon', width: 423, height: 123 } },
+  { id: 'figma-logo-airtel', name: 'Airtel', width: 102, height: 42, image: { src: '/images/services/detail/logo-airtel.webp', alt: 'Airtel', width: 306, height: 126 } },
+];
+
+/** Hover copy Figma 727:7751-7760 gives each Primary Research capability card. */
+const CAPABILITY_COPY: Record<string, string> = {
+  'telephonic surveys': 'Efficient phone-based surveys capturing valuable respondent insights.',
+  'online surveys': 'Fast, scalable online surveys reaching the right audiences anywhere.',
+  'focus group discussions': 'Moderated group conversations that reveal deeper attitudes and motivations.',
+  'cati surveys': 'Computer-assisted telephone interviews delivering structured, high-quality data.',
+};
+
 export interface ResolvedServiceDetail {
   title: string;
   hero: { eyebrow: string; heading: string; subheading: string; image?: ServiceDetail['heroImage']; actions: LinkModel[] };
   trust: { heading: string; logos: TrustLogoModel[] };
   overview: { eyebrow: string; heading: string; body: string; image?: ServiceDetail['overviewImage']; features: IndustryDetailCardModel[] };
-  capabilities: { eyebrow: string; heading: string; body: string; items: FeatureModel[] };
+  capabilities: { eyebrow: string; heading: string; body: string; items: ResolvedCapability[] };
   credentials: { heading: string; body: string; items: ServiceStatItemModel[] };
-  methodologies: { eyebrow: string; heading: string; items: IndustryDetailCardModel[] };
+  methodologies: { eyebrow: string; heading: string; body: string; items: IndustryDetailCardModel[] };
   industries: { eyebrow: string; heading: string; body: string; items: IndustryDetailCardModel[] };
   enquiry: { eyebrow: string; heading: string; body: string; image?: ServiceDetail['enquiryImage'] };
   faqItems: FaqItemModel[];
@@ -121,15 +148,11 @@ export function resolveServiceDetail(service: ServiceDetail): ResolvedServiceDet
       actions: service.heroActions.length > 0 ? service.heroActions : [CONTACT_LINK('Get a Free Quote', 'primary'), CONTACT_LINK('Talk to Our Experts', 'secondary')],
     },
 
-    // Real company wordmarks aren't confirmed clients (same disclosed
-    // reasoning as /industries/[slug]'s TrustStrip), so the fallback
-    // shell shows a generic placeholder rather than any brand name.
+    // The service's own CMS logos win; until it has some, the five
+    // logos Figma 474:5753-5767 draws.
     trust: {
       heading: service.trustHeading || 'Trusted by Global Businesses',
-      logos:
-        service.trustLogos.length > 0
-          ? service.trustLogos
-          : Array.from({ length: 5 }, (_, i) => ({ id: `fallback-trust-${i}`, name: 'Industry Partner' })),
+      logos: service.trustLogos.length > 0 ? service.trustLogos : FIGMA_TRUST_LOGOS,
     },
 
     overview: {
@@ -155,15 +178,27 @@ export function resolveServiceDetail(service: ServiceDetail): ResolvedServiceDet
       body:
         service.capabilitiesBody ||
         `Explore our comprehensive ${titleLower} solutions, designed to collect accurate, first-hand data through proven methodologies, helping businesses gain actionable insights, understand markets, and make informed decisions.`,
-      items:
-        service.features.length > 0
-          ? service.features
-          : [
+      items: (service.features.length > 0
+        ? service.features
+        : [
               fallbackFeature('telephonic', 'Telephonic Surveys', 'capability-telephonic-surveys.jpg'),
               fallbackFeature('online', 'Online Surveys', 'capability-online-surveys.jpg'),
               fallbackFeature('focus-group', 'Focus Group Discussions', 'capability-focus-group-discussions.jpg'),
               fallbackFeature('cati', 'CATI Surveys', 'capability-cati-surveys.jpg'),
-            ],
+            ]
+      ).map((feature): ResolvedCapability => {
+        const key = feature.title.trim().toLowerCase();
+        // A description that only repeats the title (as seeded) counts as empty.
+        const own = feature.description && feature.description.trim().toLowerCase() !== key ? feature.description : '';
+        const child = service.children.find((c) => c.title.trim().toLowerCase() === key);
+        return {
+          id: feature.id,
+          title: feature.title,
+          description: own || CAPABILITY_COPY[key] || `Explore our ${feature.title.toLowerCase()} capabilities.`,
+          image: feature.icon,
+          href: feature.link?.href ?? (child ? `/services/${child.slug}` : undefined),
+        };
+      }),
     },
 
     credentials: {
@@ -196,6 +231,8 @@ export function resolveServiceDetail(service: ServiceDetail): ResolvedServiceDet
     methodologies: {
       eyebrow: service.methodologiesEyebrow || 'Process',
       heading: service.methodologiesHeading || 'Research Methodologies',
+      // No CMS field yet — Figma 483:7163's copy.
+      body: 'We leverage proven qualitative and quantitative research methodologies to collect accurate, reliable data, delivering actionable insights that support smarter decisions, innovation, and sustainable business growth.',
       items:
         service.methodologies.length > 0
           ? service.methodologies

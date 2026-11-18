@@ -1,59 +1,28 @@
-import { Breadcrumb } from '@/views/ui/Breadcrumb';
-import { Button } from '@/views/ui/Button';
-import { StrapiImage } from '@/views/ui/StrapiImage';
+import { ServicesHero } from '@/views/services/listing/ServicesHero';
 import type { ResolvedServiceDetail } from './fallback';
 
-/** /services/[slug] hero — Figma node 474:5731 (y0-828). CMS-first,
- * template-fallback (resolved by fallback.ts) — always renders the full
- * hero, never collapses. Breadcrumb bar — Figma node 474:6031-6037
- * (`bg-white`, shadow `0px_2px_8px_0px_rgba(0,0,0,0.04)` — same shell as
- * every other breadcrumb on the site), extended to 4 levels when the
- * service has a parent category (e.g. Home > Services > Primary
- * Research > Telephonic Surveys). */
-export function ServiceDetailHero({
-  hero,
-  title,
-  parent,
-}: {
-  hero: ResolvedServiceDetail['hero'];
-  title: string;
-  parent?: { title: string; slug: string };
-}) {
-  return (
-    <>
-      <section className="relative flex min-h-[520px] w-full flex-col justify-end overflow-hidden text-white sm:min-h-[600px] lg:min-h-[768px]">
-        {hero.image ? (
-          <StrapiImage image={hero.image} sizes="100vw" priority fill className="object-cover" />
-        ) : (
-          <div className="absolute inset-0 bg-[#040112]" aria-hidden="true" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040112] via-[#040112]/75 to-[#040112]/40" />
-        <div className="absolute inset-0 bg-[#040112]/35" />
-        <div className="relative z-10 mx-auto w-full max-w-container px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-[70px] lg:pt-40">
-          <p className="inline-flex items-center gap-3 rounded-lg border border-white/10 bg-white/10 px-[17px] py-[9px] backdrop-blur-[2px] font-sans text-[13px] font-bold uppercase tracking-[3px] text-white">
-            <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
-            {hero.eyebrow}
-          </p>
-          <h1 className="mt-3 max-w-[930px] text-4xl font-semibold capitalize leading-[1.2] text-white sm:text-5xl lg:text-[60px] lg:tracking-[-3px]">
-            {hero.heading}
-          </h1>
-          <p className="mt-6 max-w-[884px] text-base leading-[1.9] text-white/85 sm:text-lg">{hero.subheading}</p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            {hero.actions.map((action) => (
-              <Button key={action.id} link={action} />
-            ))}
-          </div>
-        </div>
-      </section>
+const FIGMA_HERO = { src: '/images/services/detail/primary-research-hero.jpg', alt: '', width: 1920, height: 1344 };
 
-      <Breadcrumb
-        items={[
-          { label: 'Home', href: '/' },
-          { label: 'Services', href: '/services' },
-          ...(parent ? [{ label: parent.title, href: `/services/${parent.slug}` }] : []),
-          { label: title },
-        ]}
-      />
-    </>
+/** /services/[slug] hero + breadcrumb — Figma 474:5771 (1900x768) + 474:6031-6037. The exact /services hero construction
+ * (#040112 base, photo at 70%, 40% #010913 wash, 80% left fade, 255px top fade, pill at y276, 60/72px title, 16/30.4px
+ * subtitle, gradient + outline buttons at y596), so it reuses ServicesHero: here the photo (1952x1366 from y-433) is
+ * framed by object-position, the title is 875px and breaks after its first sentence like the node ("Real
+ * Conversations." / "Reliable Data. Better Decisions."), the subtitle is 884px, and the breadcrumb adds the service
+ * (and its parent category, for a sub-service). A line break typed in the CMS heading wins over the automatic one. */
+export function ServiceDetailHero({ hero, title, parent }: { hero: ResolvedServiceDetail['hero']; title: string; parent?: { title: string; slug: string } }) {
+  const heading = hero.heading.includes('\n') ? hero.heading : hero.heading.replace(/^(.+?[.!?])\s+(?=\S)/, '$1\n');
+  return (
+    <ServicesHero
+      content={{ eyebrow: hero.eyebrow, heading, subheading: hero.subheading, image: hero.image ?? FIGMA_HERO, actions: hero.actions }}
+      imageClassName="object-[50%_60%]"
+      headingClassName="max-w-[900px]"
+      subheadingClassName="max-w-[884px]"
+      breadcrumb={[
+        { label: 'Home', href: '/' },
+        { label: 'Services', href: '/services' },
+        ...(parent ? [{ label: parent.title, href: `/services/${parent.slug}` }] : []),
+        { label: title },
+      ]}
+    />
   );
 }

@@ -3,7 +3,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Lato } from 'next/font/google';
 import { SectionHeader } from '@/views/industries/listing/shared';
 import { DotPagination } from '@/views/industries/DotPagination';
 import { StrapiImage } from '@/views/ui/StrapiImage';
@@ -11,9 +10,8 @@ import { SendArrowIcon } from '@/views/ui/icons/SendArrowIcon';
 import { useSnapTrack } from '@/views/ui/useSnapTrack';
 import type { ServiceTreeItemModel } from '@/models/service';
 import type { ServicesListingContent } from './content';
+import { lato } from '../fonts';
 
-// Figma sets the panel titles in Lato SemiBold, a weight Google Fonts doesn't ship; Bold is the nearest available cut.
-const lato = Lato({ subsets: ['latin'], weight: ['700'], display: 'swap' });
 
 /** The five categories Figma 1231:77514 draws: photo (and its crop inside the 316x638 panel), 70px line icon, and the
  * description from the hover variants (1223:67311-67315). Figma's Business / Research Support variants repeat the
