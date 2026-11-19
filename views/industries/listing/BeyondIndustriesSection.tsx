@@ -25,7 +25,7 @@ const ICONS = [
  * title 22/29.5px #04264e; body 14/26.18px @ 70%. */
 export function BeyondIndustriesSection({ content }: { content: IndustriesPageContent['beyond'] }) {
   return (
-    <section className="relative bg-[#f9f9f7] pb-16 pt-16 lg:py-10">
+    <section className="relative bg-[#f9f9f7] pb-16 pt-16 lg:pb-12 lg:pt-10">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[250px]"
         style={{ backgroundImage: 'linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 100%)' }}
@@ -72,11 +72,13 @@ export function BeyondIndustriesSection({ content }: { content: IndustriesPageCo
  * 1600x455, r50, #6c2a4a -> #be2c28, a 20% luminosity texture, the
  * cut-out couple popping 85px above the band (690x541 at x=817), 52/62px
  * title (-3px) at x=114, 16/30.4px line @ 80%, and a 286x60 #040f1d
- * "Start a Conversation" button. Pulled up over the section above
- * (-264px) exactly like the node. */
+ * "Start a Conversation" button. Sits below the Beyond-Industries cards
+ * with clearance for the cutout couple — the Figma -264px upward tuck was
+ * dropped when the section's fixed lg:h-[1728px] (which reserved the faded
+ * space it tucked into) was removed. */
 export function QuestionBand({ content }: { content: IndustriesPageContent['band'] }) {
   return (
-    <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1600px] px-4 sm:px-6 lg:-mt-[264px] lg:px-8 min-[1700px]:px-0">
+    <div className="relative z-10 mx-auto mt-10 w-full max-w-[1600px] px-4 sm:px-6 lg:mt-16 lg:px-8 min-[1700px]:px-0">
       <div className="relative min-h-[455px] rounded-[30px] bg-gradient-to-r from-gradient-from to-gradient-to [container-type:inline-size] lg:rounded-[50px]">
         <div className="absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
           <Image src={content.backgroundImage?.src ?? '/images/industries/texture.jpg'} alt="" fill sizes="1600px" className="object-cover opacity-[0.09] mix-blend-luminosity" />
