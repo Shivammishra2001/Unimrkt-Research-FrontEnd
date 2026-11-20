@@ -99,7 +99,7 @@ export function TeamProfileModal({ member, onClose }: { member: TeamMemberModel;
           <p className="mt-[8.7px] font-nav text-[16px] font-medium leading-[25.6px] tracking-[-0.2px] text-[#2d3e50] opacity-90">{member.role}</p>
           <Image src="/images/our-team/team-modal-divider.svg" alt="" width={93} height={3} className="-ml-[1.5px] mt-[15.3px] block h-[3px] w-[93px] max-w-none" aria-hidden="true" />
           {member.bio && (
-            <p className="mt-[22.8px] font-sans text-[16px] font-normal leading-[30.4px] text-[#02060e] opacity-80">{member.bio}</p>
+            <p className="mt-[22.8px] whitespace-pre-line font-sans text-[16px] font-normal leading-[30.4px] text-[#02060e] opacity-80">{member.bio}</p>
           )}
         </div>
       </motion.div>
