@@ -15,10 +15,10 @@ import type { TeamMemberModel } from '@/models/teamMember';
  * Card 1188x531: white, 1px #eee, r24, shadow 6 6 54 rgba(0,0,0,.08).
  * Offsets below are the Figma ones from the card's outer top-left (the 1px
  * border is inside them, so the paddings are 1px smaller):
- *  - photo: rendered whole at its natural aspect ratio (object-contain,
- *    w-full h-auto, max-h 420px) in a tight transparent wrapper — CMS
- *    uploads are arbitrary portraits, so the full photo (head to shoulders)
- *    shows uncropped rather than being zoom-cropped to the Figma panel.
+ *  - photo card: the Figma left-column portrait panel — aspect-[356/381.4],
+ *    r14, light-neutral #F3F2F0 backdrop; the photo fills it object-cover
+ *    object-top (head anchored). Cutout portraits sit large inside the grey
+ *    frame; full-bleed uploads fill it from the top.
  *  - LinkedIn tile 51.52px #0077b5 r4, centred under the photo (197,444)
  *  - name (453, cap-top 65): Inter 600 30/28px #1e1e1e
  *  - role (cap-top 105.6): Inter 500 16/25.6px, tracking -0.2px, #2d3e50 @ 90%
@@ -71,14 +71,10 @@ export function TeamProfileModal({ member, onClose }: { member: TeamMemberModel;
           <Image src="/images/our-team/team-modal-close-icon.svg" alt="" width={13.5} height={13.5} />
         </button>
 
-        <div className="flex shrink-0 flex-col items-center gap-[12.58px] lg:pt-[49px]">
-          <div className="w-full max-w-[320px] overflow-hidden rounded-[12px] bg-transparent sm:max-w-[356px]">
+        <div className="flex shrink-0 flex-col items-center gap-4 lg:pt-[49px]">
+          <div className="relative aspect-[356/381.4] w-full max-w-[356px] shrink-0 overflow-hidden rounded-[14px] bg-[#F3F2F0] sm:w-[340px] md:w-[356px]">
             {member.photo && (
-              <StrapiImage
-                image={member.photo}
-                sizes="(min-width: 640px) 356px, 320px"
-                className="block h-auto max-h-[420px] w-full rounded-[12px] object-contain"
-              />
+              <StrapiImage image={member.photo} sizes="(min-width: 640px) 356px, 100vw" fill className="object-cover object-top" />
             )}
           </div>
           {member.linkedinUrl ? (
