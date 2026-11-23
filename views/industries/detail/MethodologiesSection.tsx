@@ -23,13 +23,16 @@ const HOVER_COPY: Record<string, string> = {
 
 export function MethodologiesSection({ methodologies }: { methodologies: ResolvedIndustryDetail['methodologies'] }) {
   const trackRef = useRef<HTMLUListElement>(null);
+  // Figma draws 4 methodologies; when the CMS adds a 5th+ they stay in the one
+  // horizontal track and the arrows slide them in (never wrap to a 2nd row).
+  const canSlide = methodologies.items.length > 4;
 
   function scrollBy(direction: 1 | -1) {
     const track = trackRef.current;
     const card = track?.querySelector('li');
     if (!track || !card) return;
-    const step = card.clientWidth + 24;
-    track.scrollBy({ left: direction * step, behavior: 'smooth' });
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 24;
+    track.scrollBy({ left: direction * (card.clientWidth + gap), behavior: 'smooth' });
   }
 
   return (
@@ -50,21 +53,23 @@ export function MethodologiesSection({ methodologies }: { methodologies: Resolve
           </div>
 
           <div className="relative mt-12 lg:mt-[96px]">
-            <button
-              type="button"
-              onClick={() => scrollBy(-1)}
-              aria-label="Previous methodology"
-              className="absolute -left-[25px] top-1/2 z-10 hidden size-[45px] -translate-y-1/2 items-center justify-center rounded-full border border-[#e5e5e5] bg-white text-[#0e1626] shadow-md transition-colors hover:bg-[#f2f2f2] lg:flex"
-            >
-              <ArrowRightIcon className="size-4 rotate-180" aria-hidden="true" />
-            </button>
+            {canSlide && (
+              <button
+                type="button"
+                onClick={() => scrollBy(-1)}
+                aria-label="Previous methodology"
+                className="absolute -left-[25px] top-1/2 z-10 hidden size-[45px] -translate-y-1/2 items-center justify-center rounded-full border border-[#e5e5e5] bg-white text-[#0e1626] shadow-md transition-colors hover:bg-[#f2f2f2] lg:flex"
+              >
+                <ArrowRightIcon className="size-4 rotate-180" aria-hidden="true" />
+              </button>
+            )}
 
             <ul
               ref={trackRef}
-              className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] lg:grid lg:grid-cols-4 lg:gap-[27px] lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+              className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] lg:gap-[27px] [&::-webkit-scrollbar]:hidden"
             >
               {methodologies.items.map((item) => (
-                <li key={item.id} className="w-64 shrink-0 snap-start sm:w-72 lg:w-auto">
+                <li key={item.id} className="w-[85%] shrink-0 snap-start md:w-[calc((100%-24px)/2)] lg:w-[calc((100%-81px)/4)]">
                   <div
                     tabIndex={0}
                     className="group relative flex aspect-[380/399] cursor-pointer outline-none flex-col justify-end overflow-hidden rounded-[30px] p-[10px] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl motion-reduce:transition-none motion-reduce:hover:transform-none"
@@ -97,14 +102,16 @@ export function MethodologiesSection({ methodologies }: { methodologies: Resolve
               ))}
             </ul>
 
-            <button
-              type="button"
-              onClick={() => scrollBy(1)}
-              aria-label="Next methodology"
-              className="absolute -right-[25px] top-1/2 z-10 hidden size-[45px] -translate-y-1/2 items-center justify-center rounded-full border border-[#e5e5e5] bg-white text-[#0e1626] shadow-md transition-colors hover:bg-[#f2f2f2] lg:flex"
-            >
-              <ArrowRightIcon className="size-4" aria-hidden="true" />
-            </button>
+            {canSlide && (
+              <button
+                type="button"
+                onClick={() => scrollBy(1)}
+                aria-label="Next methodology"
+                className="absolute -right-[25px] top-1/2 z-10 hidden size-[45px] -translate-y-1/2 items-center justify-center rounded-full border border-[#e5e5e5] bg-white text-[#0e1626] shadow-md transition-colors hover:bg-[#f2f2f2] lg:flex"
+              >
+                <ArrowRightIcon className="size-4" aria-hidden="true" />
+              </button>
+            )}
           </div>
         </div>
       </div>
