@@ -9,7 +9,7 @@
  * the render order. All are optional: a missing field means that
  * section has no CMS content yet and renders nothing (no fallback text).
  */
-import type { StrapiMedia, StrapiResponse, StrapiSeo, StrapiLink, StrapiIndustryItem, StrapiFaqItem, StrapiClosingBands } from './strapi';
+import type { StrapiMedia, StrapiResponse, StrapiSeo, StrapiLink, StrapiIndustryItem, StrapiFaqItem } from './strapi';
 import type { LinkModel, ImageModel, SeoModel, IndustryItemModel, FaqItemModel, ClosingBandsSettings } from './domain';
 
 // ---------------------------------------------------------------------------
@@ -43,89 +43,151 @@ export interface StrapiIndustrySummary {
   updatedAt: string;
 }
 
-export interface StrapiIndustryDetail extends StrapiIndustrySummary, StrapiClosingBands {
+// ---------------------------------------------------------------------------
+// `sections` dynamic zone — each page section is a distinct component block
+// (collapsible bar in Strapi Admin). The normalizer reads these back into the
+// flat Domain `IndustryDetail` below, so views/fallback are unchanged.
+// ---------------------------------------------------------------------------
+
+interface SectionBase {
+  __component: string;
+  id: number;
+}
+export interface StrapiHeroSection extends SectionBase {
+  __component: 'industry-sections.hero';
+  eyebrow: string | null;
+  heading: string | null;
+  subheading: string | null;
+  image: StrapiMedia | null;
+  actions: StrapiLink[];
+}
+export interface StrapiOverviewSection extends SectionBase {
+  __component: 'industry-sections.overview';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  cta: StrapiLink | null;
+  image: StrapiMedia | null;
+  partnersHeading: string | null;
+  partners: StrapiTrustLogo[];
+}
+export interface StrapiWhyResearchSection extends SectionBase {
+  __component: 'industry-sections.why-research';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  cards: StrapiIndustryDetailCard[];
+}
+export interface StrapiExpertiseSection extends SectionBase {
+  __component: 'industry-sections.expertise';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  items: StrapiIndustryDetailCard[];
+}
+export interface StrapiChallengesSection extends SectionBase {
+  __component: 'industry-sections.challenges';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  cards: StrapiIndustryDetailCard[];
+}
+export interface StrapiWhoWeServeSection extends SectionBase {
+  __component: 'industry-sections.who-we-serve';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  cards: StrapiIndustryDetailCard[];
+}
+export interface StrapiMethodologiesSection extends SectionBase {
+  __component: 'industry-sections.methodologies';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  items: StrapiIndustryItem[];
+}
+export interface StrapiEmpowerSection extends SectionBase {
+  __component: 'industry-sections.empower';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  cta: StrapiLink | null;
+  image: StrapiMedia | null;
+}
+export interface StrapiEnquirySection extends SectionBase {
+  __component: 'industry-sections.enquiry';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  image: StrapiMedia | null;
+}
+export interface StrapiBlogsBandSection extends SectionBase {
+  __component: 'industry-sections.blogs-band';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  description: string | null;
+}
+export interface StrapiFaqSection extends SectionBase {
+  __component: 'industry-sections.faq';
+  showSection: boolean | null;
+  heading: string | null;
+  cta: StrapiLink | null;
+  items: StrapiFaqItem[];
+}
+export interface StrapiCaseStudiesSection extends SectionBase {
+  __component: 'industry-sections.case-studies';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+  cta: StrapiLink | null;
+  items: StrapiIndustryItem[];
+}
+export interface StrapiAboutSection extends SectionBase {
+  __component: 'industry-sections.about';
+  showSection: boolean | null;
+  eyebrow: string | null;
+  heading: string | null;
+  body: string | null;
+}
+export interface StrapiCtaBannerSection extends SectionBase {
+  __component: 'industry-sections.cta-banner';
+  showSection: boolean | null;
+  heading: string | null;
+  body: string | null;
+  action: StrapiLink | null;
+}
+export type StrapiSeoSection = StrapiSeo & { __component: 'shared.seo' };
+
+export type StrapiIndustrySection =
+  | StrapiHeroSection
+  | StrapiOverviewSection
+  | StrapiWhyResearchSection
+  | StrapiExpertiseSection
+  | StrapiChallengesSection
+  | StrapiWhoWeServeSection
+  | StrapiMethodologiesSection
+  | StrapiEmpowerSection
+  | StrapiEnquirySection
+  | StrapiBlogsBandSection
+  | StrapiFaqSection
+  | StrapiCaseStudiesSection
+  | StrapiAboutSection
+  | StrapiCtaBannerSection
+  | StrapiSeoSection;
+
+export interface StrapiIndustryDetail extends StrapiIndustrySummary {
   legacyUrl: string | null;
   suggestedUrl: string | null;
-  seo: StrapiSeo | null;
   createdAt: string;
   publishedAt: string | null;
-
-  // Per-section Show/Hide visibility toggles (boolean, default true in the
-  // CMS). Existing rows predating the fields come back null → treated as
-  // visible by the normalizer.
-  showOverview?: boolean | null;
-  showWhyResearch?: boolean | null;
-  showExpertise?: boolean | null;
-  showChallenges?: boolean | null;
-  showWhoWeServe?: boolean | null;
-  showMethodologies?: boolean | null;
-  showEmpower?: boolean | null;
-  showEnquiry?: boolean | null;
-  showBlogs?: boolean | null;
-  showFaq?: boolean | null;
-  showCaseStudies?: boolean | null;
-  showAbout?: boolean | null;
-  showCtaBanner?: boolean | null;
-
-  heroEyebrow: string | null;
-  heroHeading: string | null;
-  heroSubheading: string | null;
-  heroImage: StrapiMedia | null;
-  heroActions: StrapiLink[];
-
-  trustHeading: string | null;
-  trustLogos: StrapiTrustLogo[];
-
-  whatWeDoEyebrow: string | null;
-  whatWeDoHeading: string | null;
-  whatWeDoBody: string | null;
-  whatWeDoCta: StrapiLink | null;
-  whatWeDoImage: StrapiMedia | null;
-
-  whyResearchEyebrow: string | null;
-  whyResearchHeading: string | null;
-  whyResearchCards: StrapiIndustryDetailCard[];
-
-  expertiseEyebrow: string | null;
-  expertiseHeading: string | null;
-  expertiseItems: StrapiIndustryDetailCard[];
-
-  challengesEyebrow: string | null;
-  challengesHeading: string | null;
-  challengesBody: string | null;
-  challengesCards: StrapiIndustryDetailCard[];
-
-  whoWeServeEyebrow: string | null;
-  whoWeServeHeading: string | null;
-  whoWeServeCards: StrapiIndustryDetailCard[];
-
-  methodologiesEyebrow: string | null;
-  methodologiesHeading: string | null;
-  methodologiesBody: string | null;
-  methodologies: StrapiIndustryItem[];
-
-  empowerEyebrow: string | null;
-  empowerHeading: string | null;
-  empowerBody: string | null;
-  empowerCta: StrapiLink | null;
-  empowerImage: StrapiMedia | null;
-
-  enquiryEyebrow: string | null;
-  enquiryHeading: string | null;
-  enquiryBody: string | null;
-  enquiryImage: StrapiMedia | null;
-
-  faqItems: StrapiFaqItem[];
-
-  caseStudiesEyebrow: string | null;
-  caseStudiesHeading: string | null;
-  caseStudiesBody: string | null;
-  caseStudiesCta: StrapiLink | null;
-  caseStudies: StrapiIndustryItem[];
-
-  aboutEyebrow: string | null;
-  aboutHeading: string | null;
-  aboutBody: string | null;
+  sections: StrapiIndustrySection[];
 }
 
 export interface StrapiIndustrySlug {

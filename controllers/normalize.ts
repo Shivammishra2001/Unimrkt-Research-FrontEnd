@@ -56,6 +56,21 @@ import type {
   IndustrySlugModel,
   IndustrySummary,
   TrustLogoModel,
+  StrapiHeroSection,
+  StrapiOverviewSection,
+  StrapiWhyResearchSection,
+  StrapiExpertiseSection,
+  StrapiChallengesSection,
+  StrapiWhoWeServeSection,
+  StrapiMethodologiesSection,
+  StrapiEmpowerSection,
+  StrapiEnquirySection,
+  StrapiBlogsBandSection,
+  StrapiFaqSection,
+  StrapiCaseStudiesSection,
+  StrapiAboutSection,
+  StrapiCtaBannerSection,
+  StrapiSeoSection,
 } from '@/models/industry';
 import type { StrapiGalleryItemListResponse, GalleryImage } from '@/models/gallery';
 import type { StrapiOurCompanyPageResponse, OurCompanySettings } from '@/models/ourCompanyPage';
@@ -627,93 +642,119 @@ export function normalizeIndustryList(res: StrapiIndustryListResponse): Industry
 
 export function normalizeIndustryDetail(res: StrapiIndustryDetailResponse): IndustryDetail {
   const { data } = res;
+  const sections = data.sections ?? [];
+  // Read each section block out of the `sections` dynamic zone back into the
+  // flat Domain shape, so fallback.ts and IndustryDetailView stay unchanged.
+  const hero = sections.find((s) => s.__component === 'industry-sections.hero') as StrapiHeroSection | undefined;
+  const overview = sections.find((s) => s.__component === 'industry-sections.overview') as StrapiOverviewSection | undefined;
+  const why = sections.find((s) => s.__component === 'industry-sections.why-research') as StrapiWhyResearchSection | undefined;
+  const expertise = sections.find((s) => s.__component === 'industry-sections.expertise') as StrapiExpertiseSection | undefined;
+  const challenges = sections.find((s) => s.__component === 'industry-sections.challenges') as StrapiChallengesSection | undefined;
+  const whoWeServe = sections.find((s) => s.__component === 'industry-sections.who-we-serve') as StrapiWhoWeServeSection | undefined;
+  const methodologies = sections.find((s) => s.__component === 'industry-sections.methodologies') as StrapiMethodologiesSection | undefined;
+  const empower = sections.find((s) => s.__component === 'industry-sections.empower') as StrapiEmpowerSection | undefined;
+  const enquiry = sections.find((s) => s.__component === 'industry-sections.enquiry') as StrapiEnquirySection | undefined;
+  const blogs = sections.find((s) => s.__component === 'industry-sections.blogs-band') as StrapiBlogsBandSection | undefined;
+  const faq = sections.find((s) => s.__component === 'industry-sections.faq') as StrapiFaqSection | undefined;
+  const caseStudiesSec = sections.find((s) => s.__component === 'industry-sections.case-studies') as StrapiCaseStudiesSection | undefined;
+  const about = sections.find((s) => s.__component === 'industry-sections.about') as StrapiAboutSection | undefined;
+  const ctaBanner = sections.find((s) => s.__component === 'industry-sections.cta-banner') as StrapiCtaBannerSection | undefined;
+  const seo = sections.find((s) => s.__component === 'shared.seo') as StrapiSeoSection | undefined;
+
+  // null/undefined stays undefined so the view treats the section as visible;
+  // only an explicit `false` hides it.
+  const show = (s?: { showSection?: boolean | null }) => s?.showSection ?? undefined;
+
   return {
-    closingBands: normalizeClosingBands(data),
+    // Industry closing bands come from the DZ band blocks (empty = inherit Global).
+    closingBands: normalizeClosingBands({
+      blogBand: blogs ? { eyebrow: blogs.eyebrow, heading: blogs.heading, description: blogs.description } : null,
+      faqBand: faq ? { heading: faq.heading, cta: faq.cta } : null,
+      finalCta: ctaBanner ? { heading: ctaBanner.heading, body: ctaBanner.body, action: ctaBanner.action } : null,
+    }),
     ...normalizeIndustrySummaryFields(data),
     isActive: data.isActive !== false,
     legacyUrl: data.legacyUrl ?? undefined,
     suggestedUrl: data.suggestedUrl ?? undefined,
-    seo: normalizeSeo(data.seo, data.title),
+    seo: normalizeSeo(seo ?? null, data.title),
 
-    // Section visibility toggles — null/undefined stays undefined so the
-    // view treats it as visible; only an explicit `false` hides a section.
-    showOverview: data.showOverview ?? undefined,
-    showWhyResearch: data.showWhyResearch ?? undefined,
-    showExpertise: data.showExpertise ?? undefined,
-    showChallenges: data.showChallenges ?? undefined,
-    showWhoWeServe: data.showWhoWeServe ?? undefined,
-    showMethodologies: data.showMethodologies ?? undefined,
-    showEmpower: data.showEmpower ?? undefined,
-    showEnquiry: data.showEnquiry ?? undefined,
-    showBlogs: data.showBlogs ?? undefined,
-    showFaq: data.showFaq ?? undefined,
-    showCaseStudies: data.showCaseStudies ?? undefined,
-    showAbout: data.showAbout ?? undefined,
-    showCtaBanner: data.showCtaBanner ?? undefined,
+    showOverview: show(overview),
+    showWhyResearch: show(why),
+    showExpertise: show(expertise),
+    showChallenges: show(challenges),
+    showWhoWeServe: show(whoWeServe),
+    showMethodologies: show(methodologies),
+    showEmpower: show(empower),
+    showEnquiry: show(enquiry),
+    showBlogs: show(blogs),
+    showFaq: show(faq),
+    showCaseStudies: show(caseStudiesSec),
+    showAbout: show(about),
+    showCtaBanner: show(ctaBanner),
 
-    heroEyebrow: data.heroEyebrow ?? undefined,
-    heroHeading: data.heroHeading ?? undefined,
-    heroSubheading: data.heroSubheading ?? undefined,
-    heroImage: toImageModel(data.heroImage, data.heroHeading ?? data.title),
-    heroActions: data.heroActions.map(normalizeLink),
+    heroEyebrow: hero?.eyebrow ?? undefined,
+    heroHeading: hero?.heading ?? undefined,
+    heroSubheading: hero?.subheading ?? undefined,
+    heroImage: toImageModel(hero?.image ?? null, hero?.heading ?? data.title),
+    heroActions: (hero?.actions ?? []).map(normalizeLink),
 
-    trustHeading: data.trustHeading ?? undefined,
-    trustLogos: data.trustLogos.map(normalizeTrustLogo),
+    trustHeading: overview?.partnersHeading ?? undefined,
+    trustLogos: (overview?.partners ?? []).map(normalizeTrustLogo),
 
-    whatWeDoEyebrow: data.whatWeDoEyebrow ?? undefined,
-    whatWeDoHeading: data.whatWeDoHeading ?? undefined,
-    whatWeDoBody: data.whatWeDoBody ?? undefined,
-    whatWeDoCta: data.whatWeDoCta ? normalizeLink(data.whatWeDoCta) : undefined,
-    whatWeDoImage: toImageModel(data.whatWeDoImage, data.whatWeDoHeading ?? data.title),
+    whatWeDoEyebrow: overview?.eyebrow ?? undefined,
+    whatWeDoHeading: overview?.heading ?? undefined,
+    whatWeDoBody: overview?.body ?? undefined,
+    whatWeDoCta: overview?.cta ? normalizeLink(overview.cta) : undefined,
+    whatWeDoImage: toImageModel(overview?.image ?? null, overview?.heading ?? data.title),
 
-    whyResearchEyebrow: data.whyResearchEyebrow ?? undefined,
-    whyResearchHeading: data.whyResearchHeading ?? undefined,
-    whyResearchCards: data.whyResearchCards.map(normalizeIndustryDetailCard),
+    whyResearchEyebrow: why?.eyebrow ?? undefined,
+    whyResearchHeading: why?.heading ?? undefined,
+    whyResearchCards: (why?.cards ?? []).map(normalizeIndustryDetailCard),
 
-    expertiseEyebrow: data.expertiseEyebrow ?? undefined,
-    expertiseHeading: data.expertiseHeading ?? undefined,
-    expertiseItems: data.expertiseItems.map(normalizeIndustryDetailCard),
+    expertiseEyebrow: expertise?.eyebrow ?? undefined,
+    expertiseHeading: expertise?.heading ?? undefined,
+    expertiseItems: (expertise?.items ?? []).map(normalizeIndustryDetailCard),
 
-    challengesEyebrow: data.challengesEyebrow ?? undefined,
-    challengesHeading: data.challengesHeading ?? undefined,
-    challengesBody: data.challengesBody ?? undefined,
-    challengesCards: data.challengesCards.map(normalizeIndustryDetailCard),
+    challengesEyebrow: challenges?.eyebrow ?? undefined,
+    challengesHeading: challenges?.heading ?? undefined,
+    challengesBody: challenges?.body ?? undefined,
+    challengesCards: (challenges?.cards ?? []).map(normalizeIndustryDetailCard),
 
-    whoWeServeEyebrow: data.whoWeServeEyebrow ?? undefined,
-    whoWeServeHeading: data.whoWeServeHeading ?? undefined,
-    whoWeServeCards: data.whoWeServeCards.map(normalizeIndustryDetailCard),
+    whoWeServeEyebrow: whoWeServe?.eyebrow ?? undefined,
+    whoWeServeHeading: whoWeServe?.heading ?? undefined,
+    whoWeServeCards: (whoWeServe?.cards ?? []).map(normalizeIndustryDetailCard),
 
-    methodologiesEyebrow: data.methodologiesEyebrow ?? undefined,
-    methodologiesHeading: data.methodologiesHeading ?? undefined,
-    methodologiesBody: data.methodologiesBody ?? undefined,
-    methodologies: data.methodologies.map(normalizeIndustryItem),
+    methodologiesEyebrow: methodologies?.eyebrow ?? undefined,
+    methodologiesHeading: methodologies?.heading ?? undefined,
+    methodologiesBody: methodologies?.body ?? undefined,
+    methodologies: (methodologies?.items ?? []).map(normalizeIndustryItem),
 
-    empowerEyebrow: data.empowerEyebrow ?? undefined,
-    empowerHeading: data.empowerHeading ?? undefined,
-    empowerBody: data.empowerBody ?? undefined,
-    empowerCta: data.empowerCta ? normalizeLink(data.empowerCta) : undefined,
-    empowerImage: toImageModel(data.empowerImage, data.empowerHeading ?? data.title),
+    empowerEyebrow: empower?.eyebrow ?? undefined,
+    empowerHeading: empower?.heading ?? undefined,
+    empowerBody: empower?.body ?? undefined,
+    empowerCta: empower?.cta ? normalizeLink(empower.cta) : undefined,
+    empowerImage: toImageModel(empower?.image ?? null, empower?.heading ?? data.title),
 
-    enquiryEyebrow: data.enquiryEyebrow ?? undefined,
-    enquiryHeading: data.enquiryHeading ?? undefined,
-    enquiryBody: data.enquiryBody ?? undefined,
-    enquiryImage: toImageModel(data.enquiryImage, data.enquiryHeading ?? data.title),
+    enquiryEyebrow: enquiry?.eyebrow ?? undefined,
+    enquiryHeading: enquiry?.heading ?? undefined,
+    enquiryBody: enquiry?.body ?? undefined,
+    enquiryImage: toImageModel(enquiry?.image ?? null, enquiry?.heading ?? data.title),
 
-    faqItems: data.faqItems.map((item): FaqItemModel => ({
+    faqItems: (faq?.items ?? []).map((item): FaqItemModel => ({
       id: `industry-faq-${item.id}`,
       question: item.question,
       answer: item.answer,
     })),
 
-    caseStudiesEyebrow: data.caseStudiesEyebrow ?? undefined,
-    caseStudiesHeading: data.caseStudiesHeading ?? undefined,
-    caseStudiesBody: data.caseStudiesBody ?? undefined,
-    caseStudiesCta: data.caseStudiesCta ? normalizeLink(data.caseStudiesCta) : undefined,
-    caseStudies: data.caseStudies.map(normalizeIndustryItem),
+    caseStudiesEyebrow: caseStudiesSec?.eyebrow ?? undefined,
+    caseStudiesHeading: caseStudiesSec?.heading ?? undefined,
+    caseStudiesBody: caseStudiesSec?.body ?? undefined,
+    caseStudiesCta: caseStudiesSec?.cta ? normalizeLink(caseStudiesSec.cta) : undefined,
+    caseStudies: (caseStudiesSec?.items ?? []).map(normalizeIndustryItem),
 
-    aboutEyebrow: data.aboutEyebrow ?? undefined,
-    aboutHeading: data.aboutHeading ?? undefined,
-    aboutBody: data.aboutBody ?? undefined,
+    aboutEyebrow: about?.eyebrow ?? undefined,
+    aboutHeading: about?.heading ?? undefined,
+    aboutBody: about?.body ?? undefined,
   };
 }
 
