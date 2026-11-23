@@ -15,9 +15,10 @@ import type { TeamMemberModel } from '@/models/teamMember';
  * Card 1188x531: white, 1px #eee, r24, shadow 6 6 54 rgba(0,0,0,.08).
  * Offsets below are the Figma ones from the card's outer top-left (the 1px
  * border is inside them, so the paddings are 1px smaller):
- *  - photo panel (45,50) 356x381.4, #f6f5f5, r20; the portrait fills it
- *    object-cover object-top (head/hair anchored, never clipped — matches
- *    the grid card; CMS uploads are arbitrary portraits, not the Figma crop)
+ *  - photo: rendered whole at its natural aspect ratio (object-contain,
+ *    w-full h-auto, max-h 420px) in a tight transparent wrapper — CMS
+ *    uploads are arbitrary portraits, so the full photo (head to shoulders)
+ *    shows uncropped rather than being zoom-cropped to the Figma panel.
  *  - LinkedIn tile 51.52px #0077b5 r4, centred under the photo (197,444)
  *  - name (453, cap-top 65): Inter 600 30/28px #1e1e1e
  *  - role (cap-top 105.6): Inter 500 16/25.6px, tracking -0.2px, #2d3e50 @ 90%
@@ -71,11 +72,13 @@ export function TeamProfileModal({ member, onClose }: { member: TeamMemberModel;
         </button>
 
         <div className="flex shrink-0 flex-col items-center gap-[12.58px] lg:pt-[49px]">
-          <div className="relative aspect-[356/381.42] w-full max-w-[356px] overflow-hidden rounded-[20px] bg-[#f6f5f5] lg:w-[356px]">
+          <div className="w-full max-w-[320px] overflow-hidden rounded-[12px] bg-transparent sm:max-w-[356px]">
             {member.photo && (
-              <div className="absolute left-[-5.337%] top-[3.166%] h-[121.4%] w-[108.15%]">
-                <StrapiImage image={member.photo} sizes="385px" fill className="object-cover object-top" />
-              </div>
+              <StrapiImage
+                image={member.photo}
+                sizes="(min-width: 640px) 356px, 320px"
+                className="block h-auto max-h-[420px] w-full rounded-[12px] object-contain"
+              />
             )}
           </div>
           {member.linkedinUrl ? (
