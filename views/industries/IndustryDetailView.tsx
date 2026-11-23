@@ -75,37 +75,43 @@ export function IndustryDetailView({
   return (
     <>
       <DetailHero hero={content.hero} title={content.title} />
-      <ContentBlock
-        eyebrow={content.whatWeDo.eyebrow}
-        heading={content.whatWeDo.heading}
-        body={content.whatWeDo.body}
-        cta={content.whatWeDo.cta}
-        image={content.whatWeDo.image}
-        frame="rounded"
-        imageSide="right"
-        expandable
-      />
+      {industry.showOverview !== false && (
+        <ContentBlock
+          eyebrow={content.whatWeDo.eyebrow}
+          heading={content.whatWeDo.heading}
+          body={content.whatWeDo.body}
+          cta={content.whatWeDo.cta}
+          image={content.whatWeDo.image}
+          frame="rounded"
+          imageSide="right"
+          expandable
+        />
+      )}
 
-      <WhyResearchSection whyResearch={content.whyResearch} />
-      <ExpertiseStrip expertise={content.expertise} />
-      <ChallengesSection challenges={content.challenges} />
-      <WhoWeServeSection whoWeServe={content.whoWeServe} />
-      <MethodologiesSection methodologies={content.methodologies} />
+      {industry.showWhyResearch !== false && <WhyResearchSection whyResearch={content.whyResearch} />}
+      {industry.showExpertise !== false && <ExpertiseStrip expertise={content.expertise} />}
+      {industry.showChallenges !== false && <ChallengesSection challenges={content.challenges} />}
+      {industry.showWhoWeServe !== false && <WhoWeServeSection whoWeServe={content.whoWeServe} />}
+      {industry.showMethodologies !== false && <MethodologiesSection methodologies={content.methodologies} />}
 
-      <ContentBlock
-        eyebrow={content.empower.eyebrow}
-        heading={content.empower.heading}
-        body={content.empower.body}
-        cta={content.empower.cta}
-        image={content.empower.image}
-        frame="circle"
-        imageSide="right"
-        expandable
-      />
+      {industry.showEmpower !== false && (
+        <ContentBlock
+          eyebrow={content.empower.eyebrow}
+          heading={content.empower.heading}
+          body={content.empower.body}
+          cta={content.empower.cta}
+          image={content.empower.image}
+          frame="circle"
+          imageSide="right"
+          expandable
+        />
+      )}
 
-      <EnquiryForm eyebrow={content.enquiry.eyebrow} heading={content.enquiry.heading} body={content.enquiry.body} image={content.enquiry.image} />
+      {industry.showEnquiry !== false && (
+        <EnquiryForm eyebrow={content.enquiry.eyebrow} heading={content.enquiry.heading} body={content.enquiry.body} image={content.enquiry.image} />
+      )}
 
-      {sortedBlogPosts.length > 0 && (
+      {industry.showBlogs !== false && sortedBlogPosts.length > 0 && (
         // The Home page's "Latest Blogs" band (red panel + post cards), fed the same way.
         <BlogTeaserView
           index={0}
@@ -128,30 +134,37 @@ export function IndustryDetailView({
       )}
 
       {/* The Home page's FAQ section: world-map watermark, "Browse Blogs" button, same accordion. */}
-      <FaqView
-        index={0}
-        block={{
-          kind: 'faq',
-          id: 'industry-faq',
-          theme: 'light',
-          heading: bands.faq.heading,
-          background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
-          cta: bands.faq.cta,
-          items: content.faqItems,
-        }}
-      />
+      {industry.showFaq !== false && (
+        <FaqView
+          index={0}
+          block={{
+            kind: 'faq',
+            id: 'industry-faq',
+            theme: 'light',
+            heading: bands.faq.heading,
+            background: { src: '/figma-home/faq-worldmap.png', alt: '', width: 1377, height: 787 },
+            cta: bands.faq.cta,
+            items: content.faqItems,
+          }}
+        />
+      )}
 
-      <CaseStudiesSection caseStudies={caseStudies} />
-      {/* Same About + closing-CTA design as /industries (Figma 384:6574-6388 = 1384:26772's closing frames). */}
-      <AboutServicesCta
-        detail
-        about={{ eyebrow: content.about.eyebrow, heading: content.about.heading, paragraphs: content.about.body.split('\n\n').map((p) => p.trim()).filter(Boolean) }}
-        finalCta={{
-          heading: bands.finalCta.heading,
-          body: bands.finalCta.body,
-          action: bands.finalCta.action,
-        }}
-      />
+      {industry.showCaseStudies !== false && <CaseStudiesSection caseStudies={caseStudies} />}
+      {/* Same About + closing-CTA design as /industries (Figma 384:6574-6388 = 1384:26772's closing frames).
+          About and the bottom CTA banner toggle independently (showAbout / showCtaBanner). */}
+      {(industry.showAbout !== false || industry.showCtaBanner !== false) && (
+        <AboutServicesCta
+          detail
+          includeAbout={industry.showAbout !== false}
+          includeCta={industry.showCtaBanner !== false}
+          about={{ eyebrow: content.about.eyebrow, heading: content.about.heading, paragraphs: content.about.body.split('\n\n').map((p) => p.trim()).filter(Boolean) }}
+          finalCta={{
+            heading: bands.finalCta.heading,
+            body: bands.finalCta.body,
+            action: bands.finalCta.action,
+          }}
+        />
+      )}
     </>
   );
 }

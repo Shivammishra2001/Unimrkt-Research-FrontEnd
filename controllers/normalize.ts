@@ -635,6 +635,22 @@ export function normalizeIndustryDetail(res: StrapiIndustryDetailResponse): Indu
     suggestedUrl: data.suggestedUrl ?? undefined,
     seo: normalizeSeo(data.seo, data.title),
 
+    // Section visibility toggles — null/undefined stays undefined so the
+    // view treats it as visible; only an explicit `false` hides a section.
+    showOverview: data.showOverview ?? undefined,
+    showWhyResearch: data.showWhyResearch ?? undefined,
+    showExpertise: data.showExpertise ?? undefined,
+    showChallenges: data.showChallenges ?? undefined,
+    showWhoWeServe: data.showWhoWeServe ?? undefined,
+    showMethodologies: data.showMethodologies ?? undefined,
+    showEmpower: data.showEmpower ?? undefined,
+    showEnquiry: data.showEnquiry ?? undefined,
+    showBlogs: data.showBlogs ?? undefined,
+    showFaq: data.showFaq ?? undefined,
+    showCaseStudies: data.showCaseStudies ?? undefined,
+    showAbout: data.showAbout ?? undefined,
+    showCtaBanner: data.showCtaBanner ?? undefined,
+
     heroEyebrow: data.heroEyebrow ?? undefined,
     heroHeading: data.heroHeading ?? undefined,
     heroSubheading: data.heroSubheading ?? undefined,

@@ -50,6 +50,23 @@ export interface StrapiIndustryDetail extends StrapiIndustrySummary, StrapiClosi
   createdAt: string;
   publishedAt: string | null;
 
+  // Per-section Show/Hide visibility toggles (boolean, default true in the
+  // CMS). Existing rows predating the fields come back null → treated as
+  // visible by the normalizer.
+  showOverview?: boolean | null;
+  showWhyResearch?: boolean | null;
+  showExpertise?: boolean | null;
+  showChallenges?: boolean | null;
+  showWhoWeServe?: boolean | null;
+  showMethodologies?: boolean | null;
+  showEmpower?: boolean | null;
+  showEnquiry?: boolean | null;
+  showBlogs?: boolean | null;
+  showFaq?: boolean | null;
+  showCaseStudies?: boolean | null;
+  showAbout?: boolean | null;
+  showCtaBanner?: boolean | null;
+
   heroEyebrow: string | null;
   heroHeading: string | null;
   heroSubheading: string | null;
@@ -155,6 +172,22 @@ export interface IndustryDetail extends IndustrySummary {
   legacyUrl?: string;
   suggestedUrl?: string;
   seo?: SeoModel;
+
+  // Per-section Show/Hide toggles. Undefined = not set in the CMS =
+  // treat as visible (backward compatible); only an explicit false hides.
+  showOverview?: boolean;
+  showWhyResearch?: boolean;
+  showExpertise?: boolean;
+  showChallenges?: boolean;
+  showWhoWeServe?: boolean;
+  showMethodologies?: boolean;
+  showEmpower?: boolean;
+  showEnquiry?: boolean;
+  showBlogs?: boolean;
+  showFaq?: boolean;
+  showCaseStudies?: boolean;
+  showAbout?: boolean;
+  showCtaBanner?: boolean;
 
   heroEyebrow?: string;
   heroHeading?: string;
