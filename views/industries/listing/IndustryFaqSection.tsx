@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { H2_CLASS } from './shared';
 import { PlusIcon } from '@/views/ui/icons/PlusIcon';
+import { FaqAnswer } from '@/views/ui/FaqAnswer';
 import type { IndustriesPageContent } from '@/models/industriesPage';
 
 /** FAQ — Figma 1384:26772, y10119-11105. A 222x60 gradient "Browse
@@ -73,7 +74,7 @@ export function IndustryFaqSection({ content, titleClassName = 'mt-[43px]' }: { 
                       transition={{ duration: reduceMotion ? 0 : 0.3, ease: 'easeInOut' }}
                       className="overflow-hidden"
                     >
-                      <p className="px-7 pb-6 font-sans text-[14px] leading-[26.18px] text-black opacity-70">{item.answer}</p>
+                      <FaqAnswer text={item.answer} className="px-7 pb-6 font-sans text-[14px] leading-[26.18px] text-black opacity-70" />
                     </motion.div>
                   )}
                 </AnimatePresence>

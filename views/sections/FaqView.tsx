@@ -8,6 +8,7 @@ import { Heading } from '@/views/ui/Heading';
 import { Button } from '@/views/ui/Button';
 import Image from 'next/image';
 import { PlusIcon } from '@/views/ui/icons/PlusIcon';
+import { FaqAnswer } from '@/views/ui/FaqAnswer';
 import type { FaqModel } from '@/models/domain';
 
 /** blocks.faq — single-open accordion, height/opacity spring, plus-to-x
@@ -72,7 +73,7 @@ export function FaqView({ block, variant = 'home' }: { block: FaqModel; index: n
                       transition={{ duration: shouldReduceMotion ? 0.01 : 0.25, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="px-6 pb-5 text-sm leading-relaxed opacity-80 lg:px-7">{item.answer}</p>
+                      <FaqAnswer text={item.answer} className="px-6 pb-5 text-sm leading-relaxed opacity-80 lg:px-7" />
                     </motion.div>
                   )}
                 </AnimatePresence>

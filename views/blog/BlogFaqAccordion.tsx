@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Container } from '@/views/ui/Container';
 import { PlusIcon } from '@/views/ui/icons/PlusIcon';
+import { FaqAnswer } from '@/views/ui/FaqAnswer';
 import type { FaqItemModel } from '@/models/domain';
 
 /**
@@ -88,7 +89,7 @@ export function BlogFaqAccordion({
                       transition={{ duration: shouldReduceMotion ? 0.01 : 0.25, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="px-6 pb-5 text-sm leading-relaxed opacity-80">{item.answer}</p>
+                      <FaqAnswer text={item.answer} className="px-6 pb-5 text-sm leading-relaxed opacity-80" />
                     </motion.div>
                   )}
                 </AnimatePresence>
