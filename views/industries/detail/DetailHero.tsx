@@ -1,6 +1,7 @@
 import { Breadcrumb } from '@/views/ui/Breadcrumb';
 import { Button } from '@/views/ui/Button';
 import { StrapiImage } from '@/views/ui/StrapiImage';
+import { HeroSubheading } from './HeroSubheading';
 import type { ResolvedIndustryDetail } from './fallback';
 
 /** /industries/[slug] hero — Figma node 384:6205 (y0-828). CMS-first,
@@ -47,7 +48,7 @@ export function DetailHero({ hero, title }: { hero: ResolvedIndustryDetail['hero
               </span>
             ))}
           </h1>
-          <p className="mt-[12.8px] max-w-[884px] font-sans text-[16px] font-normal leading-[30.4px] text-white/80">{hero.subheading}</p>
+          <HeroSubheading text={hero.subheading} />
           <div className="mt-[44.3px] flex flex-wrap gap-5">
             {hero.actions.map((action, i) => (
               <Button key={action.id} link={i > 0 ? { ...action, variant: 'ghost' } : action} className={i > 0 ? 'border border-white' : undefined} />
