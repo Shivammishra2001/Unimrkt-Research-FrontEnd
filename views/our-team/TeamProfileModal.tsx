@@ -15,8 +15,9 @@ import type { TeamMemberModel } from '@/models/teamMember';
  * Card 1188x531: white, 1px #eee, r24, shadow 6 6 54 rgba(0,0,0,.08).
  * Offsets below are the Figma ones from the card's outer top-left (the 1px
  * border is inside them, so the paddings are 1px smaller):
- *  - photo panel (45,50) 356x381.4, #f6f5f5, r20; the portrait is placed at
- *    (-19,12.07) 385x463 inside it, object-bottom, clipped by the panel
+ *  - photo panel (45,50) 356x381.4, #f6f5f5, r20; the portrait fills it
+ *    object-cover object-top (head/hair anchored, never clipped — matches
+ *    the grid card; CMS uploads are arbitrary portraits, not the Figma crop)
  *  - LinkedIn tile 51.52px #0077b5 r4, centred under the photo (197,444)
  *  - name (453, cap-top 65): Inter 600 30/28px #1e1e1e
  *  - role (cap-top 105.6): Inter 500 16/25.6px, tracking -0.2px, #2d3e50 @ 90%
@@ -73,7 +74,7 @@ export function TeamProfileModal({ member, onClose }: { member: TeamMemberModel;
           <div className="relative aspect-[356/381.42] w-full max-w-[356px] overflow-hidden rounded-[20px] bg-[#f6f5f5] lg:w-[356px]">
             {member.photo && (
               <div className="absolute left-[-5.337%] top-[3.166%] h-[121.4%] w-[108.15%]">
-                <StrapiImage image={member.photo} sizes="385px" fill className="object-cover object-bottom" />
+                <StrapiImage image={member.photo} sizes="385px" fill className="object-cover object-top" />
               </div>
             )}
           </div>
