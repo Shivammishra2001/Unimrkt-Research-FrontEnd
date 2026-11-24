@@ -58,7 +58,10 @@ export function QuestionsInsightsSection({ content }: { content: IndustriesPageC
               <>
                 <span className="relative mt-0 size-[64px] shrink-0 lg:mt-[6px]" aria-hidden="true">
                   <Image src={`${ICON_DIR}/q-ring.svg`} alt="" width={64} height={64} unoptimized className="absolute inset-0 size-full" />
-                  <Image src={item.icon?.src ?? `${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={34} height={34} unoptimized={!item.icon} className="absolute left-[15px] top-[15px] size-[34px]" />
+                  {/* mix-blend-multiply drops any white background on CMS-uploaded raster icons
+                      into the #F6EAEA ring (white × pink = pink); transparent SVG fallbacks are
+                      unaffected. object-contain keeps the pictogram crisp and centred in the 64px ring. */}
+                  <Image src={item.icon?.src ?? `${ICON_DIR}/${ICONS[i % ICONS.length]}`} alt="" width={34} height={34} unoptimized={!item.icon} className="absolute left-[15px] top-[15px] size-[34px] object-contain mix-blend-multiply" />
                 </span>
                 <span className="min-w-0 flex-1 text-left">
                   <span className={`block font-sans text-[18px] font-semibold leading-[27px] text-[#04264e] max-lg:flex max-lg:min-h-[64px] max-lg:items-center ${isOpen ? '' : 'lg:mt-[18.5px]'}`}>{item.title}</span>
