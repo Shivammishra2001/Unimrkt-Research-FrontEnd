@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
-import { getBlogSlugs, getCaseStudySlugs, getIndustrySlugs, getPageSlugs, getServiceSlugs } from '@/controllers/strapi';
+import { getBlogSlugs, getCaseStudySlugs, getIndustrySlugs, getPageSlugs } from '@/controllers/strapi';
+import { getAllServiceCategories } from '@/controllers/service';
+import { getServiceHref } from '@/lib/serviceHref';
 
 export const revalidate = 3600;
 
@@ -27,6 +29,21 @@ async function entries(load: () => Promise<Slugs>, toPath: (slug: string) => str
   }
 }
 
+/** Services use the hierarchical tree so a sub-service is listed at its nested
+ * /services/<parent>/<child> canonical URL — the same path getServiceHref builds
+ * everywhere else and the one the flat URLs redirect to. */
+async function serviceEntries(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const tree = await getAllServiceCategories();
+    return tree.flatMap((top) => [
+      { url: `${SITE_URL}${getServiceHref(top.slug)}` },
+      ...top.children.map((child) => ({ url: `${SITE_URL}${getServiceHref(child.slug, top.slug)}` })),
+    ]);
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Every public URL. The slug endpoints only return entries whose CMS "Page visibility" switch is ON, so a switched-off page drops out
  * of the sitemap automatically (and /robots.txt points crawlers here).
@@ -35,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [pages, industries, services, blogs, caseStudies] = await Promise.all([
     entries(getPageSlugs, (slug) => PAGE_ROUTES[slug] ?? `/${slug}`),
     entries(getIndustrySlugs, (slug) => `/industries/${slug}`),
-    entries(getServiceSlugs, (slug) => `/services/${slug}`),
+    serviceEntries(),
     entries(getBlogSlugs, (slug) => `/blogs/${slug}`),
     entries(getCaseStudySlugs, (slug) => `/case-study/${slug}`),
   ]);

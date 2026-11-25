@@ -8,6 +8,7 @@ import { CloseIcon } from '@/views/ui/icons/CloseIcon';
 import { groupIndustries, industriesFor, isIndustriesItem, isServicesItem, withCount, type NavIndustry } from './nav/industryGroups';
 import type { NavigationModel } from '@/models/domain';
 import type { ServiceTreeItemModel } from '@/models/service';
+import { getServiceHref } from '@/lib/serviceHref';
 
 const MIN_TOUCH_TARGET = 'min-h-[44px]';
 
@@ -63,7 +64,7 @@ function MobileServiceCategory({ category, onNavigate }: { category: ServiceTree
   return (
     <li>
       <div className="flex items-center">
-        <Link href={`/services/${category.slug}`} onClick={onNavigate} className={`flex flex-1 items-center gap-2.5 ${MIN_TOUCH_TARGET} py-2.5 text-[15px] font-medium text-white/90`}>
+        <Link href={getServiceHref(category.slug)} onClick={onNavigate} className={`flex flex-1 items-center gap-2.5 ${MIN_TOUCH_TARGET} py-2.5 text-[15px] font-medium text-white/90`}>
           <span className="size-1.5 shrink-0 rounded-full bg-gradient-to-br from-[#BE2C28] to-[#6C2A4A]" aria-hidden="true" />
           {category.title}
         </Link>
@@ -74,7 +75,7 @@ function MobileServiceCategory({ category, onNavigate }: { category: ServiceTree
           <ul className="mb-2 ml-[3px] border-l border-white/10 pl-5">
             {category.children.map((child) => (
               <li key={child.slug}>
-                <Link href={`/services/${child.slug}`} onClick={onNavigate} className={`flex items-center ${MIN_TOUCH_TARGET} py-2 text-sm leading-tight text-white/65`}>
+                <Link href={getServiceHref(child.slug, category.slug)} onClick={onNavigate} className={`flex items-center ${MIN_TOUCH_TARGET} py-2 text-sm leading-tight text-white/65`}>
                   {child.title}
                 </Link>
               </li>

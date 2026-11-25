@@ -6,6 +6,7 @@ import { getGlobal, StrapiError } from '@/controllers/strapi';
 import { normalizeGlobal } from '@/controllers/normalize';
 import { getAllServiceCategories } from '@/controllers/service';
 import { getAllIndustries } from '@/controllers/industry';
+import { getServiceHref } from '@/lib/serviceHref';
 import { isServicesItem, type NavIndustry } from '@/views/sections/nav/industryGroups';
 import { Navbar } from '@/views/sections/Navbar';
 import { Footer } from '@/views/sections/Footer';
@@ -125,7 +126,7 @@ function withDynamicServicesDropdown(
         children: categories.map((c) => ({
           id: `svc-cat-${c.slug}`,
           label: c.title,
-          href: `/services/${c.slug}`,
+          href: getServiceHref(c.slug),
           isExternal: false,
           children: [],
           showIndicator: false,

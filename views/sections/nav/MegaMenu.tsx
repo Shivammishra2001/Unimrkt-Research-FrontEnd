@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import Link from 'next/link';
 import type { ServiceTreeItemModel } from '@/models/service';
+import { getServiceHref } from '@/lib/serviceHref';
 import { groupIndustries, withCount, type NavIndustry } from './industryGroups';
 import type { IndustriesMenuModel, ServicesMenuModel } from '@/models/domain';
 
@@ -140,7 +141,7 @@ export function ServicesMega({ categories, menu, onNavigate }: { categories: Ser
             return (
               <li key={c.slug}>
                 <Link
-                  href={`/services/${c.slug}`}
+                  href={getServiceHref(c.slug)}
                   onClick={onNavigate}
                   onMouseEnter={() => hoverTo(c.slug)}
                   onFocus={() => {
@@ -188,7 +189,7 @@ export function ServicesMega({ categories, menu, onNavigate }: { categories: Ser
                 <p className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#ff8a85]">{menu?.eyebrow || 'Research Services'}</p>
                 <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
                   <h3 className="text-[22px] font-semibold leading-tight tracking-[-0.5px] text-white">{c.title}</h3>
-                  <Link href={`/services/${c.slug}`} onClick={onNavigate} className="group inline-flex items-center gap-1 text-[13px] font-semibold text-white/70 transition-colors duration-150 hover:text-white">
+                  <Link href={getServiceHref(c.slug)} onClick={onNavigate} className="group inline-flex items-center gap-1 text-[13px] font-semibold text-white/70 transition-colors duration-150 hover:text-white">
                     {menu?.overviewLabel || 'Overview'}
                     <Arrow className="size-3.5 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </Link>
@@ -198,7 +199,9 @@ export function ServicesMega({ categories, menu, onNavigate }: { categories: Ser
                   {subs.map((s) => (
                     <li key={s.slug}>
                       <Link
-                        href={`/services/${s.slug}`}
+                        // `subs` is c.children, or a synthetic "Explore {c.title}" whose slug is the
+                        // category's own — getServiceHref collapses that self-parent back to the flat path.
+                        href={getServiceHref(s.slug, c.slug)}
                         onClick={onNavigate}
                         className="group flex h-full items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5 transition-[background-color,border-color,transform] duration-150 hover:-translate-y-px hover:border-white/15 hover:bg-white/[0.06]"
                       >

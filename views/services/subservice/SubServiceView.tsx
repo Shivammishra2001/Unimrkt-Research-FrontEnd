@@ -5,6 +5,7 @@ import { AboutServicesCta } from '@/views/industries/listing/AboutServicesCta';
 import { StatsSection, IntroSection, WhySection, MeasureSection, QualitySection, TechnologySection } from './SubServiceSections';
 import { ProcessSection } from './ProcessSection';
 import { resolveSubService } from './content';
+import { getServiceHref } from '@/lib/serviceHref';
 import type { ServiceDetail } from '@/models/service';
 import type { BlogSummary } from '@/models/blog';
 import type { ClosingBandsSettings } from '@/models/domain';
@@ -32,7 +33,7 @@ export function SubServiceView({ service, blogPosts, globalBands }: { service: S
         breadcrumb={[
           { label: 'Home', href: '/' },
           { label: 'Services', href: '/services' },
-          ...(service.parent ? [{ label: service.parent.title, href: `/services/${service.parent.slug}` }] : []),
+          ...(service.parent ? [{ label: service.parent.title, href: getServiceHref(service.parent.slug) }] : []),
           { label: service.title },
         ]}
       />

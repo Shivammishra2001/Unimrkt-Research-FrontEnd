@@ -1,4 +1,5 @@
 import { ServicesHero } from '@/views/services/listing/ServicesHero';
+import { getServiceHref } from '@/lib/serviceHref';
 import type { ResolvedServiceDetail } from './fallback';
 
 const FIGMA_HERO = { src: '/images/services/detail/primary-research-hero.jpg', alt: '', width: 1920, height: 1344 };
@@ -20,7 +21,7 @@ export function ServiceDetailHero({ hero, title, parent }: { hero: ResolvedServi
       breadcrumb={[
         { label: 'Home', href: '/' },
         { label: 'Services', href: '/services' },
-        ...(parent ? [{ label: parent.title, href: `/services/${parent.slug}` }] : []),
+        ...(parent ? [{ label: parent.title, href: getServiceHref(parent.slug) }] : []),
         { label: title },
       ]}
     />

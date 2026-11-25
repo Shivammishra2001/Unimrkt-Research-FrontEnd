@@ -8,6 +8,7 @@ import { DotPagination } from '@/views/industries/DotPagination';
 import { SendArrowIcon } from '@/views/ui/icons/SendArrowIcon';
 import { useSnapTrack } from '@/views/ui/useSnapTrack';
 import type { ServiceTreeItemModel } from '@/models/service';
+import { getServiceHref } from '@/lib/serviceHref';
 import type { ServicesListingContent } from './content';
 import { lato } from '../fonts';
 
@@ -102,7 +103,7 @@ function DesktopAccordion({ categories, ctaLabel }: { categories: ServiceTreeIte
         {visible.map((category, i) => {
           const expanded = active === i;
           const strip = active !== null && !expanded;
-          const href = `/services/${category.slug}`;
+          const href = getServiceHref(category.slug);
           return (
             <li
               key={category.slug}
@@ -209,7 +210,7 @@ function TouchTrack({ categories, ctaLabel }: { categories: ServiceTreeItemModel
               <Image src={iconOf(category)} alt="" width={70} height={70} className="size-12" />
               <h3 className={`${lato.className} mt-3 text-[20px] font-bold leading-[1.27] text-white`}>{category.title}</h3>
               {descriptionOf(category) && <p className="mt-2 line-clamp-3 font-sans text-[14px] leading-[1.7] text-white/80">{descriptionOf(category)}</p>}
-              <ExploreButton href={`/services/${category.slug}`} title={category.title} label={ctaLabel} className="mt-4 h-12 px-4 sm:px-5" />
+              <ExploreButton href={getServiceHref(category.slug)} title={category.title} label={ctaLabel} className="mt-4 h-12 px-4 sm:px-5" />
             </div>
           </li>
         ))}

@@ -12,6 +12,7 @@
  * field (`blocks.feature-item`) rather than adding a duplicate one.
  */
 import type { ServiceDetail, ServiceStatItemModel } from '@/models/service';
+import { getServiceHref } from '@/lib/serviceHref';
 import type { FaqItemModel, FeatureModel, LinkModel } from '@/models/domain';
 import type { IndustryDetailCardModel, TrustLogoModel } from '@/models/industry';
 
@@ -196,7 +197,7 @@ export function resolveServiceDetail(service: ServiceDetail): ResolvedServiceDet
           title: feature.title,
           description: own || CAPABILITY_COPY[key] || `Explore our ${feature.title.toLowerCase()} capabilities.`,
           image: feature.icon,
-          href: feature.link?.href ?? (child ? `/services/${child.slug}` : undefined),
+          href: feature.link?.href ?? (child ? getServiceHref(child.slug, service.slug) : undefined),
         };
       }),
     },
